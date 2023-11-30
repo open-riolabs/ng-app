@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotFoundComponent } from './not-found.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '../../rlb-app.module';
+import { RlbAppModule } from '../../rlb-app.module';
 
 describe('NotFoundComponent', () => {
   let component: NotFoundComponent;
@@ -13,7 +13,7 @@ describe('NotFoundComponent', () => {
         NotFoundComponent
       ],
       imports: [
-        SharedModule,
+        RlbAppModule,
         TranslateModule.forRoot()
       ],
     })

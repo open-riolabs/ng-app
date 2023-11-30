@@ -2,7 +2,7 @@
 // import { CmsContentComponent } from './cms-content.component';
 // import { ActivatedRoute } from '@angular/router';
 // import { TranslateModule } from '@ngx-translate/core';
-// import { SharedModule } from '../../shared.module';
+// import { RlbAppModule } from '../../shared.module';
 
 // describe('CmsContentComponent', () => {
 //   let component: CmsContentComponent;
@@ -12,7 +12,7 @@
 //   beforeEach(async () => {
 //     await TestBed.configureTestingModule({
 //       imports: [
-//         SharedModule,
+//         RlbAppModule,
 //         TranslateModule.forRoot()
 //       ],
 //       providers: [

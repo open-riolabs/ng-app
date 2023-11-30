@@ -1,7 +1,7 @@
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { CookiesComponent } from './cookies.component';
 // import { TranslateModule } from '@ngx-translate/core';
-// import { SharedModule } from '../../shared.module';
+// import { RlbAppModule } from '../../shared.module';
 
 // describe('CookiesComponent', () => {
 //   let component: CookiesComponent;
@@ -13,7 +13,7 @@
 //         CookiesComponent
 //       ],
 //       imports: [
-//         SharedModule,
+//         RlbAppModule,
 //         TranslateModule.forRoot()
 //       ],
 //     })

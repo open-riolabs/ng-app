@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SupportComponent } from './support.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '../../rlb-app.module';
+import { RlbAppModule } from '../../rlb-app.module';
 import { AbstractSupportService } from '../../services';
 
 describe('SupportComponent', () => {
@@ -14,7 +14,7 @@ describe('SupportComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ SupportComponent ],
       imports: [
-        SharedModule,
+        RlbAppModule,
         TranslateModule.forRoot()
       ],
       providers: [

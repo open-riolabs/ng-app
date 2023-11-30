@@ -2,7 +2,7 @@
 
 // import { TermsAndConditionsComponent } from './terms-and-conditions.component';
 // import { TranslateModule } from '@ngx-translate/core';
-// import { SharedModule } from '../../shared.module';
+// import { RlbAppModule } from '../../shared.module';
 
 // describe('TermsAndConditionsComponent', () => {
 //   let component: TermsAndConditionsComponent;
@@ -12,7 +12,7 @@
 //     await TestBed.configureTestingModule({
 //       declarations: [ TermsAndConditionsComponent ],
 //       imports: [
-//         SharedModule,
+//         RlbAppModule,
 //         TranslateModule.forRoot()
 //       ],
 //     })

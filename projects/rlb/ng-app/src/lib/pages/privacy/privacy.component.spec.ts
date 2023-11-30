@@ -2,7 +2,7 @@
 
 // import { PrivacyComponent } from './privacy.component';
 // import { TranslateModule } from '@ngx-translate/core';
-// import { SharedModule } from '../../shared.module';
+// import { RlbAppModule } from '../../shared.module';
 
 // describe('PrivacyComponent', () => {
 //   let component: PrivacyComponent;
@@ -12,7 +12,7 @@
 //     await TestBed.configureTestingModule({
 //       declarations: [ PrivacyComponent ],
 //       imports: [
-//         SharedModule,
+//         RlbAppModule,
 //         TranslateModule.forRoot()
 //       ],
 //     })
