@@ -63,4 +63,4 @@ import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
     RouterModule
   ]
 })
-export class SharedModule { }
+export class RlbAppModule { }

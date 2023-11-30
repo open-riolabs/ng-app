@@ -7,6 +7,7 @@ export * from './lib/auth/services/auth.service'
 export * from './lib/auth/services/oauth-password.service'
 export * from './lib/auth/user-claims'
 export * from './lib/auth/user-info'
-export * from './lib/shared.module'
+export * from './lib/rlb-app.module'
 
 export * from './lib/pages/shared.routes'
+export * from './lib/configuration'

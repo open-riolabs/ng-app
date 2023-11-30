@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SupportComponent } from './support.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '../../shared.module';
+import { SharedModule } from '../../rlb-app.module';
 import { AbstractSupportService } from '../../services';
 
 describe('SupportComponent', () => {
