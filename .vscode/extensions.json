@@ -1,4 +1,10 @@
 {
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
+  "recommendations": [
+    "angular.ng-template",
+    "expertly-simple.ng-evergreen",
+    "pkief.material-icon-theme",
+    "yzhang.markdown-all-in-one",
+    "hediet.vscode-drawio"
+  ]
 }

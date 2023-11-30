@@ -1,0 +1,26 @@
+<div class=" mb-3">
+    <div class="container-fluid" *ngIf="!(isHandset$ | async) else mobileMode">
+      <div class="row mt-1">
+        <div class="mx-auto col-sm-12 col-md-8 col-lg-9 col-xl-8">
+          <ng-container [ngTemplateOutlet]="all"></ng-container>
+          <ng-container [ngTemplateOutlet]="default"></ng-container>
+        </div>
+      </div>
+    </div>
+    <ng-template class="container-fluid" #mobileMode>
+      <ng-container [ngTemplateOutlet]="all"></ng-container>
+      <ng-container [ngTemplateOutlet]="mobile"></ng-container>
+    </ng-template>
+  </div>
+  
+  <ng-template #all>
+    <ng-content select="[all]"></ng-content>
+  </ng-template>
+  
+  <ng-template #default>
+      <ng-content select="[default]"></ng-content>
+  </ng-template>
+  
+  <ng-template #mobile>
+    <ng-content select="[mobile]"></ng-content>
+  </ng-template>

@@ -1,0 +1,145 @@
+<div>
+  <div class="container">
+    <div class="row my-4" *ngIf="breadcrumb">
+      <div class="col-12">
+        <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-12">
+        <h1 class="text-center">{{"support.title"| translate}}</h1>
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="col-12">
+        <rlb-tabs>
+          <rlb-tab target="news"> {{'support.tab-news'| translate}}</rlb-tab>
+          <rlb-tab target="question"> {{'support.tab-questions'| translate }}</rlb-tab>
+          <rlb-tab target="support"> {{'support.tab-support'| translate }}</rlb-tab>
+        </rlb-tabs>
+        <rlb-tab-content>
+          <rlb-tab-pane id="news">
+            <div class="row mt-4">
+              <div class="col-12">
+                <p>{{ 'support.title-news'| translate }}</p>
+              </div>
+            </div>
+            <form [formGroup]="subscriptionForm" class="needs-validation"
+              (ngSubmit)="subscribeNewsletter(subscriptionForm.value)">
+              <div class="row">
+                <div class="col-12">
+                  <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
+                    placeholder="e-mail"></rlb-input>
+                </div>
+              </div>
+              <div class="row mt-2 mb-4">
+                <div class="col-12">
+                  <rlb-switch [label]="'support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-12">
+                  <button class="btn btn-primary" [disabled]="!subscriptionForm.valid" style="width: 100%;">
+                    {{'support.subscribe' | translate}}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </rlb-tab-pane>
+          <rlb-tab-pane id="question">
+            <div class="row mt-4">
+              <div class="col-12">
+                <p>{{'support.title-questions'| translate }}</p>
+              </div>
+            </div>
+            <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
+              <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
+                  <rlb-input [label]="'support.name' | translate" id="name" formControlName="name"
+                    placeholder="name"></rlb-input>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                  <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
+                    placeholder="e-mail"></rlb-input>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <rlb-input [label]="'support.subject' | translate" id="subject" formControlName="subject"
+                    placeholder="subject"></rlb-input>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <rlb-textarea [label]="'support.message' | translate" id="message" formControlName="message"
+                    placeholder="message"></rlb-textarea>
+                </div>
+              </div>
+              <div class="row mt-2 mb-4">
+                <div class="col-12">
+                  <rlb-switch [label]="'support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-12">
+                  <button class="btn btn-primary" style="width: 100%;" [disabled]="!questionForm.valid">
+                    {{'support.send' | translate}}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </rlb-tab-pane>
+          <rlb-tab-pane id="support">
+            <div class="row mt-4">
+              <div class="col-12">
+                <p>{{'support.title-questions'| translate }}</p>
+              </div>
+            </div>
+            <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
+              <div class="row">
+                <div class="col-md-6 col-sm-12">
+                  <rlb-input [label]="'support.name' | translate" id="name" formControlName="name"
+                    placeholder="name"></rlb-input>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                  <div class="form-floating mb-3">
+                    <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
+                      placeholder="e-mail"></rlb-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <rlb-input [label]="'support.subject' | translate" id="subject" formControlName="subject"
+                      placeholder="subject"></rlb-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <rlb-textarea [label]="'support.message' | translate" id="message" formControlName="message"
+                      placeholder="message"></rlb-textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-2 mb-4">
+                <div class="col-12">
+                  <rlb-switch [label]="'support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-12">
+                  <button class="btn btn-primary" style="width: 100%;" [disabled]="!questionForm.valid">
+                    {{'support.send' | translate}}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </rlb-tab-pane>
+        </rlb-tab-content>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1 @@
+export * from '@/shared/services/i18n/translate-server.loader'

@@ -1,0 +1,7 @@
+export * from './cms-content/cms-content.component'
+export * from './cookies/cookies.component'
+export * from './not-found/not-found.component'
+export * from './privacy/privacy.component'
+export * from './support/support.component'
+export * from './terms-and-conditions/terms-and-conditions.component'
+export * from './shared.routes'

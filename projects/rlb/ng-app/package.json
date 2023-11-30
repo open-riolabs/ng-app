@@ -1,0 +1,24 @@
+{
+  "name": "@rlb/ng-app",
+  "version": "0.0.0",
+  "peerDependencies": {
+    "@angular/common": ">=14.0.0",
+    "@angular/core": ">=14.0.0",
+    "@angular/forms": ">=14.0.0",
+    "@angular/router": ">=14.0.0",
+    "@angular/service-worker": ">=14.0.0",
+    "@ngx-translate/core": ">=14.0.0",
+    "@ngx-translate/http-loader": ">=8.0.0",
+    "@rlb/ng-bootstrap": ">=1.0.0",
+    "angular-auth-oidc-client": ">=16.0.0",
+    "ngx-cookie-service-ssr": ">=17.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/bootstrap": ">5.0.0",
+    "@types/node": ">16.10.1"
+  },
+  "sideEffects": false
+}

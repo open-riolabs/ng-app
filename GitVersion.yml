@@ -1,0 +1,31 @@
+mode: ContinuousDelivery
+major-version-bump-message: .*?(\s|^)(major|breaking)(\s|:|$).+
+minor-version-bump-message: .*?(\s|^)(feature|minor)(\s|:|$).+
+patch-version-bump-message: .*?(\s|^)(fix|patch)(\s|:|$).+
+no-bump-message: .*?(\s|^)(none|skip)(\s|:|$).+
+increment: Patch
+tag-prefix: '[vV]'
+commit-message-incrementing: Enabled
+merge-message-formats: {}
+update-build-number: true
+branches:
+  main:
+    regex: ^master$|^main$
+    tag: ''
+    is-release-branch: true
+  develop:
+    regex: ^dev(elop)?(ment)?$
+    tag: alpha
+    increment: Patch
+  release:
+    regex: ^releases?[/-]
+    tag: beta
+    increment: None
+  feature:
+    regex: ^features?[/-]
+    tag: useBranchName
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    mode: ContinuousDelivery
+    tag: beta
+    increment: Patch

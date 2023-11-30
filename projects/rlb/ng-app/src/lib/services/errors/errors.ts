@@ -1,0 +1,1 @@
+export type ErrorOutput = 'dialog' | 'toast' | 'console';

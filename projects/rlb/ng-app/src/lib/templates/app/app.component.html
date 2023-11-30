@@ -1,0 +1,41 @@
+<div class="rlb-app">
+  <rlb-sidebar id="sidebar" *ngIf="env.sidebarMode !== 'none'">
+    <rlb-sidebar-header *ngIf="env.sidebarMode ==='logo'" mode="logo"
+      [data]="{ image:env.appLogo, text:env.appTitle }" />
+    <rlb-sidebar-header *ngIf="env.sidebarMode ==='user'" mode="user" />
+    <rlb-sidebar-item *ngFor="let sideItem of sidebarItems" [icon]="sideItem.icon">{{sideItem.label}}</rlb-sidebar-item>
+    <rlb-sidebar-footer *ngIf="sidebarFooterItems && sidebarFooterItems.length">
+      <rlb-sidebar-item *ngFor="let sideItem of sidebarFooterItems"
+        [icon]="sideItem.icon">{{sideItem.label}}</rlb-sidebar-item>
+    </rlb-sidebar-footer>
+  </rlb-sidebar>
+  <div class="rlb-right-panel">
+    <rlb-navbar color="light" expand="lg" *ngIf="env.navbarDisabled !== true">
+      <a class="d-block d-sm-none" rlb-button href="#" toggle="collapse" toggle-target="sidebar" [outline]="true">
+        <span class="navbar-toggler-icon"></span>
+      </a>
+      <a rlb-navbar-brand href="#">Navbar</a>
+      <rlb-navbar-items class="me-auto">
+        <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
+          {{navItem.label}}
+        </a>
+      </rlb-navbar-items>
+    </rlb-navbar>
+    <div class="rlb-content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="modalContainerId">
+  <rlb-modal-container [id]="modalContainerId" />
+</ng-container>
+
+<ng-container *ngIf="toastContainerIds">
+  <ng-container *ngIf="toastContainerIds.constructor.name === 'Array'; else toastContainerIdsIsNotArray">
+    <rlb-toast-container *ngFor="let toastContainerId of toastContainerIds | asMulti" [id]="toastContainerId" />
+  </ng-container>
+  <ng-template #toastContainerIdsIsNotArray>
+    <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds | asSingle" />
+  </ng-template>
+</ng-container>

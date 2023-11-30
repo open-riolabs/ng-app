@@ -1,0 +1,69 @@
+image: node:latest
+
+stages:
+  - versioning
+  - build
+  - test
+  - deploy
+
+versioning:
+  stage: versioning
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  script:
+    - |
+      dotnet tool install --global GitVersion.Tool --version 5.*
+      export PATH="\$PATH:/root/.dotnet/tools"
+      dotnet-gitversion /config ./GitVersion.yml /nocache /verbosity Diagnostic /output buildserver
+  artifacts:
+    reports:
+      dotenv: gitversion.properties
+  only:
+    - master
+
+build:
+  stage: build
+  cache:
+    paths:
+      - node_modules
+    untracked: true
+    policy: pull-push
+  script:
+    - npm config set "@rlb:registry=https://gitlab.com/api/v4/groups/11765017/-/packages/npm/"
+    - npm config set '//gitlab.com/api/v4/groups/11765017/-/packages/npm/:_authToken' 'glpat-8nFj_KrxvzC12r9H7sYQ'
+    - npm install
+    - npm run lib:build
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - master
+
+test:
+  stage: test
+  cache:
+    paths:
+      - node_modules
+    policy: pull
+  script:
+    - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
+    - apt-get update
+    - apt-get install -y google-chrome-stable xvfb
+    - npm run lib:test-ci
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  cache:
+    paths:
+      - node_modules
+    policy: pull
+  script:
+    - cd dist/rlb/ng-app
+    - echo "@rlb:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
+    - echo "//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - npm version ${GitVersion_SemVer}
+    - npm publish
+  only:
+    - master
