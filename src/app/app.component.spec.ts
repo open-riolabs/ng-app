@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'ng-baseapp' title`, () => {
+  it(`should have the 'riolabs-mistral-web' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ng-baseapp');
+    expect(app.title).toEqual('riolabs-mistral-web');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, ng-baseapp');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, riolabs-mistral-web');
   });
 });
