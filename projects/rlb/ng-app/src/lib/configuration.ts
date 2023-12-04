@@ -9,6 +9,7 @@ export interface CmsConfiguration {
 }
 
 export interface AuthConfiguration {
+  configId: string;
   issuer: string;
   redirectUrlLogin: string;
   redirectUrlLogout: string;

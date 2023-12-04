@@ -5,7 +5,7 @@ import { environment } from '~/environments/environment'
 export const authCodeFlowConfig: PassedInitialConfig = {
   // Url of the Identity Provider
   config: {
-    configId: 'riolabs',
+    configId: environment.auth?.configId,
     authority: environment.auth?.issuer,
     redirectUrl: environment.auth?.redirectUrlLogin,
     postLogoutRedirectUri: environment.auth?.redirectUrlLogout,

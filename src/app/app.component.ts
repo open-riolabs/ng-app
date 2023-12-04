@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule } from '@rlb/ng-app';
+import { RlbAppModule, AuthenticationService } from '@rlb/ng-app';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +11,5 @@ import { RlbAppModule } from '@rlb/ng-app';
 })
 export class AppComponent {
   title = 'riolabs-mistral-web';
+
 }

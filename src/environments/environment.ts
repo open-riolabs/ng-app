@@ -5,7 +5,7 @@ export const environment: ProjectConfiguration = {
   eventsEndpoint: 'wss://notify.addubby.com',
   production: false,
   environment: {
-    baseUrl: 'http://localhost:2001',
+    baseUrl: 'http://localhost:4200',
     ssr: false,
     phone: false,
     appLogo: 'assets/logo.svg',
@@ -28,9 +28,10 @@ export const environment: ProjectConfiguration = {
     markdown: 'ignore'
   },
   auth: {
+    configId: 'riolabs',
     issuer: 'https://login.riolabs.net/realms/riolabs',
-    redirectUrlLogin: 'http://localhost:2001',
-    redirectUrlLogout: 'http://localhost:2001',
+    redirectUrlLogin: 'http://localhost:4200',
+    redirectUrlLogout: 'http://localhost:4200',
     clientId: 'addubby',
     scope: 'openid profile offline_access',
     showDebugInformation: false,

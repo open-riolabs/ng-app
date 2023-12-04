@@ -11,3 +11,4 @@ export * from './lib/rlb-app.module'
 
 export * from './lib/pages/shared.routes'
 export * from './lib/configuration'
+export * from './lib/auth/auth.provider'
