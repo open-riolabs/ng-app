@@ -9,6 +9,9 @@
       "@shared/*": [
         "./src/app/shared/*"
       ],
+      "@rlb/ng-store": [
+        "./dist/rlb/ng-store"
+      ],
       "@/*": [
         "./src/app/*"
       ],
