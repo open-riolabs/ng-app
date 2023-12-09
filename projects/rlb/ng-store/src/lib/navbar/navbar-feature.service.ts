@@ -14,4 +14,28 @@ export class NavbarFeatureService {
       return;
     }
   }
+
+  public updateNavbar(items: any[]) {
+    this.store.dispatch(NavbarActions.update({ items }));
+  }
+
+  public setHasLogin(visible: boolean) {
+    this.store.dispatch(NavbarActions.setHasLogin({ visible }));
+  }
+
+  public setHasSearch(visible: boolean) {
+    this.store.dispatch(NavbarActions.setHasSearch({ visible }));
+  }
+
+  public setVisible(visible: boolean) {
+    this.store.dispatch(NavbarActions.setVisible({ visible }));
+  }
+
+  public selectNavbarState() {
+    return this.store.selectSignal(o => o.navbar)();
+  }
+
+  public selectNavbar$() {
+    return this.store.select(o => o.navbar);
+  }
 }

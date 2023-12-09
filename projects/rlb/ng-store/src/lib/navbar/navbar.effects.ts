@@ -1,27 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { concatMap, delay, map, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { NavbarActions, NavbarActionsInternal } from './navbar.actions';
+import { NavbarService } from '@rlb/ng-app'
+import { tap } from 'rxjs/operators';
+import { NavbarActions } from './navbar.actions';
 
 @Injectable()
 export class NavbarEffects {
 
-
-  login$ = createEffect(() => {
+  items$ = createEffect(() => {
     return this.actions$.pipe(
-
-      // ofType(NavbarActions.login),
-      // /** An EMPTY observable only emits completion. Replace with your own observable API request */
-
-      // concatMap(() => {
-      //   return of("pippo").pipe(
-      //     delay(2000),
-      //     map(data => NavbarActionsInternal.setIdToken({ token: data })),
-      //   )
-      // })
+      ofType(NavbarActions.update),
+      tap(({ items }) => this.nav.setNavbarItems(items))
     );
   });
 
-  constructor(private actions$: Actions) { }
+  showLogin$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(NavbarActions.setHasLogin),
+      tap(({ visible }) => this.nav.setShowLogin(visible))
+    );
+  });
+
+  showSearch$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(NavbarActions.setHasSearch),
+      tap(({ visible }) => this.nav.setShowSearch(visible))
+    );
+  });
+
+  show$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(NavbarActions.setVisible),
+      tap(({ visible }) => this.nav.setShow(visible))
+    );
+  });
+
+  constructor(private actions$: Actions, private nav: NavbarService) { }
 }

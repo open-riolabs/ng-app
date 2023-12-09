@@ -1,14 +1,15 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { navbarsFeatureKey, initialNavbarState } from './navbar.model';
-import { NavbarActionsInternal } from './navbar.actions';
+import { NavbarActions, NavbarActionsInternal } from './navbar.actions';
 
 export const navbarsFeature = createFeature({
   name: navbarsFeatureKey,
   reducer: createReducer(
     initialNavbarState,
-    //on(NavbarActionsInternal.setLoading, (state, action) => ({ ...state, loading: action.loading })),
-
-
+    on(NavbarActions.setHasLogin, (state, action) => ({ ...state, hasLogin: action.visible })),
+    on(NavbarActions.setHasSearch, (state, action) => ({ ...state, hasSearch: action.visible })),
+    on(NavbarActions.setVisible, (state, action) => ({ ...state, visible: action.visible })),
+    on(NavbarActions.update, (state, action) => ({ ...state, items: action.items })),
   )
 });
 

@@ -3,25 +3,38 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatMap, delay, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SidebarActions, SidebarActionsInternal } from './sidebar.actions';
+import { SidebarService } from '@rlb/ng-app'
 
 @Injectable()
 export class SidebarEffects {
 
-
-  login$ = createEffect(() => {
+  items$ = createEffect(() => {
     return this.actions$.pipe(
-
-      // ofType(SidebarActions.login),
-      // /** An EMPTY observable only emits completion. Replace with your own observable API request */
-
-      // concatMap(() => {
-      //   return of("pippo").pipe(
-      //     delay(2000),
-      //     map(data => SidebarActionsInternal.setIdToken({ token: data })),
-      //   )
-      // })
+      ofType(SidebarActions.update),
+      tap(({ items }) => this.side.setSidebarItems(items))
     );
   });
 
-  constructor(private actions$: Actions) { }
+  showLogin$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SidebarActions.setHasLogin),
+      tap(({ visible }) => this.side.setShowLogin(visible))
+    );
+  });
+
+  showSearch$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SidebarActions.setHasSearch),
+      tap(({ visible }) => this.side.setShowSearch(visible))
+    );
+  });
+
+  show$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SidebarActions.setVisible),
+      tap(({ visible }) => this.side.setShow(visible))
+    );
+  });
+
+  constructor(private actions$: Actions, private side: SidebarService) { }
 }
