@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { Observable, of, share, switchMap } from 'rxjs'
 import { CacheItem } from './cache-item';
-import { ProjectConfiguration } from '../../configuration';
+import { ProjectConfiguration, RLB_CFG } from '../../configuration';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { ProjectConfiguration } from '../../configuration';
 export class LocalCacheService {
 
   constructor(
-    @Inject('options') @Optional() private options: ProjectConfiguration
+    @Inject(RLB_CFG) @Optional() private options: ProjectConfiguration
   ) {
     this.clear()
   }

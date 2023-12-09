@@ -1,3 +1,7 @@
+import { EnvironmentProviders, Provider, importProvidersFrom } from '@angular/core'
+import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
+import { RlbBootstrapModule } from '@rlb/ng-bootstrap'
+
 export * from './lib/services'
 export * from './lib/pipes'
 export * from './lib/templates'
@@ -12,3 +16,15 @@ export * from './lib/rlb-app.module'
 export * from './lib/pages/shared.routes'
 export * from './lib/configuration'
 export * from './lib/auth/auth.provider'
+
+export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
+  return [
+    importProvidersFrom([
+      RlbBootstrapModule.forRoot()
+    ]),
+    { provide: RLB_CFG, useValue: env },
+    { provide: RLB_CFG_ENV, useValue: env.environment },
+    { provide: RLB_CFG_CMS, useValue: env.cms },
+    { provide: RLB_CFG_PAGES, useValue: env.pages },
+  ]
+}

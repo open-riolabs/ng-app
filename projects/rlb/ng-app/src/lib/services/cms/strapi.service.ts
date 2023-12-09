@@ -2,7 +2,7 @@ import { Inject, Injectable, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { FaqGroup, Home, MenuItem, Page, Tab, Topic, LocalCacheService } from '../'
 import { Observable, from, lastValueFrom, map, switchMap, zip } from 'rxjs'
-import { CmsConfiguration } from '../../configuration'
+import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration'
 
 
 @Injectable({
@@ -13,7 +13,7 @@ export class StrapiService {
   constructor(
     private http: HttpClient,
     private cache: LocalCacheService,
-    @Inject('options:cms') @Optional() private cmsOptions: CmsConfiguration) { }
+    @Inject(RLB_CFG_CMS) @Optional() private cmsOptions: CmsConfiguration) { }
 
   public fetchHome(lang: string, cid: string): Observable<Home> {
     const __r = this.http.get<Home>(`${this.cmsOptions.endpoint}/homes/${lang}/${cid}`)

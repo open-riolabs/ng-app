@@ -1,7 +1,7 @@
 import { EventEmitter, Inject, Injectable, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CookiesService } from '..';
-import { InternationalizationConfiguration } from '../../configuration';
+import { InternationalizationConfiguration, RLB_CFG_I18N } from '../../configuration';
 
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,7 @@ export class LanguageService {
   constructor(
     private translateService: TranslateService,
     private cookiesService: CookiesService,
-    @Inject('options:i18n') @Optional() private i18nOptions: InternationalizationConfiguration,
+    @Inject(RLB_CFG_I18N) @Optional() private i18nOptions: InternationalizationConfiguration,
   ) {
     if (this.i18nOptions) {
       translateService.addLangs(this.i18nOptions.availableLangs)

@@ -3,7 +3,7 @@ import { ModalService, ModalType, ToastService } from '@rlb/ng-bootstrap';
 import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
 import { LanguageService } from '..';
-import { ProjectConfiguration } from '../../configuration';
+import { ProjectConfiguration, RLB_CFG } from '../../configuration';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class ErrorManagementService {
     private dialogService: ModalService,
     private toastService: ToastService,
     private languageService: LanguageService,
-    @Inject('options') @Optional() private options: ProjectConfiguration
+    @Inject(RLB_CFG) @Optional() private options: ProjectConfiguration
   ) { }
 
   public showErrorToast(type: ModalType = 'error', out: ErrorOutput = 'dialog', error?: any) {

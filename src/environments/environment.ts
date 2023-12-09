@@ -5,6 +5,7 @@ export const environment: ProjectConfiguration = {
   eventsEndpoint: 'wss://notify.addubby.com',
   production: false,
   environment: {
+    featursMode: 'store',
     baseUrl: 'http://localhost:4200',
     ssr: false,
     phone: false,

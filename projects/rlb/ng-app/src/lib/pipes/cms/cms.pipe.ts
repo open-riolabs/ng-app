@@ -1,12 +1,12 @@
 import { Inject, Optional, Pipe, PipeTransform } from '@angular/core';
-import { CmsConfiguration } from '../../configuration';
+import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
 
 @Pipe({
   name: 'cms',
 })
 export class CmsPipe implements PipeTransform {
 
-  constructor(@Inject('options:cms') @Optional() private cmsOptions: CmsConfiguration) { }
+  constructor(@Inject(RLB_CFG_CMS) @Optional() private cmsOptions: CmsConfiguration) { }
 
   transform(value: string, ...args: unknown[]): string {
     let cms = this.cmsOptions.endpoint

@@ -2,7 +2,7 @@ import { Component, Inject, Input, Optional } from '@angular/core';
 import { BreadcrumbItem } from '@rlb/ng-bootstrap';
 import { EMPTY, Subscription, switchMap } from 'rxjs';
 import { LanguageService, Page, StrapiService, AbstractMdService } from '../../services';
-import { CmsConfiguration } from '../../configuration';
+import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
 
 @Component({
   selector: 'rlb-cms-template',
@@ -14,7 +14,7 @@ export class CmsComponent {
   constructor(
     private strapiService: StrapiService,
     private languageService: LanguageService,
-    @Inject('options:cms') @Optional() private cmsOptions: CmsConfiguration,
+    @Inject(RLB_CFG_CMS) @Optional() private cmsOptions: CmsConfiguration,
     @Optional() private mdService?: AbstractMdService
   ) { }
 

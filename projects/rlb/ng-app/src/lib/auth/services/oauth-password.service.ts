@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http'
 import { Inject, Injectable, Optional } from '@angular/core'
 import { lastValueFrom, Observable } from 'rxjs'
-import { AuthConfiguration } from '../../configuration'
+import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration'
 
 const SESSION_RT = 'RT'
 const SESSION_AT = 'AT'
@@ -26,7 +26,7 @@ export class OauthPasswordService implements HttpInterceptor {
   //private _user: User | null = null
 
   constructor(private http: HttpClient,
-    @Inject('options:auth') @Optional() private authOptions: AuthConfiguration) {
+    @Inject(RLB_CFG_AUTH) @Optional() private authOptions: AuthConfiguration) {
     this._init().then().catch(e => { })
   }
 

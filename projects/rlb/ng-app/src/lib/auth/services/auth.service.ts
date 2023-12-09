@@ -1,9 +1,10 @@
-import { Injectable, NgZone } from '@angular/core'
+import { Inject, Injectable, NgZone, Optional } from '@angular/core'
 import { Router } from '@angular/router'
-import { map, Observable } from 'rxjs'
-import { OidcSecurityService } from 'angular-auth-oidc-client'
+import { map, Observable, tap } from 'rxjs'
+import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client'
 import { CookiesService } from '../../services'
 import { UserInfo } from '../user-info'
+import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration'
 
 @Injectable({
   providedIn: 'root'
@@ -20,46 +21,50 @@ export class AuthenticationService {
     private oidcSecurityService: OidcSecurityService,
     private cookiesService: CookiesService,
     private zone: NgZone,
-    private router: Router) {
+    private router: Router,
+    @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
+    @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
+  ) {
+    this.init()
+  }
 
-    // if (Capacitor.isNativePlatform()) {
-    //   console.log('Capacitor is native platform')
-    //   App.addListener('appUrlOpen', async ({ url }: { url: string }) => {
-    //     await this.zone.run(async () => {
-    //       const _url = `${environment.baseUrl}/${url.slice(url.indexOf('?'))}`
-    //       const [{ accessToken, idToken, isAuthenticated, userData }] = await lastValueFrom(this.oidcSecurityService.checkAuthMultiple(_url))
-    //       if (isAuthenticated) {
-    //         this._currentUser = userData
-    //         this._isAuthenticated = isAuthenticated
-    //         this._accessToken = accessToken
-    //         this._idToken = idToken
-    //         const redirect = cookiesService.getCookie('loginRedirectUrl') || '/'
-    //         cookiesService.deleteCookie('loginRedirectUrl')
-    //         await this.router.navigate([redirect])
-    //       }
-    //     })
-    //   });
-    // } else {
-    oidcSecurityService.checkAuthMultiple().subscribe(([{ isAuthenticated, userData, accessToken, idToken }]) => {
-      if (isAuthenticated) {
-        const redirect = cookiesService.getCookie('loginRedirectUrl') || '/'
-        cookiesService.deleteCookie('loginRedirectUrl')
-        this.router.navigate([redirect])
-      }
-      this._currentUser = userData
-      this._isAuthenticated = isAuthenticated
-      this._accessToken = accessToken
-      this._idToken = idToken
-    });
-    //}
+  public init() {
+    if (this.envConfig?.featursMode !== 'store') {
+      // if (Capacitor.isNativePlatform()) {
+      //   console.log('Capacitor is native platform')
+      //   App.addListener('appUrlOpen', async ({ url }: { url: string }) => {
+      //     await this.zone.run(async () => {
+      //       const _url = `${environment.baseUrl}/${url.slice(url.indexOf('?'))}`
+      //       this.authorize(_url).subscribe();
+      //     })
+      //   });
+      // } else {
+      this.authorize().subscribe();
+      //}
+    }
+  }
 
+
+  public authorize(url?: string | undefined): Observable<LoginResponse[]> {
+    return this.oidcSecurityService.checkAuthMultiple(url)
+      .pipe(tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
+        if (isAuthenticated) {
+          const redirect = this.cookiesService.getCookie('loginRedirectUrl') || '/'
+          this.cookiesService.deleteCookie('loginRedirectUrl')
+          this.router.navigate([redirect])
+        }
+        this._currentUser = userData
+        this._isAuthenticated = isAuthenticated
+        this._accessToken = accessToken
+        this._idToken = idToken
+      }))
   }
 
   public get isAuthenticated$(): Observable<boolean> {
     return this.oidcSecurityService.isAuthenticated$.pipe(map(o => o.isAuthenticated))
   }
 
-  public login(config: string) {
+  public login() {
     this.cookiesService.setCookie('loginRedirectUrl', this.router.url, 1)
     // electron
     if (typeof (process) !== 'undefined' &&
@@ -69,7 +74,7 @@ export class AuthenticationService {
         console.log(authUrl)
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
       };
-      return this.oidcSecurityService.authorize(config, { urlHandler });
+      return this.oidcSecurityService.authorize(this.authConfig?.configId, { urlHandler });
     }
     // capacitor
     // else if (Capacitor.isNativePlatform()) {
@@ -81,12 +86,16 @@ export class AuthenticationService {
     // }
     // browser
     else {
-      this.oidcSecurityService.authorize(config);
+      return this.oidcSecurityService.authorize(this.authConfig?.configId);
     }
   }
 
   logout() {
-    this.oidcSecurityService.logoff().subscribe((result) => console.log(result));
+    this.oidcSecurityService.logoff(this.authConfig?.configId).subscribe((result) => console.log(result));
+  }
+
+  logout$() {
+    return this.oidcSecurityService.logoff(this.authConfig?.configId)
   }
 
   public get currentUser$(): Observable<UserInfo> {

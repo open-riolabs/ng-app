@@ -1,11 +1,11 @@
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
-import { EnvironmentProviders, makeEnvironmentProviders } from "@angular/core";
+import { EnvironmentProviders, isDevMode, makeEnvironmentProviders } from "@angular/core";
 import { AbstractLoggerService, AbstractSecurityStorage, AuthInterceptor, AuthModule, LogLevel, provideAuth } from "angular-auth-oidc-client";
 import { LoggerService } from "./services/logger.service";
 import { TokenStoreService } from "./providers/token-store.service";
-import { AuthConfiguration } from "../configuration";
+import { AuthConfiguration, RLB_CFG_AUTH } from "../configuration";
 
-export function provideCodeBrowserAuth(auth: AuthConfiguration | undefined, debug?: boolean): EnvironmentProviders {
+export function provideRlbCodeBrowserAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth) return makeEnvironmentProviders([]);
   return makeEnvironmentProviders([
     AuthModule,
@@ -24,10 +24,10 @@ export function provideCodeBrowserAuth(auth: AuthConfiguration | undefined, debu
         autoUserInfo: true,
         renewUserInfoAfterTokenRenew: true,
         renewTimeBeforeTokenExpiresInSeconds: 30,
-        logLevel: debug ? LogLevel.Debug : LogLevel.None,
+        logLevel: isDevMode() ? LogLevel.Debug : LogLevel.None,
       }
     }),
-    { provide: 'options:auth', useValue: auth },
+    { provide: RLB_CFG_AUTH, useValue: auth },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: AbstractLoggerService, useClass: LoggerService },
     { provide: AbstractSecurityStorage, useClass: TokenStoreService }

@@ -1,7 +1,7 @@
 import { NavbarService, SidebarService } from '../../services';
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { EnvironmentConfiguration } from '../../configuration';
+import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { NavigableItem } from '@rlb/ng-bootstrap';
 
 @Component({
@@ -20,7 +20,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   public sidebarFooterItems: NavigableItem[] = [];
 
   constructor(
-    @Inject('options:env') public env: EnvironmentConfiguration,
+    @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     private sidebarService: SidebarService,
     private navbarService: NavbarService) { }
 
