@@ -4,7 +4,7 @@
   "compilerOptions": {
     "paths": {
       "@rlb/ng-app": [
-        "./projects/rlb/ng-app/src/public-api.ts"
+        "./dist/rlb/ng-app"
       ],
       "@shared/*": [
         "./src/app/shared/*"
