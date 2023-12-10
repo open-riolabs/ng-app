@@ -32,6 +32,7 @@ build:
     - npm config set '//gitlab.com/api/v4/groups/11765017/-/packages/npm/:_authToken' '${CI_TOKEN}'
     - npm install
     - npm run lib:build
+    - npm run store:build
   artifacts:
     paths:
       - dist/
@@ -50,6 +51,7 @@ test:
     - apt-get update
     - apt-get install -y google-chrome-stable xvfb
     - npm run lib:test-ci
+    - npm run store:test-ci
   only:
     - master
 
@@ -61,6 +63,12 @@ deploy:
     policy: pull
   script:
     - cd dist/rlb/ng-app
+    - echo "@rlb:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
+    - echo "//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - npm version ${GitVersion_SemVer}
+    - npm publish
+    - cd ..
+    - cd ng-store
     - echo "@rlb:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
     - echo "//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - npm version ${GitVersion_SemVer}
