@@ -6,6 +6,7 @@ import { environment } from '~/environments/environment';
 import { SupportService } from './support/support.service';
 import { MdService } from './md/md.service';
 import { routes } from './app.routes';
+import { provideAuthFeature, provideNavbarFeature, provideSidebarFeature } from '../../projects/rlb/ng-store/src/public-api';
 
 
 export const appConfig: ApplicationConfig = {
@@ -17,8 +18,13 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
-    }),
+    }),   
     { provide: AbstractSupportService, useClass: SupportService },
     { provide: AbstractMdService, useClass: MdService },
+    // Provide State
+    provideAuthFeature(),
+    provideSidebarFeature(),
+    provideNavbarFeature()
+
   ]
 };

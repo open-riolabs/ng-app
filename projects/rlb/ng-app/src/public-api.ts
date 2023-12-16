@@ -1,6 +1,8 @@
 import { EnvironmentProviders, Provider, importProvidersFrom } from '@angular/core'
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
+import { RlbAppModule } from './lib/rlb-app.module'
 import { RlbBootstrapModule } from '@rlb/ng-bootstrap'
+import { ModalAppsComponent } from './lib/modals/modal-apps.component'
 
 export * from './lib/services'
 export * from './lib/pipes'
@@ -20,8 +22,13 @@ export * from './lib/auth/auth.provider'
 export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
   return [
     importProvidersFrom([
-      RlbBootstrapModule.forRoot()
-    ]),
+      RlbBootstrapModule.forRoot({
+        modals: [
+          ModalAppsComponent
+
+        ]
+      }),
+      RlbAppModule]),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },
     { provide: RLB_CFG_CMS, useValue: env.cms },

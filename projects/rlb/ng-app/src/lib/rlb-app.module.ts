@@ -17,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { AppTemplateComponent } from './templates/app/app.component';
 import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
+import { ModalAppsComponent } from './modals/modal-apps.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,8 @@ import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
     PrivacyComponent,
     SupportComponent,
     TermsAndConditionsComponent,
+    // modals
+    ModalAppsComponent,
     // pipes
     CmsPipe,
     AsMultiPipe,
@@ -60,7 +63,8 @@ import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
     TranslateModule,
     HttpClientModule,
     RlbBootstrapModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ]
 })
 export class RlbAppModule { }

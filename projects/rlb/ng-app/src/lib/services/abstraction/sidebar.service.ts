@@ -49,6 +49,7 @@ export class SidebarService {
   }
 
   public setShow(visible: boolean) {
-    this._show.next(visible);
+    //this._show.next(visible);
+    console.log('SidebarService.setShow', visible);
   }
 }

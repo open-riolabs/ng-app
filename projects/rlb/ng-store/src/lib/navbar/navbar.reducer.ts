@@ -6,10 +6,10 @@ export const navbarsFeature = createFeature({
   name: navbarsFeatureKey,
   reducer: createReducer(
     initialNavbarState,
-    on(NavbarActions.setHasLogin, (state, action) => ({ ...state, hasLogin: action.visible })),
-    on(NavbarActions.setHasSearch, (state, action) => ({ ...state, hasSearch: action.visible })),
-    on(NavbarActions.setVisible, (state, action) => ({ ...state, visible: action.visible })),
-    on(NavbarActions.update, (state, action) => ({ ...state, items: action.items })),
+    on(NavbarActionsInternal.setHasLogin, (state, action) => ({ ...state, hasLogin: action.visible })),
+    on(NavbarActionsInternal.setHasSearch, (state, action) => ({ ...state, hasSearch: action.visible })),
+    on(NavbarActionsInternal.setVisible, (state, action) => ({ ...state, visible: action.visible })),
+    on(NavbarActionsInternal.update, (state, action) => ({ ...state, items: action.items })),
   )
 });
 

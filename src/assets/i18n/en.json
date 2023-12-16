@@ -1,3 +1,6 @@
 {
-  
+  "core": {
+    "apps": "Apps",
+    "settings": "Settings"
+  }
 }

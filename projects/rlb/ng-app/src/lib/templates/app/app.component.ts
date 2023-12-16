@@ -2,7 +2,8 @@ import { NavbarService, SidebarService } from '../../services';
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
-import { NavigableItem } from '@rlb/ng-bootstrap';
+import { ModalService, NavigableItem } from '@rlb/ng-bootstrap';
+import { AppsService } from '../../services/apps/apps.service';
 
 @Component({
   selector: 'rlb-app',
@@ -22,6 +23,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     private sidebarService: SidebarService,
+    private appsService: AppsService,
     private navbarService: NavbarService) { }
 
   ngOnDestroy(): void {
@@ -39,5 +41,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   @Input('modal-container-id') modalContainerId!: string;
   @Input('toast-container-ids') toastContainerIds!: string | string[];
 
-
+  modalAppDialog() {
+    this.appsService.chooseApp();
+  }
 }

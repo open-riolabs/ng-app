@@ -1,4 +1,46 @@
 <rlb-app modal-container-id="modal-c-1" toast-container-ids="toast-c-1">
   <router-outlet></router-outlet>
-  <span> {{ 'fwefrewf' | translate}}</span>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <rlb-tabs class="mt-4">
+          <rlb-tab target="tab-auth">Auth</rlb-tab>
+          <rlb-tab target="tab-sidebar">Sidebar</rlb-tab>
+          <rlb-tab target="tab-navbar">Navbar</rlb-tab>
+          <rlb-tab target="tab-apps">Apps</rlb-tab>
+        </rlb-tabs>
+        <rlb-tab-content>
+          <rlb-tab-pane id="tab-auth">
+            <h3>Auth store</h3>
+            <button class="m-2" rlb-button (click)="login()">Login</button>
+            <button class="m-2" rlb-button (click)="logout()">Logout</button>
+            <div>
+              <span class="m-2">Is auth: {{ (auth | async)?.isAuth ? 'yes' : 'no' }}</span>
+              <span class="d-block m-2">Access token:</span>
+              <pre class="m-2">{{ (auth | async)?.accessToken }}</pre>
+              <span class="d-block m-2">Id token:</span>
+              <pre class="m-2">{{ (auth | async)?.idToken }}</pre>
+              <span class="d-block m-2">User:</span>
+              <pre class="m-2">{{ (auth | async)?.user| json }}</pre>
+            </div>
+          </rlb-tab-pane>
+          <rlb-tab-pane id="tab-sidebar">
+            <h3>Sidebar store</h3>
+            <button rlb-button (click)="setSidebarVisible(true)">Show sidebar</button>
+            <button rlb-button (click)="setSidebarVisible(false)">Hide sidebar</button>
+          </rlb-tab-pane>
+          <rlb-tab-pane id="tab-navbar">
+            <h3>Navbar store</h3>
+            
+          </rlb-tab-pane>
+          <rlb-tab-pane id="tab-apps">
+            <h3>Apps store</h3>
+            
+          </rlb-tab-pane>
+        </rlb-tab-content>
+      </div>
+    </div>
+  </div>
+
 </rlb-app>
