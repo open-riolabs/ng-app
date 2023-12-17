@@ -1,12 +1,12 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { AbstractMdService, AbstractSupportService, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n } from '@rlb/ng-app'
+import { AbstractMdService, AbstractSupportService, provideAuthFeature, provideNavbarFeature, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n, provideSidebarFeature } from '@rlb/ng-app'
 import { environment } from '~/environments/environment';
 import { SupportService } from './support/support.service';
 import { MdService } from './md/md.service';
 import { routes } from './app.routes';
-import { provideAuthFeature, provideNavbarFeature, provideSidebarFeature } from '../../projects/rlb/ng-store/src/public-api';
+
 
 
 export const appConfig: ApplicationConfig = {
@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
-    }),   
+    }),
     { provide: AbstractSupportService, useClass: SupportService },
     { provide: AbstractMdService, useClass: MdService },
     // Provide State

@@ -1,9 +1,10 @@
-import { NavbarService, SidebarService } from '../../services';
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
-import { ModalService, NavigableItem } from '@rlb/ng-bootstrap';
+import { NavigableItem } from '@rlb/ng-bootstrap';
 import { AppsService } from '../../services/apps/apps.service';
+import { Store } from '@ngrx/store';
+import { BaseState, sidebarsFeatureKey, navbarsFeatureKey } from '../../store';
 
 @Component({
   selector: 'rlb-app',
@@ -22,9 +23,8 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
-    private sidebarService: SidebarService,
-    private appsService: AppsService,
-    private navbarService: NavbarService) { }
+    public store: Store<BaseState>,
+    private appsService: AppsService) { }
 
   ngOnDestroy(): void {
     this.navbarItemsSubscription?.unsubscribe();
@@ -33,9 +33,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sidebarItemsSubscription = this.sidebarService.sidebarItems$.subscribe(items => this.sidebarItems = items);
-    this.sidebarFooterItemsSubscription = this.sidebarService.sidebarFooterItems$.subscribe(items => this.sidebarFooterItems = items);
-    this.navbarItemsSubscription = this.navbarService.navbarItems$.subscribe(items => this.navbarItems = items);
+
   }
 
   @Input('modal-container-id') modalContainerId!: string;
@@ -43,5 +41,29 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   modalAppDialog() {
     this.appsService.chooseApp();
+  }
+
+  get sidearVisible$() {
+    return this.store.select(state => state[sidebarsFeatureKey].visible);
+  }
+
+  get sidearHasLogin$() {
+    return this.store.select(state => state[sidebarsFeatureKey].hasLogin);
+  }
+
+  get sidearHasSearch$() {
+    return this.store.select(state => state[sidebarsFeatureKey].hasSearch);
+  }
+
+  get navbarVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].visible);
+  }
+
+  get navbarHasLogin$() {
+    return this.store.select(state => state[navbarsFeatureKey].hasLogin);
+  }
+
+  get navbarHasSearch$() {
+    return this.store.select(state => state[navbarsFeatureKey].hasSearch);
   }
 }

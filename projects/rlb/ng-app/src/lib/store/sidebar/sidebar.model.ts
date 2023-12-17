@@ -13,7 +13,7 @@ export const initialSidebarState: Sidebar = {
   items: [],
   hasLogin: false,
   hasSearch: false,
-  visible: false
+  visible: true
 }
 
 export interface SidebarState { [sidebarsFeatureKey]: Sidebar }

@@ -1,35 +1,42 @@
 <div class="rlb-app">
-  <rlb-sidebar id="sidebar" *ngIf="env.sidebarMode !== 'none'">
-    <rlb-sidebar-header *ngIf="env.sidebarMode ==='logo'" mode="logo"
-      [data]="{ image:env.appLogo, text:env.appTitle }" />
-    <rlb-sidebar-header *ngIf="env.sidebarMode ==='user'" mode="user" />
-    <rlb-sidebar-item *ngFor="let sideItem of sidebarItems" [icon]="sideItem.icon">
-      {{sideItem.label}}
-    </rlb-sidebar-item>
-    <rlb-sidebar-footer>
-      <rlb-sidebar-item *ngFor="let sideItem of sidebarFooterItems" [icon]="sideItem.icon">
+  <ng-container *ngIf="sidearVisible$ | async">
+    <rlb-sidebar id="sidebar" *ngIf="env.sidebarMode !== 'none'">
+      <rlb-sidebar-header *ngIf="env.sidebarMode ==='logo'" mode="logo"
+        [data]="{ image:env.appLogo, text:env.appTitle }" />
+      <rlb-sidebar-header *ngIf="env.sidebarMode ==='user'" mode="user" />
+      <rlb-sidebar-item *ngFor="let sideItem of sidebarItems" [icon]="sideItem.icon">
         {{sideItem.label}}
       </rlb-sidebar-item>
-      <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
-        {{'core.apps' | translate}}
-      </rlb-sidebar-item>
-      <rlb-sidebar-item icon="bi bi-gear">
-        {{'core.settings' | translate}}
-      </rlb-sidebar-item>
-    </rlb-sidebar-footer>
-  </rlb-sidebar>
+      <rlb-sidebar-footer>
+        <rlb-sidebar-item *ngFor="let sideItem of sidebarFooterItems" [icon]="sideItem.icon">
+          {{sideItem.label}}
+        </rlb-sidebar-item>
+        <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
+          {{'core.apps' | translate}}
+        </rlb-sidebar-item>
+        <rlb-sidebar-item icon="bi bi-gear">
+          {{'core.user' | translate}}
+        </rlb-sidebar-item>
+        <rlb-sidebar-item icon="bi bi-gear">
+          {{'core.settings' | translate}}
+        </rlb-sidebar-item>
+      </rlb-sidebar-footer>
+    </rlb-sidebar>
+  </ng-container>
   <div class="rlb-right-panel">
-    <rlb-navbar color="light" expand="lg" *ngIf="env.navbarDisabled !== true">
-      <a class="d-block d-sm-none" rlb-button href="#" toggle="collapse" toggle-target="sidebar" [outline]="true">
-        <span class="navbar-toggler-icon"></span>
-      </a>
-      <a rlb-navbar-brand href="#">Navbar</a>
-      <rlb-navbar-items class="me-auto">
-        <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
-          {{navItem.label}}
+    <ng-container *ngIf="navbarVisible$ | async">
+      <rlb-navbar color="light" expand="lg" *ngIf="env.navbarDisabled !== true">
+        <a class="d-block d-sm-none" rlb-button href="#" toggle="collapse" toggle-target="sidebar" [outline]="true">
+          <span class="navbar-toggler-icon"></span>
         </a>
-      </rlb-navbar-items>
-    </rlb-navbar>
+        <a rlb-navbar-brand href="#">Navbar</a>
+        <rlb-navbar-items class="me-auto">
+          <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
+            {{navItem.label}}
+          </a>
+        </rlb-navbar-items>
+      </rlb-navbar>
+    </ng-container>
     <div class="rlb-content">
       <ng-content></ng-content>
     </div>

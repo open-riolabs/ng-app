@@ -11,12 +11,7 @@
     "lib:test": "ng test @rlb/ng-app",
     "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @rlb/ng-app",
     "lib:lint": "ng lint @rlb/ng-app",
-    "lib:pack": "ng build @rlb/ng-app && npm pack ./dist/rlb/ng-app/core",
-    "store:build": "ng build @rlb/ng-store",
-    "store:test": "ng test @rlb/ng-store",
-    "store:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @rlb/ng-store",
-    "store:lint": "ng lint @rlb/ng-store",
-    "store:pack": "ng build @rlb/ng-store && npm pack ./dist/rlb/ng-store/core"
+    "lib:pack": "ng build @rlb/ng-app && npm pack ./dist/rlb/ng-app/core"
   },
   "private": true,
   "author": {
