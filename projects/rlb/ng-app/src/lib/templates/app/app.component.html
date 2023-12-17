@@ -14,7 +14,7 @@
         <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
           {{'core.apps' | translate}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item icon="bi bi-gear">
+        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async)" icon="bi bi-person">
           {{'core.user' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item icon="bi bi-gear">
@@ -30,6 +30,10 @@
           <span class="navbar-toggler-icon"></span>
         </a>
         <a rlb-navbar-brand href="#">Navbar</a>
+        <rlb-navbar-form>
+          <rlb-input class="mx-2" type="search" placeholder="Search" />
+          <button class="me-2" rlb-button type="submit" icon="bi bi-search" >Search</button>
+        </rlb-navbar-form>
         <rlb-navbar-items class="me-auto">
           <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
             {{navItem.label}}
