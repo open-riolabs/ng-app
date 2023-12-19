@@ -4,7 +4,9 @@ import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { NavigableItem } from '@rlb/ng-bootstrap';
 import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
-import { BaseState, sidebarsFeatureKey, navbarsFeatureKey } from '../../store';
+import { BaseState } from '@rlb/ng-app';
+import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
+import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 
 @Component({
   selector: 'rlb-app',

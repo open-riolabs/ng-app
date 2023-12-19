@@ -40,7 +40,6 @@ export interface PagesConfiguration {
 }
 
 export interface EnvironmentConfiguration {
-  featursMode: 'store' | 'service';
   appLogo: string;
   appTitle: string;
   sidebarMode?: SidebarMode | 'none';

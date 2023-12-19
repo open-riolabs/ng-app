@@ -9,6 +9,9 @@ export const authsFeature = createFeature({
     on(AuthActionsInternal.setLoading, (state, action) => ({ ...state, loading: action.loading })),
     on(AuthActionsInternal.setUser, (state, action) => ({ ...state, user: action.user })),
     on(AuthActionsInternal.setAuth, (state, action) => ({ ...state, ...action.auth })),
+    on(AuthActionsInternal.setAccessToken, (state, action) => ({ ...state, accessToken: action.accessToken })),
+    on(AuthActionsInternal.setIdToken, (state, action) => ({ ...state, idToken: action.idToken })),
+    on(AuthActionsInternal.setIsAuth, (state, action) => ({ ...state, isAuth: action.isAuth })),
     on(AuthActionsInternal.reset, () => ({ ...initialAuthState }))
   )
 });

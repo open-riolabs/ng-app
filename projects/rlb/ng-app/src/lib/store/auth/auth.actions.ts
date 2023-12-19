@@ -6,6 +6,9 @@ export const AuthActionsInternal = createActionGroup({
   events: {
     'SetUser': props<{ user: any }>(),
     'SetAuth': props<{ auth: Auth }>(),
+    'SetIdToken': props<{ idToken: string | null | undefined }>(),
+    'SetAccessToken': props<{ accessToken: string | null | undefined }>(),
+    'SetIsAuth': props<{ isAuth: boolean }>(),
     'SetLoading': props<{ loading: boolean }>(),
     'Reset': emptyProps(),
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule, BaseState, AuthActions, Auth, authsFeatureKey, SidebarActions, NavbarActions } from '@rlb/ng-app';
+import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions } from '@rlb/ng-app';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 

@@ -2,8 +2,8 @@ export const authsFeatureKey = 'auth';
 
 export interface Auth<T = any> {
   user: T | null;
-  idToken: string | null;
-  accessToken: string | null;
+  idToken: string | null | undefined;
+  accessToken: string | null | undefined;
   isAuth: boolean;
   loading: boolean;
 }

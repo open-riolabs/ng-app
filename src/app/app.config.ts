@@ -1,13 +1,11 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { AbstractMdService, AbstractSupportService, provideAuthFeature, provideNavbarFeature, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n, provideSidebarFeature } from '@rlb/ng-app'
+import { AbstractMdService, AbstractSupportService, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n } from '@rlb/ng-app'
 import { environment } from '~/environments/environment';
 import { SupportService } from './support/support.service';
 import { MdService } from './md/md.service';
 import { routes } from './app.routes';
-
-
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,10 +19,5 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: AbstractSupportService, useClass: SupportService },
     { provide: AbstractMdService, useClass: MdService },
-    // Provide State
-    provideAuthFeature(),
-    provideSidebarFeature(),
-    provideNavbarFeature()
-
   ]
 };
