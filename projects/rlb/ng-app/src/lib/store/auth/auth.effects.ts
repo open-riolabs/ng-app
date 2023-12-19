@@ -2,8 +2,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { AuthActions, AuthActionsInternal } from './auth.actions';
-import { AuthenticationService, EnvironmentConfiguration, RLB_CFG_ENV } from '@rlb/ng-app'
 import { Store } from '@ngrx/store';
+import { AuthenticationService } from '../../auth/services/auth.service';
+import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 
 @Injectable()
 export class AuthEffects {
