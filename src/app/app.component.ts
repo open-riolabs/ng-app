@@ -29,25 +29,31 @@ export class AppComponent {
     return this.store.select(o => o[authsFeatureKey]);
   }
 
-  applyStore(action: "sideVisible" | "sideLogin" | "sideSearch" | "navVisible" | "navLogin" | "navSearch", payload: any): void {
+  applyStore(action: "sideVisible" | "sideLogin" | "sideSearch" | "sideSettings" | "navVisible" | "navLogin" | "navSearch" | "navSettings", payload: any): void {
     switch (action) {
       case "sideVisible":
         this.store.dispatch(SidebarActions.setVisible({ visible: payload }));
         break;
       case "sideLogin":
-        this.store.dispatch(SidebarActions.setHasLogin({ visible: payload }));
+        this.store.dispatch(SidebarActions.setLoginVisible({ visible: payload }));
         break;
       case "sideSearch":
-        this.store.dispatch(SidebarActions.setHasSearch({ visible: payload }));
+        this.store.dispatch(SidebarActions.setSearchVisible({ visible: payload }));
+        break;
+      case "sideSettings":
+        this.store.dispatch(SidebarActions.setSettingsVisible({ visible: payload }));
         break;
       case "navVisible":
         this.store.dispatch(NavbarActions.setVisible({ visible: payload }));
         break;
       case "navLogin":
-        this.store.dispatch(NavbarActions.setHasLogin({ visible: payload }));
+        this.store.dispatch(NavbarActions.setLoginVisible({ visible: payload }));
         break;
       case "navSearch":
-        this.store.dispatch(NavbarActions.setHasSearch({ visible: payload }));
+        this.store.dispatch(NavbarActions.setSearchVisible({ visible: payload }));
+        break;
+      case "navSettings":
+        this.store.dispatch(NavbarActions.setSettingsVisible({ visible: payload }));
         break;
     }
   }

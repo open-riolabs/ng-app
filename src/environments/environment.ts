@@ -32,7 +32,7 @@ export const environment: ProjectConfiguration = {
     issuer: 'https://login.riolabs.net/realms/riolabs',
     redirectUrlLogin: 'http://localhost:4200',
     redirectUrlLogout: 'http://localhost:4200',
-    clientId: 'addubby',
+    clientId: 'riolabs',
     scope: 'openid profile offline_access',
     showDebugInformation: false,
     allowedUrls: [

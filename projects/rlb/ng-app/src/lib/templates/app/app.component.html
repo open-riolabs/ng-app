@@ -24,19 +24,30 @@
     </rlb-sidebar>
   </ng-container>
   <div class="rlb-right-panel">
-    <ng-container *ngIf="navbarVisible$ | async">
+    <ng-container *ngIf="navVisible$ | async">
       <rlb-navbar color="light" expand="lg" *ngIf="env.navbarDisabled !== true">
-        <a class="d-block d-sm-none" rlb-button href="#" toggle="collapse" toggle-target="sidebar" [outline]="true">
+        <a *ngIf="sidearVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
+          toggle-target="sidebar" [outline]="true">
           <span class="navbar-toggler-icon"></span>
         </a>
-        <a rlb-navbar-brand href="#">Navbar</a>
-        <rlb-navbar-form>
+        <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
+        <rlb-navbar-form *ngIf="navSearchVisible$ | async">
           <rlb-input class="mx-2" type="search" placeholder="Search" />
-          <button class="me-2" rlb-button type="submit" icon="bi bi-search" >Search</button>
+          <button class="me-2" rlb-button type="submit" icon="bi bi-search">Search</button>
         </rlb-navbar-form>
-        <rlb-navbar-items class="me-auto">
+        <rlb-navbar-items class="ms-auto">
           <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
             {{navItem.label}}
+          </a>
+          <a *ngIf="navLoginVisible$|async" rlb-navbar-item dropdown toggle="dropdown" toggle-target="#">
+            <i class="bi bi-person"></i>
+            <ul rlb-dropdown-menu placement="right">
+              <li rlb-dropdown-item href="#">{{'core.login' | translate}}</li>
+              <li rlb-dropdown-item href="#">{{'core.logout' | translate}}</li>
+            </ul>
+          </a>
+          <a *ngIf="navSettingsVisible$ | async" rlb-navbar-item href="#">
+            <i class="bi bi-gear"></i>
           </a>
         </rlb-navbar-items>
       </rlb-navbar>

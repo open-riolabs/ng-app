@@ -50,22 +50,34 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   }
 
   get sidearHasLogin$() {
-    return this.store.select(state => state[sidebarsFeatureKey].hasLogin);
+    return this.store.select(state => state[sidebarsFeatureKey].loginVisible);
   }
 
   get sidearHasSearch$() {
-    return this.store.select(state => state[sidebarsFeatureKey].hasSearch);
+    return this.store.select(state => state[sidebarsFeatureKey].searchVisible);
   }
 
-  get navbarVisible$() {
+  get sidearHasSettings$() {
+    return this.store.select(state => state[sidebarsFeatureKey].settingsVisible);
+  }
+
+  get navVisible$() {
     return this.store.select(state => state[navbarsFeatureKey].visible);
   }
 
-  get navbarHasLogin$() {
-    return this.store.select(state => state[navbarsFeatureKey].hasLogin);
+  get navLoginVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
   }
 
-  get navbarHasSearch$() {
-    return this.store.select(state => state[navbarsFeatureKey].hasSearch);
+  get navSearchVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].searchVisible);
+  }
+
+  get navSettingsVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].settingsVisible);
+  }
+
+  get navHeader$() {
+    return this.store.select(state => state[navbarsFeatureKey].header);
   }
 }

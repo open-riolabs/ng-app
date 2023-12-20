@@ -1,5 +1,4 @@
 export * from './abstraction/abstract-support.service'
-export * from './abstraction/search.service'
 export * from './cache/local-cache.service'
 export * from './cache/cache-item'
 export * from './cms/md.service'

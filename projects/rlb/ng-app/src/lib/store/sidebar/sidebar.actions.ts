@@ -4,21 +4,17 @@ import { NavigableItem } from '@rlb/ng-bootstrap';
 
 export const SidebarActionsInternal = createActionGroup({
   source: 'Sidebar/Internal',
-  events: {
-    Update: props<{ items: NavigableItem[] }>(),
-    SetVisible: props<{ visible: boolean }>(),
-    SetHasSearch: props<{ visible: boolean }>(),
-    SetHasLogin: props<{ visible: boolean }>()
-  }
+  events: {}
 });
 
 
 export const SidebarActions = createActionGroup({
   source: 'Sidebar/API',
   events: {
-    Update: props<{ items: NavigableItem[] }>(),
+    SetItems: props<{ items: NavigableItem[] }>(),
     SetVisible: props<{ visible: boolean }>(),
-    SetHasSearch: props<{ visible: boolean }>(),
-    SetHasLogin: props<{ visible: boolean }>()
+    SetLoginVisible: props<{ visible: boolean }>(),
+    SetSearchVisible: props<{ visible: boolean }>(),
+    SetSettingsVisible: props<{ visible: boolean }>(),
   }
 });

@@ -4,16 +4,18 @@ export const sidebarsFeatureKey = 'sidebar';
 
 export interface Sidebar {
   items: NavigableItem[]
-  hasLogin: boolean
-  hasSearch: boolean
   visible: boolean
+  loginVisible: boolean
+  searchVisible: boolean
+  settingsVisible: boolean
 }
 
 export const initialSidebarState: Sidebar = {
   items: [],
-  hasLogin: false,
-  hasSearch: false,
-  visible: true
+  visible: true,
+  loginVisible: true,
+  searchVisible: true,
+  settingsVisible: true
 }
 
 export interface SidebarState { [sidebarsFeatureKey]: Sidebar }
