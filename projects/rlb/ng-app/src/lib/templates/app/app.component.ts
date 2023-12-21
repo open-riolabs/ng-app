@@ -6,7 +6,7 @@ import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
-import { BaseState } from '../../../public-api';
+import { AuthActions, BaseState, authsFeatureKey } from '../../../public-api';
 
 @Component({
   selector: 'rlb-app',
@@ -79,5 +79,17 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   get navHeader$() {
     return this.store.select(state => state[navbarsFeatureKey].header);
+  }
+
+  get isAuth$() {
+    return this.store.select(state => state[authsFeatureKey].isAuth);
+  }
+
+  login(): void {
+    this.store.dispatch(AuthActions.login());
+  }
+
+  logout(): void {
+    this.store.dispatch(AuthActions.logout());
   }
 }

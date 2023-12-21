@@ -29,7 +29,7 @@ export class AppComponent {
     return this.store.select(o => o[authsFeatureKey]);
   }
 
-  applyStore(action: "sideVisible" | "sideLogin" | "sideSearch" | "sideSettings" | "navVisible" | "navLogin" | "navSearch" | "navSettings", payload: any): void {
+  applyStore(action: "sideVisible" | "sideLogin" | "sideSearch" | "sideSettings" | "navVisible" | "navLogin" | "navSearch" | "navSettings" | "navHeader", payload: any): void {
     switch (action) {
       case "sideVisible":
         this.store.dispatch(SidebarActions.setVisible({ visible: payload }));
@@ -54,6 +54,10 @@ export class AppComponent {
         break;
       case "navSettings":
         this.store.dispatch(NavbarActions.setSettingsVisible({ visible: payload }));
+        break;
+      case "navHeader":
+        this.store.dispatch(NavbarActions.setHeader({ header: payload }));
+        console.log("navHeader", payload);
         break;
     }
   }

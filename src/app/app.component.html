@@ -2,12 +2,12 @@
   <router-outlet></router-outlet>
 
   <div class="container">
-    <div class="row">
+    <div class="row my-2">
       <div class="col-md-12">
         <rlb-tabs class="mt-4">
           <rlb-tab target="tab-auth">Auth</rlb-tab>
-          <rlb-tab target="tab-sidebar">Sidebar</rlb-tab>
           <rlb-tab target="tab-navbar">Navbar</rlb-tab>
+          <rlb-tab target="tab-sidebar">Sidebar</rlb-tab>
           <rlb-tab target="tab-apps">Apps</rlb-tab>
         </rlb-tabs>
         <rlb-tab-content>
@@ -27,32 +27,86 @@
           </rlb-tab-pane>
           <rlb-tab-pane id="tab-sidebar">
             <h3>Sidebar store</h3>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('sideVisible', true)">Show sidebar</button>
-              <button class="m-2" rlb-button (click)="applyStore('sideVisible',false)">Hide sidebar</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideVisible',true)">Show sidebar</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideVisible',false)">Hide sidebar</button>
+              </div>
             </div>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('sideLogin',true)">Show login</button>
-              <button class="m-2" rlb-button (click)="applyStore('sideLogin',false)">Hide login</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideLogin',true)">Show login</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideLogin',false)">Hide login</button>
+              </div>
             </div>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('sideSearch',true)">Show search</button>
-              <button class="m-2" rlb-button (click)="applyStore('sideSearch',false)">Hide search</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideSearch',true)">Show search</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideSearch',false)">Hide search</button>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideSettings', true)">
+                  Show settings
+                </button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('sideSettings',false)">
+                  Hide settings
+                </button>
+              </div>
             </div>
           </rlb-tab-pane>
           <rlb-tab-pane id="tab-navbar">
             <h3>Navbar store</h3>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('navVisible',true)">Show navbar</button>
-              <button class="m-2" rlb-button (click)="applyStore('navVisible',false)">Hide navbar</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navVisible',true)">Show navbar</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navVisible',false)">Hide navbar</button>
+              </div>
             </div>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('navLogin',true)">Show login</button>
-              <button class="m-2" rlb-button (click)="applyStore('navLogin',false)">Hide login</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navLogin',true)">Show login</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navLogin',false)">Hide login</button>
+              </div>
             </div>
-            <div>
-              <button class="m-2" rlb-button (click)="applyStore('navSearch',true)">Show search</button>
-              <button class="m-2" rlb-button (click)="applyStore('navSearch',false)">Hide search</button>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navSearch',true)">Show search</button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navSearch',false)">Hide search</button>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navSettings', true)">
+                  Show settings
+                </button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navSettings',false)">
+                  Hide settings
+                </button>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-4">
+                <rlb-input class="w-100" type="text" placeholder="Header" #box
+                  (keyup.enter)="applyStore('navHeader', box.value)"></rlb-input>
+              </div>
             </div>
           </rlb-tab-pane>
           <rlb-tab-pane id="tab-apps">

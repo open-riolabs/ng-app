@@ -14,10 +14,15 @@
         <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
           {{'core.apps' | translate}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async)" icon="bi bi-person">
-          {{'core.user' | translate}}
+        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && !(isAuth$ | async)"
+          icon="bi bi-person" (action)="login()">
+          oo {{'core.user' | translate}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item icon="bi bi-gear">
+        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && (isAuth$ | async)"
+          icon="bi bi-person" (action)="logout()">
+          pp {{'core.user' | translate}}
+        </rlb-sidebar-item>
+        <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear">
           {{'core.settings' | translate}}
         </rlb-sidebar-item>
       </rlb-sidebar-footer>
@@ -39,12 +44,17 @@
           <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
             {{navItem.label}}
           </a>
-          <a *ngIf="navLoginVisible$|async" rlb-navbar-item dropdown toggle="dropdown" toggle-target="#">
+          <span rlb-navbar-separator></span>
+          <a *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" rlb-navbar-item dropdown toggle="dropdown"
+            toggle-target="#">
             <i class="bi bi-person"></i>
             <ul rlb-dropdown-menu placement="right">
               <li rlb-dropdown-item href="#">{{'core.login' | translate}}</li>
-              <li rlb-dropdown-item href="#">{{'core.logout' | translate}}</li>
+              <li rlb-dropdown-item href="#" (click)="logout()">{{'core.logout' | translate}}</li>
             </ul>
+          </a>
+          <a *ngIf="(navLoginVisible$|async) && !(isAuth$ | async)" rlb-navbar-item href="#" (click)="login()">
+            <i class="bi bi-person"></i>
           </a>
           <a *ngIf="navSettingsVisible$ | async" rlb-navbar-item href="#">
             <i class="bi bi-gear"></i>
