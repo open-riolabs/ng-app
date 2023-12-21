@@ -16,11 +16,11 @@
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && !(isAuth$ | async)"
           icon="bi bi-person" (action)="login()">
-          oo {{'core.user' | translate}}
+          {{'core.user' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && (isAuth$ | async)"
           icon="bi bi-person" (action)="logout()">
-          pp {{'core.user' | translate}}
+          {{'core.user' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear">
           {{'core.settings' | translate}}
