@@ -16,5 +16,6 @@ export const SidebarActions = createActionGroup({
     SetLoginVisible: props<{ visible: boolean }>(),
     SetSearchVisible: props<{ visible: boolean }>(),
     SetSettingsVisible: props<{ visible: boolean }>(),
+    SetSearchText: props<{ text: string | null }>(),
   }
 });

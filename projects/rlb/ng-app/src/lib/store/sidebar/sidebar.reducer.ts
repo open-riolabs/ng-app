@@ -10,7 +10,8 @@ export const sidebarsFeature = createFeature({
     on(SidebarActions.setVisible, (state, { visible }) => ({ ...state, visible })),
     on(SidebarActions.setLoginVisible, (state, { visible }) => ({ ...state, loginVisible: visible })),
     on(SidebarActions.setSearchVisible, (state, { visible }) => ({ ...state, searchVisible: visible })),
-    on(SidebarActions.setSettingsVisible, (state, { visible }) => ({ ...state, settingsVisible: visible }))
+    on(SidebarActions.setSettingsVisible, (state, { visible }) => ({ ...state, settingsVisible: visible })),
+    on(SidebarActions.setSearchText, (state, { text }) => ({ ...state, searchText: text }))
   )
 });
 

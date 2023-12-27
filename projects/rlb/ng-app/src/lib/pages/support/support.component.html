@@ -28,8 +28,11 @@
               (ngSubmit)="subscribeNewsletter(subscriptionForm.value)">
               <div class="row">
                 <div class="col-12">
-                  <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
-                    placeholder="e-mail"></rlb-input>
+                  <rlb-input id="email" formControlName="email" placeholder="e-mail">
+                    <span after>
+                      {{ 'support.email' | translate }}
+                    </span>
+                  </rlb-input>
                 </div>
               </div>
               <div class="row mt-2 mb-4">
@@ -55,18 +58,27 @@
             <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
               <div class="row mb-3">
                 <div class="col-md-6 col-sm-12">
-                  <rlb-input [label]="'support.name' | translate" id="name" formControlName="name"
-                    placeholder="name"></rlb-input>
+                  <rlb-input id="name" formControlName="name" placeholder="name">
+                    <span after>
+                      {{ 'support.name' | translate }}
+                    </span>
+                  </rlb-input>
                 </div>
                 <div class="col-md-6 col-sm-12">
-                  <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
-                    placeholder="e-mail"></rlb-input>
+                  <rlb-input id="email" formControlName="email" placeholder="e-mail">
+                    <span after>
+                      {{ 'support.email' | translate }}
+                    </span>
+                  </rlb-input>
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col-12">
-                  <rlb-input [label]="'support.subject' | translate" id="subject" formControlName="subject"
-                    placeholder="subject"></rlb-input>
+                  <rlb-input id="subject" formControlName="subject" placeholder="subject">
+                    <span after>
+                      {{ 'support.subject' | translate }}
+                    </span>
+                  </rlb-input>
                 </div>
               </div>
               <div class="row mb-3">
@@ -98,21 +110,30 @@
             <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
               <div class="row">
                 <div class="col-md-6 col-sm-12">
-                  <rlb-input [label]="'support.name' | translate" id="name" formControlName="name"
-                    placeholder="name"></rlb-input>
+                  <rlb-input id="name" formControlName="name" placeholder="name">
+                    <span after>
+                      {{ 'support.name' | translate }}
+                    </span>
+                  </rlb-input>
                 </div>
                 <div class="col-md-6 col-sm-12">
                   <div class="form-floating mb-3">
-                    <rlb-input [label]="'support.email' | translate" id="email" formControlName="email"
-                      placeholder="e-mail"></rlb-input>
+                    <rlb-input id="email" formControlName="email" placeholder="e-mail">
+                      <span after>
+                        {{ 'support.email' | translate }}
+                      </span>
+                    </rlb-input>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-12">
                   <div class="form-floating mb-3">
-                    <rlb-input [label]="'support.subject' | translate" id="subject" formControlName="subject"
-                      placeholder="subject"></rlb-input>
+                    <rlb-input id="subject" formControlName="subject" placeholder="subject">
+                      <span after>
+                        {{ 'support.subject' | translate }}
+                      </span>
+                    </rlb-input>
                   </div>
                 </div>
               </div>
@@ -120,7 +141,11 @@
                 <div class="col-12">
                   <div class="form-floating mb-3">
                     <rlb-textarea [label]="'support.message' | translate" id="message" formControlName="message"
-                      placeholder="message"></rlb-textarea>
+                      placeholder="message">
+                      <span after>
+                        {{ 'support.subject' | translate }}
+                      </span>
+                    </rlb-textarea>
                   </div>
                 </div>
               </div>

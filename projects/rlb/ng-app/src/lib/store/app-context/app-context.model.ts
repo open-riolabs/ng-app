@@ -1,23 +1,21 @@
 import { NavigableItem } from "@rlb/ng-bootstrap";
 
-export const sidebarsFeatureKey = 'sidebar';
+export const appContextFeatureKey = 'sidebar';
 
-export interface Sidebar {
+export interface AppContext {
   items: NavigableItem[]
   visible: boolean
   loginVisible: boolean
   searchVisible: boolean
   settingsVisible: boolean
-  searchText: string | null
 }
 
-export const initialSidebarState: Sidebar = {
+export const initialAppContextState: AppContext = {
   items: [],
   visible: true,
   loginVisible: true,
   searchVisible: true,
-  settingsVisible: true,
-  searchText: null
+  settingsVisible: true
 }
 
-export interface SidebarState { [sidebarsFeatureKey]: Sidebar }
+export interface appContexttate { [appContextFeatureKey]: AppContext }

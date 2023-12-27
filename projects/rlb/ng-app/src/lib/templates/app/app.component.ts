@@ -6,7 +6,7 @@ import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
-import { AuthActions, BaseState, authsFeatureKey } from '../../../public-api';
+import { AuthActions, BaseState, NavbarActions, SidebarActions, authsFeatureKey } from '../../../public-api';
 
 @Component({
   selector: 'rlb-app',
@@ -18,7 +18,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   private navbarItemsSubscription: Subscription | undefined;
   private sidebarItemsSubscription: Subscription | undefined;
   private sidebarFooterItemsSubscription: Subscription | undefined;
-
+  public navSearchText: string | null = null;
   public navbarItems: NavigableItem[] = [];
   public sidebarItems: NavigableItem[] = [];
   public sidebarFooterItems: NavigableItem[] = [];
@@ -55,6 +55,14 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   get sidearHasSearch$() {
     return this.store.select(state => state[sidebarsFeatureKey].searchVisible);
+  }
+
+  setSidearSearchText(text: string | null) {
+    this.store.dispatch(SidebarActions.setSearchText({ text }));
+  }
+
+  setNavbarSearchText(text: string | null) {
+    this.store.dispatch(NavbarActions.setSearchText({ text }));
   }
 
   get sidearHasSettings$() {

@@ -14,6 +14,7 @@ export const NavbarActions = createActionGroup({
     SetLoginVisible: props<{ visible: boolean }>(),
     SetSearchVisible: props<{ visible: boolean }>(),
     SetSettingsVisible: props<{ visible: boolean }>(),
-    SetHeader: props<{ header: string | null }>()
+    SetHeader: props<{ header: string | null }>(),
+    SetSearchText: props<{ text: string | null }>(),
   }
 });

@@ -48,6 +48,10 @@ export class LanguageService {
     return this.translateService.getLangs()
   }
 
+  public set languages(value: string[]) {
+    this.translateService.addLangs(value)
+  }
+
   public get defaultLanguage(): string {
     return this.translateService.getDefaultLang()
   }

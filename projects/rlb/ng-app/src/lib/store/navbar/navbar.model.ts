@@ -9,6 +9,7 @@ export interface Navbar {
   loginVisible: boolean
   searchVisible: boolean
   settingsVisible: boolean
+  searchText: string | null
 }
 
 export const initialNavbarState: Navbar = {
@@ -17,6 +18,7 @@ export const initialNavbarState: Navbar = {
   loginVisible: true,
   searchVisible: true,
   settingsVisible: true,
+  searchText: null,
   items: []
 }
 
