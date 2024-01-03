@@ -45,10 +45,9 @@
             (click)="setNavbarSearchText(navSearchText)">Search</button>
         </rlb-navbar-form>
         <rlb-navbar-items class="ms-auto">
-          <rlb-navbar-item *ngFor="let navItem of navbarItems" [routerLink]="navItem.url" href="#"
-            routerLinkActive="active">
-            {{navItem.label}}
-          </rlb-navbar-item>
+          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navbarComponents">
+            <ng-container *ngComponentOutlet="navComponent"></ng-container>
+          </ng-container>
           <rlb-navbar-separator />
           <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>
             <i class="bi bi-person"></i>

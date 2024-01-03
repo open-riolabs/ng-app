@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ContentChild, DoCheck, Inject, Input, OnDestroy, OnInit, Type } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { NavigableItem } from '@rlb/ng-bootstrap';
@@ -22,6 +22,8 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   public navbarItems: NavigableItem[] = [];
   public sidebarItems: NavigableItem[] = [];
   public sidebarFooterItems: NavigableItem[] = [];
+
+  @Input() navbarComponents: Type<any>[] = [];
 
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
@@ -100,4 +102,5 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   logout(): void {
     this.store.dispatch(AuthActions.logout());
   }
+
 }

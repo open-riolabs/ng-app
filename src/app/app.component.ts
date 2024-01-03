@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions } from '@rlb/ng-app';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { NavbarItemDemoComponent } from './nav-item.component';
 
 
 @Component({
@@ -16,6 +17,8 @@ export class AppComponent {
   title = 'riolabs-mistral-web';
 
   constructor(public store: Store<BaseState>) { }
+
+  navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];
 
   login(): void {
     this.store.dispatch(AuthActions.login());
