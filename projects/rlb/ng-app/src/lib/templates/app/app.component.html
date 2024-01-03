@@ -38,6 +38,11 @@
           <span class="navbar-toggler-icon"></span>
         </a>
         <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
+        <rlb-navbar-items>
+          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
+            <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
+          </ng-container>
+        </rlb-navbar-items>
         <rlb-navbar-form *ngIf="navSearchVisible$ | async">
           <rlb-input class="mx-2" type="search" placeholder="Search" [(ngModel)]="navSearchText"
             (keyup.enter)="setNavbarSearchText(navSearchText)" />
@@ -45,8 +50,8 @@
             (click)="setNavbarSearchText(navSearchText)">Search</button>
         </rlb-navbar-form>
         <rlb-navbar-items class="ms-auto">
-          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navbarComponents">
-            <ng-container *ngComponentOutlet="navComponent"></ng-container>
+          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
+            <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
           </ng-container>
           <rlb-navbar-separator />
           <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>

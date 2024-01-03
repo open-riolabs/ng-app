@@ -18,6 +18,8 @@ import { RouterModule } from '@angular/router';
 import { AppTemplateComponent } from './templates/app/app.component';
 import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
 import { ModalAppsComponent } from './modals/modal-apps.component';
+import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
+import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { ModalAppsComponent } from './modals/modal-apps.component';
     CmsPipe,
     AsMultiPipe,
     AsSinglePipe,
+    LeftComponentPipe,
+    RightComponentPipe,
     // templates
     BaseComponent,
     CmsComponent,
@@ -54,6 +58,8 @@ import { ModalAppsComponent } from './modals/modal-apps.component';
     CmsPipe,
     AsMultiPipe,
     AsSinglePipe,
+    LeftComponentPipe,
+    RightComponentPipe,
     // templates
     BaseComponent,
     CmsComponent,

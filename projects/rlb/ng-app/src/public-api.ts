@@ -12,7 +12,6 @@ import { navbarsFeature } from './lib/store/navbar/navbar.reducer'
 import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer'
 import { SidebarState } from './lib/store/sidebar/sidebar.model'
 import { NavbarState } from './lib/store/navbar/navbar.model'
-import { appContextFeatureKey } from './lib/store/app-context/app-context.model'
 import { appContextFeature } from './lib/store/app-context/app-context.reducer'
 import { AppContextEffects } from './lib/store/app-context/app-context.effects'
 
@@ -42,10 +41,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
   return [
     importProvidersFrom([
       RlbBootstrapModule.forRoot({
-        modals: [
-          ModalAppsComponent
-
-        ]
+        modals: [ModalAppsComponent]
       }),
       RlbAppModule]),
     provideStore(),
@@ -59,6 +55,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     { provide: RLB_CFG_ENV, useValue: env.environment },
     { provide: RLB_CFG_CMS, useValue: env.cms },
     { provide: RLB_CFG_PAGES, useValue: env.pages },
+    { provide: RLB_CFG_I18N, useValue: env.i18n }
   ]
 }
 

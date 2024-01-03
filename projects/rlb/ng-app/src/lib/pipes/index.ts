@@ -1,2 +1,4 @@
 export * from './as/as.pipe'
 export * from './cms/cms.pipe'
+export * from './left-component/left-component.pipe'
+export * from './right-component/right-component.pipe'

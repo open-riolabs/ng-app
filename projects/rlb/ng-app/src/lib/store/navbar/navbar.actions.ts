@@ -9,12 +9,13 @@ export const NavbarActionsInternal = createActionGroup({
 export const NavbarActions = createActionGroup({
   source: 'Navbar/API',
   events: {
-    SetItems: props<{ items: NavigableItem[] }>(),
     SetVisible: props<{ visible: boolean }>(),
     SetLoginVisible: props<{ visible: boolean }>(),
     SetSearchVisible: props<{ visible: boolean }>(),
     SetSettingsVisible: props<{ visible: boolean }>(),
     SetHeader: props<{ header: string | null }>(),
     SetSearchText: props<{ text: string | null }>(),
+    SetLeftItems: props<{ items: string[] }>(),
+    SetRightItems: props<{ items: string[] }>(),
   }
 });

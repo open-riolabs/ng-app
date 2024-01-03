@@ -32,7 +32,17 @@ export class AppComponent {
     return this.store.select(o => o[authsFeatureKey]);
   }
 
-  applyStore(action: "sideVisible" | "sideLogin" | "sideSearch" | "sideSettings" | "navVisible" | "navLogin" | "navSearch" | "navSettings" | "navHeader", payload: any): void {
+  applyStore(action: "sideVisible"
+    | "sideLogin" |
+    "sideSearch" |
+    "sideSettings" |
+    "navVisible" |
+    "navLogin" |
+    "navSearch" |
+    "navSettings" |
+    "navHeader" |
+    "navLeftItems" |
+    "navRightItems", payload: any): void {
     switch (action) {
       case "sideVisible":
         this.store.dispatch(SidebarActions.setVisible({ visible: payload }));
@@ -60,7 +70,14 @@ export class AppComponent {
         break;
       case "navHeader":
         this.store.dispatch(NavbarActions.setHeader({ header: payload }));
-        console.log("navHeader", payload);
+        break;
+      case "navLeftItems":
+        if (payload === "clear") this.store.dispatch(NavbarActions.setLeftItems({ items: [] }));
+        if (payload === "add") this.store.dispatch(NavbarActions.setLeftItems({ items: ["demo"] }));
+        break;
+      case "navRightItems":
+        if (payload === "clear") this.store.dispatch(NavbarActions.setRightItems({ items: [] }));
+        if (payload === "add") this.store.dispatch(NavbarActions.setRightItems({ items: ["demo"] }));
         break;
     }
   }

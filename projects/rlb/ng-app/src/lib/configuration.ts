@@ -1,10 +1,24 @@
+import { InjectionToken, Type } from "@angular/core";
 import { SidebarMode } from "@rlb/ng-bootstrap/lib/components/sidebar/sidebar-mode";
 export const RLB_CFG = 'options';
-export const RLB_CFG_CMS = `${RLB_CFG}:cms`
-export const RLB_CFG_I18N = `${RLB_CFG}:i18n`;
-export const RLB_CFG_PAGES = `${RLB_CFG}:pages`;
-export const RLB_CFG_ENV = `${RLB_CFG}:env`;
-export const RLB_CFG_AUTH = `${RLB_CFG}:auth`;
+export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
+export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
+export const RLB_CFG_PAGES = new InjectionToken<PagesConfiguration>(`${RLB_CFG}:pages`);
+export const RLB_CFG_ENV = new InjectionToken<EnvironmentConfiguration>(`${RLB_CFG}:env`);
+export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:auth`);
+
+export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`RLB_APP_NAVCOMP`);
+
+export interface NavbarComponents {
+  left: {
+    component: Type<any>,
+    name: string,
+  }[],
+  right: {
+    component: Type<any>,
+    name: string,
+  }[]
+}
 
 export interface CmsConfiguration {
   endpoint: string;

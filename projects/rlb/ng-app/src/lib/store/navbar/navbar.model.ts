@@ -3,13 +3,14 @@ import { NavigableItem } from "@rlb/ng-bootstrap";
 export const navbarsFeatureKey = 'navbar';
 
 export interface Navbar {
-  items: NavigableItem[],
   visible: boolean
   header: string | null,
   loginVisible: boolean
   searchVisible: boolean
   settingsVisible: boolean
-  searchText: string | null
+  searchText: string | null,
+  leftItems: string[],
+  rightItems: string[],
 }
 
 export const initialNavbarState: Navbar = {
@@ -19,7 +20,8 @@ export const initialNavbarState: Navbar = {
   searchVisible: true,
   settingsVisible: true,
   searchText: null,
-  items: []
+  leftItems: [],
+  rightItems: [],
 }
 
 export interface NavbarState { [navbarsFeatureKey]: Navbar }

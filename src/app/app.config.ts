@@ -1,11 +1,12 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { AbstractMdService, AbstractSupportService, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n } from '@rlb/ng-app'
+import { AbstractMdService, AbstractSupportService, RLB_APP_NAVCOMP, provideRlbCodeBrowserAuth, provideRlbConfig, provideRlbI18n } from '@rlb/ng-app'
 import { environment } from '~/environments/environment';
 import { SupportService } from './support/support.service';
 import { MdService } from './md/md.service';
 import { routes } from './app.routes';
+import { NavbarItemDemoComponent } from './nav-item.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +20,11 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: AbstractSupportService, useClass: SupportService },
     { provide: AbstractMdService, useClass: MdService },
+    {
+      provide: RLB_APP_NAVCOMP, useValue: {
+        left: [{ component: NavbarItemDemoComponent, name: 'demo' }],
+        right: [{ component: NavbarItemDemoComponent, name: 'demo' }]
+      }
+    }
   ]
 };

@@ -104,6 +104,30 @@
               </div>
             </div>
             <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navLeftItems', 'add')">
+                  Add demo item (left)
+                </button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navLeftItems','clear')">
+                  Clear items (left)
+                </button>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navRightItems', 'add')">
+                  Add demo item (right)
+                </button>
+              </div>
+              <div class="col-2">
+                <button class="w-100" rlb-button (click)="applyStore('navRightItems','clear')">
+                  Clear items (right)
+                </button>
+              </div>
+            </div>
+            <div class="row my-2">
               <div class="col-4">
                 <rlb-input class="w-100" type="text" placeholder="Header" #box
                   (keyup.enter)="applyStore('navHeader', box.value)"></rlb-input>

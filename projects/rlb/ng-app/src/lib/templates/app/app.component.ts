@@ -95,6 +95,14 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[authsFeatureKey].isAuth);
   }
 
+  get navLeftItems$() {
+    return this.store.select(state => state[navbarsFeatureKey].leftItems);
+  }
+
+  get navRightItems$() {
+    return this.store.select(state => state[navbarsFeatureKey].rightItems);
+  }
+
   login(): void {
     this.store.dispatch(AuthActions.login());
   }
