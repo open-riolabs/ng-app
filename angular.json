@@ -104,7 +104,7 @@
       "projectType": "library",
       "root": "projects/rlb/ng-app",
       "sourceRoot": "projects/rlb/ng-app/src",
-      "prefix": "lib",
+      "prefix": "rlb",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",

@@ -45,24 +45,24 @@
             (click)="setNavbarSearchText(navSearchText)">Search</button>
         </rlb-navbar-form>
         <rlb-navbar-items class="ms-auto">
-          <a *ngFor="let navItem of navbarItems" rlb-navbar-item [routerLink]="navItem.url" routerLinkActive="active">
+          <rlb-navbar-item *ngFor="let navItem of navbarItems" [routerLink]="navItem.url" href="#"
+            routerLinkActive="active">
             {{navItem.label}}
-          </a>
-          <span rlb-navbar-separator></span>
-          <a *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" rlb-navbar-item dropdown toggle="dropdown"
-            toggle-target="#">
+          </rlb-navbar-item>
+          <rlb-navbar-separator />
+          <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>
             <i class="bi bi-person"></i>
             <ul rlb-dropdown-menu placement="right">
-              <li rlb-dropdown-item href="#">{{'core.login' | translate}}</li>
-              <li rlb-dropdown-item href="#" (click)="logout()">{{'core.logout' | translate}}</li>
+              <li rlb-dropdown-item>{{'core.login' | translate}}</li>
+              <li rlb-dropdown-item (click)="logout()">{{'core.logout' | translate}}</li>
             </ul>
-          </a>
-          <a *ngIf="(navLoginVisible$|async) && !(isAuth$ | async)" rlb-navbar-item href="#" (click)="login()">
+          </rlb-navbar-item>
+          <rlb-navbar-item href="#" *ngIf="(navLoginVisible$|async) && !(isAuth$ | async)" (click)="login()">
             <i class="bi bi-person"></i>
-          </a>
-          <a *ngIf="navSettingsVisible$ | async" rlb-navbar-item href="#">
+          </rlb-navbar-item>
+          <rlb-navbar-item href="#" *ngIf="navSettingsVisible$ | async">
             <i class="bi bi-gear"></i>
-          </a>
+          </rlb-navbar-item>
         </rlb-navbar-items>
       </rlb-navbar>
     </ng-container>
