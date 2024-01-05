@@ -38,17 +38,19 @@
           <span class="navbar-toggler-icon"></span>
         </a>
         <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
+        <rlb-navbar-form *ngIf="navSearchVisible$ | async">
+          <rlb-input class="mx-2" type="search" placeholder="Search" [(ngModel)]="navSearchText"
+            (keyup.enter)="setNavbarSearchText(navSearchText)">
+            <button rlb-button outline after class="me-2" type="submit" (click)="setNavbarSearchText(navSearchText)">
+              <i class="bi bi-search"></i>
+            </button>
+          </rlb-input>
+        </rlb-navbar-form>
         <rlb-navbar-items>
           <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
             <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
           </ng-container>
         </rlb-navbar-items>
-        <rlb-navbar-form *ngIf="navSearchVisible$ | async">
-          <rlb-input class="mx-2" type="search" placeholder="Search" [(ngModel)]="navSearchText"
-            (keyup.enter)="setNavbarSearchText(navSearchText)" />
-          <button class="me-2" rlb-button type="submit" icon="bi bi-search"
-            (click)="setNavbarSearchText(navSearchText)">Search</button>
-        </rlb-navbar-form>
         <rlb-navbar-items class="ms-auto">
           <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
