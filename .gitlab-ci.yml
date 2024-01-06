@@ -63,6 +63,10 @@ deploy:
     - cd dist/rlb/ng-app
     - echo "@rlb:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
     - echo "//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - git tag --force ${GitVersion_SemVer}
+    - git remote add tag-origin https://oauth2:${CI_TOKEN}@gitlab.com/${CI_PROJECT_PATH}
+    - git push --force tag-origin ${GitVersion_SemVer}
+    - git remote rm tag-origin
     - npm version ${GitVersion_SemVer}
     - npm publish
   only:
