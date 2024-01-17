@@ -61,6 +61,9 @@ export interface EnvironmentConfiguration {
   baseUrl: string;
   ssr: boolean;
   phone: boolean;
+  errorDialogName?: string;
+  errorToastName?: string;
+  errorToastContainer?: string;
 }
 
 export interface IConfiguration {
