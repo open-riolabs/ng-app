@@ -62,6 +62,7 @@ export interface EnvironmentConfiguration {
   ssr: boolean;
   phone: boolean;
   errorDialogName?: string;
+  errorDialogSize?: 'sm' | 'lg' | 'xl' | 'md';
   errorToastName?: string;
   errorToastContainer?: string;
 }

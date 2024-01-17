@@ -1,5 +1,5 @@
-import { EnvironmentProviders, Provider, importProvidersFrom } from '@angular/core'
-import { ProjectConfiguration, RLB_CFG, RLB_CFG_AUTH, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
+import { EnvironmentProviders, Provider } from '@angular/core'
+import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
 import { ModalRegistryOptions, RlbBootstrapModule } from '@rlb/ng-bootstrap'
 import { ModalAppsComponent } from './lib/modals/modal-apps.component'

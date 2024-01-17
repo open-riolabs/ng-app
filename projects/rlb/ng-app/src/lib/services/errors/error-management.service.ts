@@ -33,15 +33,15 @@ export class ErrorManagementService {
     return EMPTY;
   }
 
-  public showDialog(type: ModalType, error?: any) {
+  public showDialog(type: ModalType, error?: Error) {
     if (!this.options.production) {
       console.info("%c Error service: ShowDialog", 'background: #ffcdc9; color: #000', error)
     }
     return this.dialogService.openModal<string, void>(
       this.options?.environment?.errorDialogName || 'error-dialog',
       {
-        content: this.languageService.translate('error.content'),
-        title: this.languageService.translate('error.title'),
+        content: error?.message || '',
+        title: error?.name || '',
         ok: this.languageService.translate('common.ok'),
         type,
       },
@@ -49,7 +49,7 @@ export class ErrorManagementService {
         animation: true,
         backdrop: true,
         keyboard: true,
-        size: 'lg',
+        size: this.options?.environment?.errorDialogSize || 'md',
         scrollable: true,
         focus: true,
         fullscreen: false,
@@ -66,8 +66,8 @@ export class ErrorManagementService {
       this.options?.environment?.errorToastContainer || 'error-toast-container',
       this.options?.environment?.errorToastName || 'error-toast',
       {
-        content: this.languageService.translate('error.content'),
-        title: this.languageService.translate('error.title'),
+        content: error?.message || '',
+        title: error?.name || '',
         ok: this.languageService.translate('common.ok'),
         type: 'error'
       },
