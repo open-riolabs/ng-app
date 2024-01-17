@@ -1,7 +1,7 @@
 import { EnvironmentProviders, Provider, importProvidersFrom } from '@angular/core'
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_AUTH, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
-import { RlbBootstrapModule } from '@rlb/ng-bootstrap'
+import { ModalRegistryOptions, RlbBootstrapModule } from '@rlb/ng-bootstrap'
 import { ModalAppsComponent } from './lib/modals/modal-apps.component'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
@@ -20,10 +20,8 @@ export * from './lib/pipes'
 export * from './lib/templates'
 export * from './lib/auth'
 export * from './lib/rlb-app.module'
-
 export * from './lib/pages/shared.routes'
 export * from './lib/configuration'
-
 export * from './lib/store/auth/auth.actions'
 export * from './lib/store/auth/auth.model'
 export * from './lib/store/auth/auth-feature.service'
@@ -34,11 +32,8 @@ export * from './lib/store/sidebar/sidebar.model'
 
 export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
   return [
-    importProvidersFrom([
-      RlbBootstrapModule.forRoot({
-        modals: [ModalAppsComponent]
-      }),
-      RlbAppModule]),
+    RlbBootstrapModule,
+    RlbAppModule,
     provideStore(),
     provideState(authsFeature),
     provideEffects(AuthEffects),
@@ -51,6 +46,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     { provide: RLB_CFG_CMS, useValue: env.cms },
     { provide: RLB_CFG_PAGES, useValue: env.pages },
     { provide: RLB_CFG_I18N, useValue: env.i18n },
+    { provide: ModalRegistryOptions, useValue: { modals: [ModalAppsComponent] }, multi: true }
   ]
 }
 
