@@ -17,7 +17,7 @@ export class ErrorManagementService {
     @Inject(RLB_CFG) @Optional() private options: ProjectConfiguration
   ) { }
 
-  public showErrorToast(type: ModalType = 'error', out: ErrorOutput = 'dialog', error?: any) {
+  public showError(type: ModalType = 'error', out: ErrorOutput = 'dialog', error?: any) {
     if (out === 'dialog') {
       return this.showDialog(type, error);
     }
@@ -79,12 +79,12 @@ export class ErrorManagementService {
     );
   }
 
-  public manageUI<T>(type: ModalType = 'error', out: ErrorOutput = 'dialog'): OperatorFunction<T, T | string> {
+  public manageUI<T>(type: ModalType = 'error', out: ErrorOutput = 'dialog'): OperatorFunction<T, T> {
     return (source: Observable<T>) => {
       return source.pipe(
         catchError((error, k) => {
-          this.showErrorToast(type, out, error);
-          return of(error);
+          this.showError(type, out, error);
+          return EMPTY;
         }),
       );
     };
