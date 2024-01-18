@@ -1,7 +1,7 @@
 import { EnvironmentProviders, Provider } from '@angular/core'
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
-import { ModalRegistryOptions, RlbBootstrapModule } from '@rlb/ng-bootstrap'
+import { ModalRegistryOptions, provideRlbBootstrap } from '@rlb/ng-bootstrap';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
@@ -32,7 +32,7 @@ export * from './lib/store/sidebar/sidebar.model'
 
 export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
   return [
-    RlbBootstrapModule,
+    provideRlbBootstrap(),
     RlbAppModule,
     provideStore(),
     provideState(authsFeature),

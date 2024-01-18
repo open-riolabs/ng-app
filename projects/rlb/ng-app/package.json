@@ -9,7 +9,7 @@
     "@angular/service-worker": ">=14.0.0",
     "@ngx-translate/core": ">=14.0.0",
     "@ngx-translate/http-loader": ">=8.0.0",
-    "@rlb/ng-bootstrap": ">=1.3.6",
+    "@rlb/ng-bootstrap": ">=1.3.8",
     "angular-auth-oidc-client": ">=16.0.0",
     "ngx-cookie-service-ssr": ">=17.0.0"
   },
