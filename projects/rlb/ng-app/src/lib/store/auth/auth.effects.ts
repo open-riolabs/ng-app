@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { AuthActions, AuthActionsInternal } from './auth.actions';
 import { Store } from '@ngrx/store';
 import { AuthenticationService } from '../../auth/services/auth.service';
-import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
+import { AuthConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 
 @Injectable()
 export class AuthEffects {
@@ -32,32 +32,34 @@ export class AuthEffects {
     private actions$: Actions,
     private auth: AuthenticationService,
     store: Store,
-    @Inject(RLB_CFG_ENV) envConfig: EnvironmentConfiguration) {
-    auth.authorize()
-      .pipe(
-        tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
-          store.dispatch(AuthActionsInternal.setAuth({
-            auth: {
-              accessToken,
-              idToken,
-              isAuth: isAuthenticated,
-              user: userData,
-              loading: false
-            }
-          }))
-        })).subscribe();
+    @Inject(RLB_CFG_AUTH) @Optional() authConfig: AuthConfiguration) {
+    if (authConfig) {
+      auth.authorize()
+        .pipe(
+          tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
+            store.dispatch(AuthActionsInternal.setAuth({
+              auth: {
+                accessToken,
+                idToken,
+                isAuth: isAuthenticated,
+                user: userData,
+                loading: false
+              }
+            }))
+          })).subscribe();
 
-    auth.idToken$.subscribe((idToken) => {
-      store.dispatch(AuthActionsInternal.setIdToken({ idToken }))
-    })
-    auth.accessToken$.subscribe((accessToken) => {
-      store.dispatch(AuthActionsInternal.setAccessToken({ accessToken }))
-    })
-    auth.userInfo$.subscribe((user) => {
-      store.dispatch(AuthActionsInternal.setUser({ user }))
-    })
-    auth.isAuthenticated$.subscribe((isAuth) => {
-      store.dispatch(AuthActionsInternal.setIsAuth({ isAuth }))
-    })
+      auth.idToken$.subscribe((idToken) => {
+        store.dispatch(AuthActionsInternal.setIdToken({ idToken }))
+      })
+      auth.accessToken$.subscribe((accessToken) => {
+        store.dispatch(AuthActionsInternal.setAccessToken({ accessToken }))
+      })
+      auth.userInfo$.subscribe((user) => {
+        store.dispatch(AuthActionsInternal.setUser({ user }))
+      })
+      auth.isAuthenticated$.subscribe((isAuth) => {
+        store.dispatch(AuthActionsInternal.setIsAuth({ isAuth }))
+      })
+    }
   }
 }

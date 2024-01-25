@@ -35,16 +35,18 @@ export class AuthenticationService {
     return this.oidcSecurityService.checkAuthMultiple(url)
       .pipe(tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
         if (isAuthenticated) {
-          const redirect = this.cookiesService.getCookie('loginRedirectUrl') || '/'
-          this.cookiesService.deleteCookie('loginRedirectUrl')
-          this.router.navigate([redirect])
+          const redirect = this.cookiesService.getCookie('loginRedirectUrl')
+          if (redirect) {
+            this.cookiesService.deleteCookie('loginRedirectUrl')
+            this.router.navigate([redirect])
+          }
         }
       }))
     //}
   }
 
   public login() {
-    this.cookiesService.setCookie('loginRedirectUrl', this.router.url, 1)
+    this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1)
     // electron
     if (typeof (process) !== 'undefined' &&
       typeof (process?.version) !== 'undefined' &&
