@@ -43,8 +43,8 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   @Input('modal-container-id') modalContainerId!: string;
   @Input('toast-container-ids') toastContainerIds!: string | string[];
 
-  modalAppDialog() {
-    this.appsService.chooseApp();
+  async modalAppDialog() {
+    await this.appsService.chooseApp();
   }
 
   get sidearVisible$() {
@@ -93,6 +93,10 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   get isAuth$() {
     return this.store.select(state => state[authsFeatureKey].isAuth);
+  }
+
+  get user$() {
+    return this.store.select(state => state[authsFeatureKey].user);
   }
 
   get navLeftItems$() {

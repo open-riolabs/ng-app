@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { NavigableItem } from '@rlb/ng-bootstrap';
+import { AppItem } from '../../services/apps/app';
 
 export const AppContextActionsInternal = createActionGroup({
   source: 'AppContext/Internal',
@@ -15,7 +15,8 @@ export const AppContextActions = createActionGroup({
   events: {
     setLanguage: props<{ language: string }>(),
     setSupportedLanguages: props<{ supportedLanguages: string[] }>(),
-    setAppName: props<{ appName: string }>(),
-    setAppContext: props<{ appContext: NavigableItem[] }>(),
+    setCurrentApp: props<{ app: AppItem | null | undefined }>(),
+    addApp: props<{ app: AppItem }>(),
+    removeApp: props<{ appId: string }>(),
   }
 });

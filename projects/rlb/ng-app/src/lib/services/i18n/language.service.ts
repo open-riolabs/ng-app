@@ -79,6 +79,7 @@ export class LanguageService {
       case 'en': return 'English'
       case 'es': return 'Español'
       case 'fr': return 'Francés'
+      case 'ja': return '日本語'
       default: return ''
     }
   }

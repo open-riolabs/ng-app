@@ -1,10 +1,10 @@
 import { Component, OnInit, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions } from '@rlb/ng-app';
+import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions, appContextFeatureKey } from '@rlb/ng-app';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { NavbarItemDemoComponent } from './nav-item.component';
-
+import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-context/app-context.actions';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,20 @@ import { NavbarItemDemoComponent } from './nav-item.component';
 export class AppComponent {
   title = 'riolabs-mistral-web';
 
-  constructor(public store: Store<BaseState>) { }
+  constructor(public store: Store<BaseState>) {
+    store.dispatch(AppContextActions.addApp({
+      app: {
+        id: 'chat',
+        name: 'Chat',
+        description: 'Chat with other users',
+        url: 'chat',
+        icon: 'bi-chat',
+        enabled: true,
+        auth: true
+      }
+    }));
+    store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+  }
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];
 

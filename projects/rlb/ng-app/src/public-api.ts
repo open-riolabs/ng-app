@@ -12,8 +12,9 @@ import { navbarsFeature } from './lib/store/navbar/navbar.reducer'
 import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer'
 import { SidebarState } from './lib/store/sidebar/sidebar.model'
 import { NavbarState } from './lib/store/navbar/navbar.model'
-import { appContextFeature } from './lib/store/app-context/app-context.reducer'
+import { appFeature } from './lib/store/app-context/app-context.reducer'
 import { AppContextEffects } from './lib/store/app-context/app-context.effects'
+import { AppState } from './lib/store/app-context/app-context.model';
 
 export * from './lib/services'
 export * from './lib/pipes'
@@ -29,6 +30,8 @@ export * from './lib/store/navbar/navbar.actions'
 export * from './lib/store/navbar/navbar.model'
 export * from './lib/store/sidebar/sidebar.actions'
 export * from './lib/store/sidebar/sidebar.model'
+export * from './lib/store/app-context/app-context.actions'
+export * from './lib/store/app-context/app-context.model'
 
 export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
   return [
@@ -39,7 +42,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     provideEffects(AuthEffects),
     provideState(navbarsFeature),
     provideState(sidebarsFeature),
-    provideState(appContextFeature),
+    provideState(appFeature),
     provideEffects(AppContextEffects),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },
@@ -50,4 +53,4 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
   ]
 }
 
-export interface BaseState extends AuthState, SidebarState, NavbarState { }
+export interface BaseState extends AuthState, SidebarState, NavbarState, AppState { }

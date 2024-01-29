@@ -58,8 +58,8 @@
           <rlb-navbar-separator />
           <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>
             <i class="bi bi-person"></i>
+            <span class="ms-2 me-1">{{ (user$|async).name}}</span>
             <ul rlb-dropdown-menu placement="right">
-              <li rlb-dropdown-item>{{'core.login' | translate}}</li>
               <li rlb-dropdown-item (click)="logout()">{{'core.logout' | translate}}</li>
             </ul>
           </rlb-navbar-item>

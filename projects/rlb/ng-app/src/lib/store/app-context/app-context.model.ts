@@ -1,21 +1,19 @@
-import { NavigableItem } from "@rlb/ng-bootstrap";
+import { AppItem } from "../../services/apps/app";
 
-export const appContextFeatureKey = 'sidebar';
+export const appContextFeatureKey = 'app';
 
 export interface AppContext {
-  items: NavigableItem[]
-  visible: boolean
-  loginVisible: boolean
-  searchVisible: boolean
-  settingsVisible: boolean
+  apps: AppItem[]
+  currentApp: AppItem | null | undefined,
+  language: string | null,
+  supportedLanguages: string[]
 }
 
 export const initialAppContextState: AppContext = {
-  items: [],
-  visible: true,
-  loginVisible: true,
-  searchVisible: true,
-  settingsVisible: true
+  apps: [],
+  currentApp: null,
+  language: null,
+  supportedLanguages: ['en']
 }
 
-export interface appContexttate { [appContextFeatureKey]: AppContext }
+export interface AppState { [appContextFeatureKey]: AppContext }

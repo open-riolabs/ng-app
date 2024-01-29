@@ -1,54 +1,35 @@
 import { Injectable } from '@angular/core';
-import { App } from './app';
+import { AppItem } from './app';
 import { ModalService } from '@rlb/ng-bootstrap';
 import { Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { appContextFeatureKey } from '../../store/app-context/app-context.model';
+import { LanguageService } from '../i18n/language.service';
+import { AppContextActions, BaseState } from '../../../public-api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppsService {
 
-  private _currentApp_s = new Subject<App | null>();
-  private _currentApp: App | null = null;
-  public currentApp$ = this._currentApp_s.asObservable();
-  public get currentApp(): App | null {
-    return this._currentApp;
-  }
-
-  getApps(): App[] {
-    return [{
-      id: 'chat',
-      name: 'Chat',
-      description: 'Chat with other users',
-      url: 'chat',
-      icon: 'bi-chat',
-      enabled: true
-    },
-    {
-      id: 'drive',
-      name: 'Drive',
-      description: 'Store your files',
-      url: 'drive',
-      icon: 'bi-hdd-rack',
-      enabled: true
-    }]
-  }
-
-  chooseApp() {
-    this.modalService.openModal<App[], App>('modal-apps-component', {
-      title: 'Riolabs Apps',
-      content: this.getApps(),
-      ok: 'OK',
+  async chooseApp() {
+    const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)();
+    console.log(apps);
+    this.modalService.openModal<AppItem[], AppItem>('modal-apps-component', {
+      title: this.languageService.translate('core.apps.title'),
+      content: apps,
+      ok: this.languageService.translate('common.ok'),
       type: 'info'
     }).subscribe((o) => {
       if (o?.reason === 'ok') {
-        if (this._currentApp?.id !== o.result?.id) {
-          this._currentApp = o.result;
-          this._currentApp_s.next(o.result);
-        }
+        this.store.dispatch(AppContextActions.setCurrentApp({ app: o.result }));
       }
     });
   }
 
-  constructor(private modalService: ModalService) { }
+  constructor(
+    private modalService: ModalService,
+    private languageService: LanguageService,
+    private store: Store<BaseState>
+  ) { }
 }
