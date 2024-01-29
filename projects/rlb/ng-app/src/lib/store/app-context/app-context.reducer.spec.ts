@@ -1,12 +1,12 @@
 import { initialAppContextState } from './app-context.model';
-import { sidebarReducer } from './app-context.reducer';
+import { appReducer } from './app-context.reducer';
 
 describe('Sidebar Reducer', () => {
   describe('unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = sidebarReducer(initialAppContextState, action);
+      const result = appReducer(initialAppContextState, action);
 
       expect(result).toBe(initialAppContextState);
     });
