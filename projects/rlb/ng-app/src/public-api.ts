@@ -49,7 +49,13 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     { provide: RLB_CFG_CMS, useValue: env.cms },
     { provide: RLB_CFG_PAGES, useValue: env.pages },
     { provide: RLB_CFG_I18N, useValue: env.i18n },
-    { provide: ModalRegistryOptions, useValue: { modals: [ModalAppsComponent] }, multi: true }
+    {
+      provide: ModalRegistryOptions, useValue: {
+        modals: {
+          "modal-apps-component": ModalAppsComponent
+        }
+      }, multi: true
+    }
   ]
 }
 
