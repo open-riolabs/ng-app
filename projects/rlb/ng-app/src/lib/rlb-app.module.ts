@@ -20,6 +20,7 @@ import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
 import { ModalAppsComponent } from './modals/modal-apps.component';
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
+import { TruncatePipe } from './pipes';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { RightComponentPipe } from './pipes/right-component/right-component.pipe
     AsSinglePipe,
     LeftComponentPipe,
     RightComponentPipe,
+    TruncatePipe,
     // templates
     BaseComponent,
     CmsComponent,
@@ -60,6 +62,7 @@ import { RightComponentPipe } from './pipes/right-component/right-component.pipe
     AsSinglePipe,
     LeftComponentPipe,
     RightComponentPipe,
+    TruncatePipe,
     // templates
     BaseComponent,
     CmsComponent,
