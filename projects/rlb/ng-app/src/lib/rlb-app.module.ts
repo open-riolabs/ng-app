@@ -17,10 +17,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { AppTemplateComponent } from './templates/app/app.component';
 import { AsMultiPipe, AsSinglePipe } from './pipes/as/as.pipe';
-import { ModalAppsComponent } from './modals/modal-apps.component';
+
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
-import { TruncatePipe } from './pipes';
+import { AutolinkPipe, TruncatePipe } from './pipes';
 
 @NgModule({
   declarations: [
@@ -31,8 +31,6 @@ import { TruncatePipe } from './pipes';
     PrivacyComponent,
     SupportComponent,
     TermsAndConditionsComponent,
-    // modals
-    ModalAppsComponent,
     // pipes
     CmsPipe,
     AsMultiPipe,
@@ -40,6 +38,7 @@ import { TruncatePipe } from './pipes';
     LeftComponentPipe,
     RightComponentPipe,
     TruncatePipe,
+    AutolinkPipe,
     // templates
     BaseComponent,
     CmsComponent,
@@ -63,6 +62,7 @@ import { TruncatePipe } from './pipes';
     LeftComponentPipe,
     RightComponentPipe,
     TruncatePipe,
+    AutolinkPipe,
     // templates
     BaseComponent,
     CmsComponent,

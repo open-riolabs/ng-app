@@ -1,9 +1,12 @@
 import { Component } from "@angular/core";
 import { IModal, ModalData, ModalDirective } from "@rlb/ng-bootstrap";
 import { AppItem } from "../services/apps/app";
+import { RlbAppModule } from "../rlb-app.module";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-demo',
+  standalone: true,
+  imports: [RlbAppModule, CommonModule],
   template: `
     <div class="modal-header">
       <h5 class="modal-title">{{ data.title }}</h5>

@@ -14,15 +14,15 @@
           {{sideItem.label}}
         </rlb-sidebar-item>
         <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
-          {{'core.apps' | translate}}
+          {{'core.apps.button' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && !(isAuth$ | async)"
           icon="bi bi-person" (action)="login()">
-          {{'core.user' | translate}}
+          {{'core.login' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && (isAuth$ | async)"
           icon="bi bi-person" (action)="logout()">
-          {{'core.user' | translate}}
+          {{'core.logout' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear">
           {{'core.settings' | translate}}
@@ -58,7 +58,7 @@
           <rlb-navbar-separator />
           <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>
             <i class="bi bi-person"></i>
-            <span class="ms-2 me-1">{{ (user$|async).name}}</span>
+            <span class="ms-2 me-1">{{ (user$|async)?.name}}</span>
             <ul rlb-dropdown-menu placement="right">
               <li rlb-dropdown-item (click)="logout()">{{'core.logout' | translate}}</li>
             </ul>

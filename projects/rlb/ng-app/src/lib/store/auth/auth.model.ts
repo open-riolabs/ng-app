@@ -16,4 +16,4 @@ export const initialAuthState: Auth = {
   loading: false,
 }
 
-export interface AuthState { [authsFeatureKey]: Auth }
+export interface AuthState<User = any> { [authsFeatureKey]: Auth<User> }

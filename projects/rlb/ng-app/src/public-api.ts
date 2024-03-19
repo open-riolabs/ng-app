@@ -1,7 +1,7 @@
 import { EnvironmentProviders, Provider } from '@angular/core'
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
-import { ModalRegistryOptions, provideRlbBootstrap } from '@rlb/ng-bootstrap';
+import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb/ng-bootstrap';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
@@ -15,11 +15,16 @@ import { NavbarState } from './lib/store/navbar/navbar.model'
 import { appFeature } from './lib/store/app-context/app-context.reducer'
 import { AppContextEffects } from './lib/store/app-context/app-context.effects'
 import { AppState } from './lib/store/app-context/app-context.model';
+import { JwtUser } from './lib/auth/user-info';
+import { ErrorModalComponent } from './lib/modals/error-modal.component';
+import { ToastComponent } from './lib/toasts/error-toast.component';
 
 export * from './lib/services'
 export * from './lib/pipes'
 export * from './lib/templates'
 export * from './lib/auth'
+export * from './lib/modals'
+export * from './lib/toasts'
 export * from './lib/rlb-app.module'
 export * from './lib/pages/shared.routes'
 export * from './lib/configuration'
@@ -52,11 +57,21 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     {
       provide: ModalRegistryOptions, useValue: {
         modals: {
-          "modal-apps-component": ModalAppsComponent
+          "modal-apps-component": ModalAppsComponent,
+          'error-modal-component': ErrorModalComponent,
         }
       }, multi: true
-    }
+    },
+    {
+      provide: ToastRegistryOptions,
+      useValue: {
+        toasts: {
+          'toast-component': ToastComponent,
+        },
+      },
+      multi: true,
+    },
   ]
 }
 
-export interface BaseState extends AuthState, SidebarState, NavbarState, AppState { }
+export interface BaseState<User = JwtUser> extends AuthState<User>, SidebarState, NavbarState, AppState { }
