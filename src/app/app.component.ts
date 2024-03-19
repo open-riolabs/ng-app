@@ -50,9 +50,7 @@ export class AppComponent {
     "sideSearch" |
     "sideSettings" |
     "navVisible" |
-    "navLogin" |
     "navSearch" |
-    "navSettings" |
     "navHeader" |
     "navLeftItems" |
     "navRightItems", payload: any): void {
@@ -72,14 +70,8 @@ export class AppComponent {
       case "navVisible":
         this.store.dispatch(NavbarActions.setVisible({ visible: payload }));
         break;
-      case "navLogin":
-        this.store.dispatch(NavbarActions.setLoginVisible({ visible: payload }));
-        break;
       case "navSearch":
         this.store.dispatch(NavbarActions.setSearchVisible({ visible: payload }));
-        break;
-      case "navSettings":
-        this.store.dispatch(NavbarActions.setSettingsVisible({ visible: payload }));
         break;
       case "navHeader":
         this.store.dispatch(NavbarActions.setHeader({ header: payload }));

@@ -1,0 +1,50 @@
+{
+  "common": {
+    "ok": "Ok",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "edit": "Edit",
+    "name": "Name",
+    "description": "Description",
+    "search": "Search",
+    "searching": "Searching...",
+    "noResults": "No results",
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "core": {
+    "apps": {
+      "button": "Apps",
+      "title": "Riolabs Apps"
+    },
+    "settings": "Settings",
+    "user": "User",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "pages": {
+    "notFound": {
+      "title": "Page not found",
+      "content": "The page you are looking for does not exist.",
+      "button": "Go to home page"
+    },
+    "support": {
+      "title": "Support",
+      "legal": "Legal",
+      "subscribe": "Subscribe to our newsletter",
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send",
+      "success": "Your message has been sent successfully.",
+      "error": "An error occurred while sending your message.",
+      "infoPage": "For more information, please visit our legal page"
+    }
+  }
+}

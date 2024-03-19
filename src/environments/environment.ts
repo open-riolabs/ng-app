@@ -32,7 +32,7 @@ export const environment: ProjectConfiguration = {
   },
   auth: {
     configId: 'riolabs',
-    issuer: 'https://login.riolabs.net/realms/riolabs',
+    issuer: 'https://login.mistral.riolabs.net/realms/riolabs',
     redirectUrlLogin: 'http://localhost:4202',
     redirectUrlLogout: 'http://localhost:4202',
     clientId: 'riolabs',

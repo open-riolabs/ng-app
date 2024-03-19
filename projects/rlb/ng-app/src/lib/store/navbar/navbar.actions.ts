@@ -10,9 +10,7 @@ export const NavbarActions = createActionGroup({
   source: 'Navbar/API',
   events: {
     SetVisible: props<{ visible: boolean }>(),
-    SetLoginVisible: props<{ visible: boolean }>(),
     SetSearchVisible: props<{ visible: boolean }>(),
-    SetSettingsVisible: props<{ visible: boolean }>(),
     SetHeader: props<{ header: string | null }>(),
     SetSearchText: props<{ text: string | null }>(),
     SetLeftItems: props<{ items: string[] }>(),

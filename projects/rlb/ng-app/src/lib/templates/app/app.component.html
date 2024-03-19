@@ -13,19 +13,19 @@
         <rlb-sidebar-item *ngFor="let sideItem of sidebarFooterItems" [icon]="sideItem.icon">
           {{sideItem.label}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item (action)="modalAppDialog()" icon="bi bi-grid-3x3-gap-fill">
-          {{'core.apps.button' | translate}}
-        </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && !(isAuth$ | async)"
-          icon="bi bi-person" (action)="login()">
+          icon="bi bi-box-arrow-in-left" (action)="login()">
           {{'core.login' | translate}}
         </rlb-sidebar-item>
         <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && (isAuth$ | async)"
-          icon="bi bi-person" (action)="logout()">
-          {{'core.logout' | translate}}
+          icon="bi bi-person" url="/account">
+          {{'core.account' | translate}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear">
+        <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear" [url]="'settings'">
           {{'core.settings' | translate}}
+        </rlb-sidebar-item>
+        <rlb-sidebar-item routerLink="apps" icon="bi bi-grid-3x3-gap-fill" [url]="'/apps'">
+          {{'core.apps.button' | translate}}
         </rlb-sidebar-item>
       </rlb-sidebar-footer>
     </rlb-sidebar>
@@ -56,19 +56,6 @@
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
           </ng-container>
           <rlb-navbar-separator />
-          <rlb-navbar-item href="#" *ngIf="(navLoginVisible$ | async) && (isAuth$ | async)" dropdown>
-            <i class="bi bi-person"></i>
-            <span class="ms-2 me-1">{{ (user$|async)?.name}}</span>
-            <ul rlb-dropdown-menu placement="right">
-              <li rlb-dropdown-item (click)="logout()">{{'core.logout' | translate}}</li>
-            </ul>
-          </rlb-navbar-item>
-          <rlb-navbar-item href="#" *ngIf="(navLoginVisible$|async) && !(isAuth$ | async)" (click)="login()">
-            <i class="bi bi-person"></i>
-          </rlb-navbar-item>
-          <rlb-navbar-item href="#" *ngIf="navSettingsVisible$ | async">
-            <i class="bi bi-gear"></i>
-          </rlb-navbar-item>
         </rlb-navbar-items>
       </rlb-navbar>
     </ng-container>

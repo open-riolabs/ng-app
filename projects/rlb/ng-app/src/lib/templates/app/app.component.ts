@@ -75,16 +75,8 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].visible);
   }
 
-  get navLoginVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
-  }
-
   get navSearchVisible$() {
     return this.store.select(state => state[navbarsFeatureKey].searchVisible);
-  }
-
-  get navSettingsVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].settingsVisible);
   }
 
   get navHeader$() {

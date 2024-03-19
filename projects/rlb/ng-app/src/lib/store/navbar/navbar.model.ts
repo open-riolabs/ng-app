@@ -5,9 +5,7 @@ export const navbarsFeatureKey = 'navbar';
 export interface Navbar {
   visible: boolean
   header: string | null,
-  loginVisible: boolean
   searchVisible: boolean
-  settingsVisible: boolean
   searchText: string | null,
   leftItems: string[],
   rightItems: string[],
@@ -16,9 +14,7 @@ export interface Navbar {
 export const initialNavbarState: Navbar = {
   visible: true,
   header: null,
-  loginVisible: true,
   searchVisible: true,
-  settingsVisible: true,
   searchText: null,
   leftItems: [],
   rightItems: [],

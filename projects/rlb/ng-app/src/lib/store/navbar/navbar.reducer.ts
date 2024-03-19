@@ -7,9 +7,7 @@ export const navbarsFeature = createFeature({
   reducer: createReducer(
     initialNavbarState,
     on(NavbarActions.setVisible, (state, { visible }) => ({ ...state, visible })),
-    on(NavbarActions.setLoginVisible, (state, { visible }) => ({ ...state, loginVisible: visible })),
     on(NavbarActions.setSearchVisible, (state, { visible }) => ({ ...state, searchVisible: visible })),
-    on(NavbarActions.setSettingsVisible, (state, { visible }) => ({ ...state, settingsVisible: visible })),
     on(NavbarActions.setHeader, (state, { header }) => ({ ...state, header })),
     on(NavbarActions.setSearchText, (state, { text }) => ({ ...state, searchText: text })),
     on(NavbarActions.setLeftItems, (state, { items }) => ({ ...state, leftItems: items })),
@@ -21,4 +19,4 @@ export const navbarReducer = navbarsFeature.reducer;
 
 export const {
   selectNavbarState
-} = navbarsFeature;    
+} = navbarsFeature;
