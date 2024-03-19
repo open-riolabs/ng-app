@@ -47,7 +47,7 @@ export class KeycloakProfileService {
     });
   }
 
-  getDevices(): Observable<KeyCloakDevice> {
+  getDevices(): Observable<KeyCloakDevice[]> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
@@ -61,7 +61,7 @@ export class KeycloakProfileService {
   }
 
 
-  getCredentials(): Observable<KeycloakCredentials> {
+  getCredentials(): Observable<KeycloakCredentials[]> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
