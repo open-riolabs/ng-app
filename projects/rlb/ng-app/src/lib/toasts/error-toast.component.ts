@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RlbAppModule } from '@rlb/ng-app';
+import { RlbAppModule } from '../rlb-app.module';
 import { ToastData, ToastDirective, IToast } from '@rlb/ng-bootstrap';
 
 @Component({

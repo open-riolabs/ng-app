@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AuthConfiguration, BaseState, RLB_CFG_AUTH, authsFeatureKey } from "@rlb/ng-app";
+import { AuthConfiguration, BaseState, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
 import { EMPTY, Observable } from "rxjs";
 
 @Injectable({
