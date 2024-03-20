@@ -43,10 +43,6 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   @Input('modal-container-id') modalContainerId!: string;
   @Input('toast-container-ids') toastContainerIds!: string | string[];
 
-  async modalAppDialog() {
-    await this.appsService.chooseApp();
-  }
-
   get sidearVisible$() {
     return this.store.select(state => state[sidebarsFeatureKey].visible);
   }

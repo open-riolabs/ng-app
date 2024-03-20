@@ -8,22 +8,10 @@ import { UserAccountComponent } from './apps/user-account/user-account.component
 
 export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   const defaultRoutes: Routes = [
-    {
-      path: 'settings',
-      component: SettingsListComponent,
-    },
-    {
-      path: 'settings/core',
-      component: SettingsCoreComponent,
-    },
-    {
-      path: 'apps',
-      component: AppSelectorComponent,
-    },
-    {
-      path: 'account',
-      component: UserAccountComponent,
-    }
+    { path: 'settings', component: SettingsListComponent, },
+    { path: 'settings/general', component: SettingsCoreComponent, },
+    { path: 'apps', component: AppSelectorComponent, },
+    { path: 'account', component: UserAccountComponent, }
   ];
   if (config?.['content']?.path) {
     defaultRoutes.push({ path: config?.['content'].path, component: CmsContentComponent });

@@ -25,7 +25,13 @@ export class AppComponent {
         url: 'chat',
         icon: 'bi-chat',
         enabled: true,
-        auth: true
+        auth: true,
+        settings: {
+          title: 'Chat settings',
+          description: 'Chat settings description',
+          url: 'settings/chat',
+          icon: 'bi bi-gear'
+        }
       }
     }));
     store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
