@@ -56,7 +56,12 @@
         "created": "Created",
         "actions": "Actions",
         "update": "Update",
-        "delete": "Delete"
+        "delete": "Delete",
+        "noCredentials": "No credentials found for this section",
+        "addOTP": "Configure OTP",
+        "deleteTitle": "Delete credential",
+        "deleteHeader": "Delete credential confirmation",
+        "deleteMessage": "Are you sure you want to delete this credential?"
       }
     }
   },
@@ -69,7 +74,6 @@
     "support": {
       "title": "Support",
       "legal": "Legal",
-      "subscribe": "Subscribe to our newsletter",
       "name": "Name",
       "email": "Email",
       "subject": "Subject",

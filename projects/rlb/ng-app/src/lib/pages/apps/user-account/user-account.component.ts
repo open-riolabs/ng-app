@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { CommonModule, Location } from '@angular/common';
 import { KeycloakProfileService, KeycloakUser, KeycloakCredential, KeycloakSession } from '../../../auth/keycloak';
-import { EMPTY, Subscription, lastValueFrom, switchMap } from 'rxjs';
+import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
 import { AuthActions } from '../../../store/auth/auth.actions';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@rlb/ng-bootstrap';
@@ -57,7 +57,7 @@ export class UserAccountComponent implements OnInit, OnDestroy {
     this.store.dispatch(AuthActions.logout());
   }
 
-  async removeCredential(id: string) {
+  async removeCredential(type: string, id: string) {
     return await lastValueFrom(this.modalService.openConfirmModal(
       this.languageService.translate("core.account.credentials.deleteTitle"),
       this.languageService.translate("core.account.credentials.deleteMessage"),
@@ -65,7 +65,13 @@ export class UserAccountComponent implements OnInit, OnDestroy {
       this.languageService.translate("common.yes"),
       this.languageService.translate("common.cancel")).pipe(switchMap((result) => {
         if (result) {
-          return this.keycloakProfileService.removeCredential(id);
+          return this.keycloakProfileService.removeCredential(id).pipe(tap(() => {
+            const meta = this.keycloakCredentials.find((c) => c.type === type)?.userCredentialMetadatas
+            const idx = meta?.findIndex((m) => m.credential.id === id)
+            if (meta && idx !== undefined && idx !== -1) {
+              meta.splice(idx, 1);
+            }
+          }));
         }
         return EMPTY;
       })));
@@ -73,5 +79,13 @@ export class UserAccountComponent implements OnInit, OnDestroy {
 
   async updateProfile() {
     return await lastValueFrom(this.keycloakProfileService.updateUserProfile(this.keyCloakUser));
+  }
+
+  updatePassword() {
+    this.keycloakProfileService.updatePassword();
+  }
+
+  configureOTP() {
+    this.keycloakProfileService.configureOTP();
   }
 }

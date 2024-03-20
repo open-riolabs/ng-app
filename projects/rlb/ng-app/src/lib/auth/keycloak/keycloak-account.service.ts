@@ -4,6 +4,8 @@ import { Store } from "@ngrx/store";
 import { AuthConfiguration, BaseState, ErrorManagementService, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
 import { EMPTY, Observable, map } from "rxjs";
 import { KeycloakUser, KeycloakDevice, KeycloakCredential, KeycloakSession } from "./";
+import { AuthenticationService } from '../services/auth.service';
+import { OidcSecurityService } from "angular-auth-oidc-client";
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,9 @@ export class KeycloakProfileService {
     @Inject(RLB_CFG_AUTH) @Optional() private authOptions: AuthConfiguration,
     private http: HttpClient,
     private readonly store: Store<BaseState>,
-    private readonly errorManagementService: ErrorManagementService,) { }
+    private readonly errorManagementService: ErrorManagementService,
+    private readonly oidcSecurityService: OidcSecurityService,
+    @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration) { }
 
   getUserProfile(): Observable<KeycloakUser> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
@@ -96,5 +100,21 @@ export class KeycloakProfileService {
       },
     })
       .pipe(this.errorManagementService.manageUI('error', 'dialog'));
+  }
+
+  configureOTP() {
+    return this.oidcSecurityService.authorize(this.authConfig?.configId, {
+      customParams: {
+        kc_action: "CONFIGURE_TOTP"
+      }
+    })
+  }
+
+  updatePassword() {
+    return this.oidcSecurityService.authorize(this.authConfig?.configId, {
+      customParams: {
+        kc_action: "UPDATE_PASSWORD"
+      }
+    })
   }
 }

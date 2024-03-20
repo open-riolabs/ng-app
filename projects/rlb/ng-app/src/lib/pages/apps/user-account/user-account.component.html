@@ -3,6 +3,9 @@
     <h3>{{ 'core.account.title' | translate}}</h3>
     <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y"
       style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
+    <button rlb-button outline size="sm" class="position-absolute end-0 top-50 translate-middle-y" (click)="updateProfile()">
+      <i class="bi bi-floppy"></i>
+    </button>
   </div>
   <rlb-list class="settings" *ngIf="keyCloakUser">
     <rlb-list-item class="settings-item">
@@ -58,7 +61,70 @@
       </div>
     </rlb-list-item>
   </rlb-list>
-  <div class="container text-center position-relative my-3">
+  <div class="container text-center position-relative mt-5 mb-2">
+    <h3>{{ 'core.account.credentials.title' | translate}}</h3>
+  </div>
+  <ng-container *ngFor="let type of keycloakCredentials">
+    <div class="container position-relative my-3">
+      <h5>{{ ('core.account.credentials.'+type?.type) | translate }}</h5>
+      <button *ngIf="type.type === 'otp'" rlb-button size="sm" class="position-absolute end-0 top-50 translate-middle-y"
+        (click)="configureOTP()">
+        {{ 'core.account.credentials.addOTP' | translate}}
+      </button>
+    </div>
+    <rlb-list class="settings mb-5">
+      <rlb-list-item class="settings-item" *ngFor="let cred of type.userCredentialMetadatas">
+        <div class="row">
+          <div class="col-12">
+            <dl class="row signed-in-device-grid">
+              <div class="col-md-1">
+                <i class="bi bi-key" style="font-size: 35px;"></i>
+              </div>
+              <div class="col-md-5">
+                <dt>
+                  <span class="text-muted">
+                    {{ 'core.account.credentials.name' | translate }}
+                  </span>
+                </dt>
+                <dd>{{cred.credential.userLabel || cred.credential.type}}</dd>
+              </div>
+              <div class="col-md-4">
+                <dt>
+                  <span class="text-muted">
+                    {{'core.account.credentials.created' | translate}}
+                  </span>
+                </dt>
+                <dd>{{cred.credential.createdDate | date:'dd:MM:yyyy HH:mm' }}</dd>
+              </div>
+              <div class="col-md-2">
+                <dt><span class="text-muted">{{'core.account.credentials.actions' |
+                    translate}}</span></dt>
+                <dd>
+                  <button *ngIf="type.removeable" rlb-button class="w-100" color="danger"
+                    (click)="removeCredential(type.type, cred.credential.id)">
+                    <i class="bi bi-trash"></i>
+                    {{ 'core.account.credentials.delete' | translate}}
+                  </button>
+                  <button *ngIf="!type.removeable" rlb-button class="w-100" outline (click)="updatePassword()">
+                    <i class="bi bi-trash"></i>
+                    {{ 'core.account.credentials.update' | translate}}
+                  </button>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </rlb-list-item>
+      <rlb-list-item *ngIf="type.userCredentialMetadatas.length === 0">
+        <div class="d-flex justify-content-center">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'core.account.credentials.noCredentials' | translate}}</h5>
+          </div>
+        </div>
+      </rlb-list-item>
+    </rlb-list>
+  </ng-container>
+  <div class="container text-center position-relative mt-5 mb-3">
     <h3>{{ 'core.account.session.title' | translate}}</h3>
   </div>
   <rlb-list class="settings">
@@ -82,85 +148,36 @@
             <div class=" col-md-1">
             </div>
             <div class=" col-md-2">
-              <dt class="col-sm-6 col-md-12"><span class="text-muted">{{ 'core.account.session.ip' | translate }}</span>
+              <dt><span class="text-muted">{{ 'core.account.session.ip' | translate }}</span>
               </dt>
-              <dd class="col-sm-6 col-md-12">{{d.ipAddress}}</dd>
+              <dd>{{d.ipAddress}}</dd>
             </div>
             <div class="col-md-2">
-              <dt class="col-sm-6 col-md-12">
+              <dt>
                 <span class="text-muted">
                   {{'core.account.session.lastAccess' | translate}}
                 </span>
               </dt>
-              <dd class="col-sm-6 col-md-12">{{d.lastAccess*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
+              <dd>{{d.lastAccess*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
             </div>
             <div class="col-md-2">
-              <dt class="col-sm-6 col-md-12"><span class="text-muted">{{'core.account.session.applications' |
+              <dt><span class="text-muted">{{'core.account.session.applications' |
                   translate}}</span></dt>
-              <dd class="col-sm-6 col-md-12">{{d.clientslist }} </dd>
+              <dd>{{d.clientslist }} </dd>
             </div>
             <div class="col-md-2">
-              <dt class="col-sm-6 col-md-12"><span class="text-muted">{{'core.account.session.started' |
+              <dt><span class="text-muted">{{'core.account.session.started' |
                   translate}}</span></dt>
-              <dd class="col-sm-6 col-md-12">{{d.started*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
+              <dd>{{d.started*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
             </div>
             <div class="col-md-2">
-              <dt class="col-sm-6 col-md-12"><span class="text-muted">{{'core.account.session.expires' |
+              <dt><span class="text-muted">{{'core.account.session.expires' |
                   translate}}</span></dt>
-              <dd class="col-sm-6 col-md-12">{{d.expires*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
+              <dd>{{d.expires*1000 | date:'dd/MM/yyyy - HH:mm'}}</dd>
             </div>
           </dl>
         </div>
       </div>
     </rlb-list-item>
   </rlb-list>
-  <div class="container text-center position-relative my-3">
-    <h3>{{ 'core.account.credentials.title' | translate}}</h3>
-  </div>
-  <ng-container *ngFor="let type of keycloakCredentials">
-    <h5 class="my-3">{{ ('core.account.credentials.'+type?.type) | translate }}</h5>
-    <rlb-list class="settings">
-      <rlb-list-item class="settings-item" *ngFor="let cred of type.userCredentialMetadatas">
-        <div class="row">
-          <div class="col-12">
-            <dl class="row signed-in-device-grid">
-              <div class=" col-md-1">
-                <i class="bi bi-key" style="font-size: 35px;"></i>
-              </div>
-              <div class=" col-md-4">
-                <dt class="col-sm-6 col-md-12">
-                  <span class="text-muted">
-                    {{ 'core.account.credentials.name' | translate }}
-                  </span>
-                </dt>
-                <dd class="col-sm-6 col-md-12">{{cred.credential.userLabel || cred.credential.type}}</dd>
-              </div>
-              <div class="col-md-4">
-                <dt class="col-sm-6 col-md-12">
-                  <span class="text-muted">
-                    {{'core.account.credentials.created' | translate}}
-                  </span>
-                </dt>
-                <dd class="col-sm-6 col-md-12">{{cred.credential.createdDate | date:'dd:MM:yyyy HH:mm' }}</dd>
-              </div>
-              <div class="col-md-3">
-                <dt class="col-sm-6 col-md-12"><span class="text-muted">{{'core.account.credentials.actions' |
-                    translate}}</span></dt>
-                <dd class="col-sm-6 col-md-12">
-                  <button *ngIf="type.removeable" rlb-button class="w-100" color="danger" (click)="removeCredential(cred.credential.id)">
-                    <i class="bi bi-trash"></i>
-                    {{ 'core.account.credentials.delete' | translate}}
-                  </button>
-                  <button *ngIf="!type.removeable" rlb-button class="w-100" outline>
-                    <i class="bi bi-trash"></i>
-                    {{ 'core.account.credentials.update' | translate}}
-                  </button>
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </rlb-list-item>
-    </rlb-list>
-  </ng-container>
 </div>

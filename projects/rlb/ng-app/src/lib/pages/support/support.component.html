@@ -1,170 +1,62 @@
-<div>
-  <div class="container">
-    <div class="row my-4" *ngIf="breadcrumb">
-      <div class="col-12">
-        <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
-      </div>
-    </div>
-    <div class="row my-4">
-      <div class="col-12">
-        <h1 class="text-center">{{"pages.support.title"| translate}}</h1>
-      </div>
-    </div>
-    <div class="row my-4">
-      <div class="col-12">
-        <rlb-tabs>
-          <rlb-tab target="news"> {{'pages.support.tab-news'| translate}}</rlb-tab>
-          <rlb-tab target="question"> {{'pages.support.tab-questions'| translate }}</rlb-tab>
-          <rlb-tab target="support"> {{'pages.support.tab-support'| translate }}</rlb-tab>
-        </rlb-tabs>
-        <rlb-tab-content>
-          <rlb-tab-pane id="news">
-            <div class="row mt-4">
-              <div class="col-12">
-                <p>{{ 'pages.support.title-news'| translate }}</p>
-              </div>
-            </div>
-            <form [formGroup]="subscriptionForm" class="needs-validation"
-              (ngSubmit)="subscribeNewsletter(subscriptionForm.value)">
-              <div class="row">
-                <div class="col-12">
-                  <rlb-input id="email" formControlName="email" placeholder="e-mail">
-                    <span after>
-                      {{ 'pages.support.email' | translate }}
-                    </span>
-                  </rlb-input>
-                </div>
-              </div>
-              <div class="row mt-2 mb-4">
-                <div class="col-12">
-                  <rlb-switch [label]="'pages.support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
-                </div>
-              </div>
-              <div class="row mb-4">
-                <div class="col-12">
-                  <button class="btn btn-primary" [disabled]="!subscriptionForm.valid" style="width: 100%;">
-                    {{'pages.support.subscribe' | translate}}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </rlb-tab-pane>
-          <rlb-tab-pane id="question">
-            <div class="row mt-4">
-              <div class="col-12">
-                <p>{{'pages.support.title-questions'| translate }}</p>
-              </div>
-            </div>
-            <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
-              <div class="row mb-3">
-                <div class="col-md-6 col-sm-12">
-                  <rlb-input id="name" formControlName="name" placeholder="name">
-                    <span after>
-                      {{ 'pages.support.name' | translate }}
-                    </span>
-                  </rlb-input>
-                </div>
-                <div class="col-md-6 col-sm-12">
-                  <rlb-input id="email" formControlName="email" placeholder="e-mail">
-                    <span after>
-                      {{ 'pages.support.email' | translate }}
-                    </span>
-                  </rlb-input>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-12">
-                  <rlb-input id="subject" formControlName="subject" placeholder="subject">
-                    <span after>
-                      {{ 'pages.support.subject' | translate }}
-                    </span>
-                  </rlb-input>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-12">
-                  <rlb-textarea [label]="'pages.support.message' | translate" id="message" formControlName="message"
-                    placeholder="message"></rlb-textarea>
-                </div>
-              </div>
-              <div class="row mt-2 mb-4">
-                <div class="col-12">
-                  <rlb-switch [label]="'pages.support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
-                </div>
-              </div>
-              <div class="row mb-4">
-                <div class="col-12">
-                  <button class="btn btn-primary" style="width: 100%;" [disabled]="!questionForm.valid">
-                    {{'pages.support.send' | translate}}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </rlb-tab-pane>
-          <rlb-tab-pane id="support">
-            <div class="row mt-4">
-              <div class="col-12">
-                <p>{{'pages.support.title-questions'| translate }}</p>
-              </div>
-            </div>
-            <form [formGroup]="questionForm" novalidate (ngSubmit)="sendQuestion(questionForm.value)">
-              <div class="row">
-                <div class="col-md-6 col-sm-12">
-                  <rlb-input id="name" formControlName="name" placeholder="name">
-                    <span after>
-                      {{ 'pages.support.name' | translate }}
-                    </span>
-                  </rlb-input>
-                </div>
-                <div class="col-md-6 col-sm-12">
-                  <div class="form-floating mb-3">
-                    <rlb-input id="email" formControlName="email" placeholder="e-mail">
-                      <span after>
-                        {{ 'pages.support.email' | translate }}
-                      </span>
-                    </rlb-input>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <rlb-input id="subject" formControlName="subject" placeholder="subject">
-                      <span after>
-                        {{ 'pages.support.subject' | translate }}
-                      </span>
-                    </rlb-input>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <rlb-textarea [label]="'pages.support.message' | translate" id="message" formControlName="message"
-                      placeholder="message">
-                      <span after>
-                        {{ 'pages.support.subject' | translate }}
-                      </span>
-                    </rlb-textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="row mt-2 mb-4">
-                <div class="col-12">
-                  <rlb-switch [label]="'pages.support.legal' | translate" id="legal" formControlName="legal"></rlb-switch>
-                </div>
-              </div>
-              <div class="row mb-4">
-                <div class="col-12">
-                  <button class="btn btn-primary" style="width: 100%;" [disabled]="!questionForm.valid">
-                    {{'pages.support.send' | translate}}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </rlb-tab-pane>
-        </rlb-tab-content>
-      </div>
-    </div>
+<div class="container mt-2 mb-5">
+  <div class="container text-center position-relative my-3">
+    <h3>{{ 'pages.support.title' | translate}}</h3>
+    <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y"
+      style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
   </div>
+  <form [formGroup]="supportForm" class="needs-validation" (ngSubmit)="sendSupport(supportForm.value)">
+    <rlb-list class="settings">
+      <rlb-list-item class="settings-item">
+        <div class="d-flex justify-content-between">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'pages.support.name' | translate}}</h5>
+          </div>
+          <div class="settings-control">
+            <rlb-input type="text" formControlName="name" />
+          </div>
+        </div>
+      </rlb-list-item>
+      <rlb-list-item class="settings-item">
+        <div class="d-flex justify-content-between">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'pages.support.email' | translate}}</h5>
+          </div>
+          <div class="settings-control">
+            <rlb-input type="text" formControlName="email" />
+          </div>
+        </div>
+      </rlb-list-item>
+      <rlb-list-item class="settings-item">
+        <div class="d-flex justify-content-between">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'pages.support.subject' | translate}}</h5>
+          </div>
+          <div class="settings-control">
+            <rlb-input type="text" formControlName="subject" />
+          </div>
+        </div>
+      </rlb-list-item>
+      <rlb-list-item class="settings-item">
+        <div class="d-flex justify-content-between">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'pages.support.message' | translate}}</h5>
+          </div>
+          <div class="settings-control">
+            <rlb-input type="text" formControlName="message" />
+          </div>
+        </div>
+      </rlb-list-item>
+      <rlb-list-item class="settings-item">
+        <div class="d-flex justify-content-between">
+          <div class="settings-text">
+            <h5 class="mt-1">{{ 'pages.support.legal' | translate}}</h5>
+            <span>{{ 'pages.support.infoPage' | translate}}</span>
+          </div>
+          <div class="settings-control">
+            <rlb-switch formControlName="legal" />
+          </div>
+        </div>
+      </rlb-list-item>
+    </rlb-list>
+  </form>
 </div>

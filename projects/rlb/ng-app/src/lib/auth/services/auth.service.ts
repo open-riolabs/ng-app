@@ -98,4 +98,8 @@ export class AuthenticationService {
   public get refreshToken$(): Observable<string | undefined> {
     return this.oidcSecurityService.getRefreshToken()
   }
+
+  public get oidc(): OidcSecurityService {
+    return this.oidcSecurityService
+  }
 }
