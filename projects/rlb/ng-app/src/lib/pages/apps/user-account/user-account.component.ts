@@ -4,10 +4,10 @@ import { CommonModule, Location } from '@angular/common';
 import { KeycloakProfileService, KeycloakUser, KeycloakCredential, KeycloakSession } from '../../../auth/keycloak';
 import { EMPTY, Subscription, lastValueFrom, switchMap } from 'rxjs';
 import { AuthActions } from '../../../store/auth/auth.actions';
-import { BaseState } from '@rlb/ng-app';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@rlb/ng-bootstrap';
 import { LanguageService } from '../../../services/i18n/language.service';
+import { BaseState } from '../../../../public-api';
 
 @Component({
   selector: 'rlb-user-account',
