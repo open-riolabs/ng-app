@@ -1,4 +1,4 @@
-export interface KeycloakCredentials {
+export interface KeycloakCredential {
   type: string
   category: string
   displayName: string
@@ -6,15 +6,15 @@ export interface KeycloakCredentials {
   iconCssClass: string
   updateAction?: string
   removeable: boolean
-  userCredentialMetadatas: UserCredentialMetadata[]
+  userCredentialMetadatas: KeycloakUserCredentialMetadata[]
   createAction?: string
 }
 
-export interface UserCredentialMetadata {
-  credential: Credential
+export interface KeycloakUserCredentialMetadata {
+  credential: _KeycloakCredential
 }
 
-export interface Credential {
+export interface _KeycloakCredential {
   id: string
   type: string
   userLabel: string

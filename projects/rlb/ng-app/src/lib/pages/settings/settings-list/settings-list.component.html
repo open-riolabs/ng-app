@@ -12,4 +12,20 @@
       [line-1]="setting.title | translate" [routerLink]="setting.url" [line-2]="setting.description | translate">
     </rlb-list-item-image>
   </rlb-list>
+
+  <rlb-list class="mt-5"
+    *ngIf="pages?.['privacy']?.path || pages?.['cookies']?.path || pages?.['terms']?.path || pages?.['support']?.path">
+    <rlb-list-item-image icon="bi bi-shield-check" *ngIf="pages?.['privacy']?.path" [avatar-size]="18"
+      [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">
+    </rlb-list-item-image>
+    <rlb-list-item-image icon="bi bi bi-cookie" *ngIf="pages?.['cookies']?.path" [avatar-size]="18"
+      [line-1]="'core.settings.cookies' | translate" [routerLink]="'/cookies'">
+    </rlb-list-item-image>
+    <rlb-list-item-image icon="bi bi-vector-pen" *ngIf="pages?.['terms']?.path" [avatar-size]="18"
+      [line-1]="'core.settings.legal' | translate" [routerLink]="'/terms'">
+    </rlb-list-item-image>
+    <rlb-list-item-image icon="bi bi-chat-quote" *ngIf="pages?.['support']?.path" [avatar-size]="18"
+      [line-1]=" 'core.settings.support' | translate" [routerLink]="'/support'">
+    </rlb-list-item-image>
+  </rlb-list>
 </div>

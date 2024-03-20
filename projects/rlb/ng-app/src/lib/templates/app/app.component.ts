@@ -98,9 +98,4 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   login(): void {
     this.store.dispatch(AuthActions.login());
   }
-
-  logout(): void {
-    this.store.dispatch(AuthActions.logout());
-  }
-
 }

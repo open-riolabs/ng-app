@@ -1,11 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AuthConfiguration, BaseState, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
-import { EMPTY, Observable } from "rxjs";
-import { KeyCloakUser } from "./keycloack-user";
-import { KeyCloakDevice } from "./keycloak-device";
-import { KeycloakCredentials } from "./keycloak-credentials";
+import { AuthConfiguration, BaseState, ErrorManagementService, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
+import { EMPTY, Observable, map } from "rxjs";
+import { KeycloakUser, KeycloakDevice, KeycloakCredential, KeycloakSession } from "./";
 
 @Injectable({
   providedIn: 'root',
@@ -19,9 +17,10 @@ export class KeycloakProfileService {
   constructor(
     @Inject(RLB_CFG_AUTH) @Optional() private authOptions: AuthConfiguration,
     private http: HttpClient,
-    private readonly store: Store<BaseState>,) { }
+    private readonly store: Store<BaseState>,
+    private readonly errorManagementService: ErrorManagementService,) { }
 
-  getUserProfile(): Observable<KeyCloakUser> {
+  getUserProfile(): Observable<KeycloakUser> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
@@ -31,10 +30,11 @@ export class KeycloakProfileService {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
+      .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 
-  updateUserProfile(data: KeyCloakUser): Observable<void> {
+  updateUserProfile(data: KeycloakUser): Observable<void> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
@@ -44,24 +44,33 @@ export class KeycloakProfileService {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
+      .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 
-  getDevices(): Observable<KeyCloakDevice[]> {
+  getDevices(): Observable<KeycloakSession[]> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
     const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
     const url = `${this.baseUrl}/sessions/devices`;
-    return this.http.get<any>(url, {
+    return this.http.get<KeycloakDevice[]>(url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    }).pipe(
+      map((devices) => devices.map((device) => device.sessions.map((session) => {
+        session.os = device.os;
+        session.osVersion = device.osVersion;
+        session.device = device.device;
+        session.mobile = device.mobile;
+        session.clientslist = session.clients.map((client) => client.clientName).join(', ');
+        return session;
+      })).flat()),
+      this.errorManagementService.manageUI('error', 'dialog'));
   }
 
-
-  getCredentials(): Observable<KeycloakCredentials[]> {
+  getCredentials(): Observable<KeycloakCredential[]> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
       return EMPTY;
     }
@@ -71,6 +80,21 @@ export class KeycloakProfileService {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
+      .pipe(this.errorManagementService.manageUI('error', 'dialog'));
+  }
+
+  removeCredential(id: string): Observable<void> {
+    if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+      return EMPTY;
+    }
+    const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
+    const url = `${this.baseUrl}/credentials/${id}`;
+    return this.http.delete<void>(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 }

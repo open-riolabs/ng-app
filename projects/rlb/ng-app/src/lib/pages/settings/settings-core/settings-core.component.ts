@@ -7,7 +7,7 @@ import { CommonModule, Location } from '@angular/common';
   standalone: true,
   imports: [RlbAppModule, CommonModule],
   templateUrl: './settings-core.component.html',
-  styleUrl: './settings-core.component.css'
+  styleUrl: './settings-core.component.scss'
 })
 export class SettingsCoreComponent {
   constructor(private _location: Location) { }

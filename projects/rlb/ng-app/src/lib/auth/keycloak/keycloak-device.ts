@@ -1,25 +1,30 @@
-export interface KeyCloakDevice {
+export interface KeycloakDevice {
   os: string
   osVersion: string
   device: string
   lastAccess: number
   current: boolean
-  sessions: Session[]
+  sessions: KeycloakSession[]
   mobile: boolean
 }
 
-export interface Session {
+export interface KeycloakSession {
   id: string
   ipAddress: string
   started: number
-  lastAccess: number
   expires: number
-  clients: Client[]
+  clients: KeycloakClient[]
   browser: string
+  os: string
+  osVersion: string
+  device: string
+  lastAccess: number
   current: boolean
+  mobile: boolean,
+  clientslist: string
 }
 
-export interface Client {
+export interface KeycloakClient {
   clientId: string
   clientName: string
   userConsentRequired: boolean

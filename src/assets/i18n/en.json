@@ -21,11 +21,44 @@
       "button": "Apps",
       "title": "Riolabs Apps"
     },
-    "settings": "Settings",
-    "user": "User",
-    "login": "Login",
-    "logout": "Logout",
-    "profile": "Profile"
+    "settings": {
+      "title": "Settings",
+      "generalTitle": "General settings",
+      "generalDescription": "Manage general settings of applications",
+      "support": "Support",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "legal": "Legal"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "changePassword": "Change password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "login": "Login",
+      "logout": "Logout",
+      "username": "Username",
+      "session": {
+        "title": "Sessions",
+        "current": "Current session",
+        "ip": "IP",
+        "applications": "Applications",
+        "lastAccess": "Last access",
+        "started": "Started",
+        "expires": "Expires"
+      },
+      "credentials": {
+        "title": "Credentials",
+        "password": "Password",
+        "otp": "One-time password",
+        "name": "Name",
+        "created": "Created",
+        "actions": "Actions",
+        "update": "Update",
+        "delete": "Delete"
+      }
+    }
   },
   "pages": {
     "notFound": {

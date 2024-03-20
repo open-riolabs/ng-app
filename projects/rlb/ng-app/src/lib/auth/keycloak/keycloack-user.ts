@@ -1,4 +1,4 @@
-export interface KeyCloakUser {
+export interface KeycloakUser {
   attributes: {};
   email: string;
   emailVerified: boolean,
