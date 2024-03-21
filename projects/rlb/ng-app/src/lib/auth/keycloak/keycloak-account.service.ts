@@ -4,7 +4,6 @@ import { Store } from "@ngrx/store";
 import { AuthConfiguration, BaseState, ErrorManagementService, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
 import { EMPTY, Observable, map } from "rxjs";
 import { KeycloakUser, KeycloakDevice, KeycloakCredential, KeycloakSession } from "./";
-import { AuthenticationService } from '../services/auth.service';
 import { OidcSecurityService } from "angular-auth-oidc-client";
 
 @Injectable({
