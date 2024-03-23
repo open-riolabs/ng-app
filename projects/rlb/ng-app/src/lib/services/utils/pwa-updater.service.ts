@@ -3,6 +3,7 @@ import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter, map, switchMap } from 'rxjs';
 import { ModalService } from '@rlb/ng-bootstrap';
 import { LanguageService } from '../i18n/language.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,8 +34,8 @@ export class PwaUpdaterService {
     return await this.updates.checkForUpdate();
   }
 
-  async checkWithDialog() {
-    this.updates.versionUpdates
+  checkWithDialog() {
+    return this.updates.versionUpdates
       .pipe(
         filter((evt): evt is VersionReadyEvent => {
           const result = evt.type === 'VERSION_READY';
