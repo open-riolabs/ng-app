@@ -63,6 +63,13 @@
         "deleteHeader": "Delete credential confirmation",
         "deleteMessage": "Are you sure you want to delete this credential?"
       }
+    },
+    "pwa": {
+      "newVersionAvailable": "New version available",
+      "updateNow": "Update now",
+      "updateMessage": "A new version of the application is available. Do you want to update it now?",
+      "later": "Later",
+      "update": "Update"
     }
   },
   "pages": {
