@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { CommonModule, Location } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { AppContextActions, BaseState, LanguageService, appContextFeatureKey } from '@rlb/ng-app';
+import { AppContextActions, BaseState, LanguageService, appContextFeatureKey } from '../../../../public-api';
 
 @Component({
   selector: 'rlb-settings-core',
