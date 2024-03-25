@@ -6,7 +6,7 @@ import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
-import { AuthActions, BaseState, NavbarActions, SidebarActions, authsFeatureKey } from '../../../public-api';
+import { AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
 
 @Component({
   selector: 'rlb-app',
@@ -93,6 +93,10 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   get navRightItems$() {
     return this.store.select(state => state[navbarsFeatureKey].rightItems);
+  }
+
+  get theme(){
+    return this.store.selectSignal(state => state[appContextFeatureKey].theme)();
   }
 
   login(): void {

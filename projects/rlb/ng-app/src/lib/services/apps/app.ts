@@ -6,7 +6,7 @@ export interface AppItem {
   icon: string;
   enabled: boolean;
   auth: boolean;
-  settings: AppItemSettings;
+  settings?: AppItemSettings;
 }
 
 export interface AppItemSettings {

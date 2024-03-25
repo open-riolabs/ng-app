@@ -32,7 +32,7 @@
   </ng-container>
   <div class="rlb-right-panel">
     <ng-container *ngIf="navVisible$ | async">
-      <rlb-navbar color="light" expand="lg" *ngIf="env.navbarDisabled !== true">
+      <rlb-navbar [color]="theme" expand="lg" *ngIf="env.navbarDisabled !== true" class="border-bottom">
         <a *ngIf="sidearVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
           toggle-target="sidebar" [outline]="true">
           <span class="navbar-toggler-icon"></span>

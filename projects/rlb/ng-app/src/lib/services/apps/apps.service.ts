@@ -2,22 +2,23 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { BaseState } from '../../../public-api';
+import { AppItemSettings } from './app';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppsService {
 
-  get apps(){
+  get apps() {
     return this.store.selectSignal(state => state[appContextFeatureKey].apps)();
   }
 
-  get currentApp(){
+  get currentApp() {
     return this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
   }
 
-  get settings(){
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps?.map(o=> o.settings))();
+  get settings(): AppItemSettings[] {
+    return this.store.selectSignal(state => state[appContextFeatureKey].apps?.filter(o => !!o.settings).map(o => (o.settings as AppItemSettings)))();
   }
 
   constructor(

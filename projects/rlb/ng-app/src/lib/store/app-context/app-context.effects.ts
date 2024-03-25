@@ -1,18 +1,19 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { concatMap, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
-import { Store } from '@ngrx/store';
-import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { LanguageService } from '../../services';
 
 @Injectable()
 export class AppContextEffects {
-
+  private renderer: Renderer2;
   setLanguage$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AppContextActions.setLanguage),
       tap(({ language }) => this.languageService.language = language),
+      tap(({ language }) => {
+        this.renderer.setAttribute(document.documentElement, 'lang', language);
+      }),
       map(({ language }) => AppContextActionsInternal.setLanguage({ language })),
     );
   });
@@ -25,11 +26,20 @@ export class AppContextEffects {
     );
   });
 
+  setTheme$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AppContextActions.setTheme),
+      tap(({ theme }) => {
+        this.renderer.setAttribute(document.documentElement, 'data-bs-theme', theme);
+      }),
+      map(({ theme }) => AppContextActionsInternal.setTheme({ theme })),
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private languageService: LanguageService,
-    store: Store,
-    @Inject(RLB_CFG_ENV) envConfig: EnvironmentConfiguration) {
-
+    rendererFactory: RendererFactory2) {
+    this.renderer = rendererFactory.createRenderer(null, null);
   }
 }

@@ -39,7 +39,6 @@ export class PwaUpdaterService {
       .pipe(
         filter((evt): evt is VersionReadyEvent => {
           const result = evt.type === 'VERSION_READY';
-          console.log(evt);
           return result;
         }),
         switchMap(() =>

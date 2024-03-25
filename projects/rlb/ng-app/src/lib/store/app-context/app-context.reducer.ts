@@ -16,6 +16,7 @@ export const appFeature = createFeature({
     on(AppContextActions.removeApp, (state, { appId }) => ({ ...state, apps: state.apps.filter(a => a.id !== appId) })),
     on(AppContextActionsInternal.setLanguage, (state, { language }) => ({ ...state, language })),
     on(AppContextActionsInternal.setSupportedLanguages, (state, { supportedLanguages }) => ({ ...state, supportedLanguages })),
+    on(AppContextActionsInternal.setTheme, (state, { theme }) => ({ ...state, theme }))
   )
 });
 

@@ -35,6 +35,7 @@ export class AppComponent {
       }
     }));
     store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+    //store.dispatch(AppContextActions.setTheme({ theme: 'dark' }));
   }
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];

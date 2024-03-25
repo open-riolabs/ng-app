@@ -6,6 +6,7 @@ export interface AppContext {
   apps: AppItem[]
   currentApp: AppItem | null | undefined,
   language: string | null,
+  theme: 'light' | 'dark',
   supportedLanguages: string[]
 }
 
@@ -13,7 +14,8 @@ export const initialAppContextState: AppContext = {
   apps: [],
   currentApp: null,
   language: null,
-  supportedLanguages: ['en']
+  supportedLanguages: ['en'],
+  theme: 'light'
 }
 
 export interface AppState { [appContextFeatureKey]: AppContext }
