@@ -1,0 +1,11 @@
+.settings {
+  .settings-item {
+    .settings-control {
+      width: 300px;
+      ::ng-deep rlb-switch .form-check {
+        display: block;
+        margin-left: auto;
+      }
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "save": "保存",
+    "delete": "削除",
+    "add": "追加",
+    "edit": "編集",
+    "name": "名前",
+    "description": "説明",
+    "search": "検索",
+    "searching": "検索中...",
+    "noResults": "結果なし",
+    "loading": "読み込み中...",
+    "yes": "はい",
+    "no": "いいえ"
+  },
+  "core": {
+    "apps": {
+      "button": "アプリ",
+      "title": "Riolabsアプリ"
+    },
+    "settings": {
+      "title": "設定",
+      "generalTitle": "一般設定",
+      "generalDescription": "アプリケーションの一般設定を管理します",
+      "support": "サポート",
+      "privacy": "プライバシー",
+      "cookies": "クッキー",
+      "legal": "法的"
+    },
+    "account": {
+      "title": "アカウント",
+      "email": "メール",
+      "changePassword": "パスワード変更",
+      "firstName": "名",
+      "lastName": "姓",
+      "login": "ログイン",
+      "logout": "ログアウト",
+      "username": "ユーザー名",
+      "session": {
+        "title": "セッション",
+        "current": "現在のセッション",
+        "ip": "IP",
+        "applications": "アプリケーション",
+        "lastAccess": "最終アクセス",
+        "started": "開始",
+        "expires": "有効期限"
+      },
+      "credentials": {
+        "title": "資格情報",
+        "password": "パスワード",
+        "otp": "ワンタイムパスワード",
+        "name": "名前",
+        "created": "作成日",
+        "actions": "アクション",
+        "update": "更新",
+        "delete": "削除",
+        "noCredentials": "このセクションには資格情報が見つかりません",
+        "addOTP": "OTPの設定",
+        "deleteTitle": "資格情報の削除",
+        "deleteHeader": "資格情報の削除確認",
+        "deleteMessage": "この資格情報を削除してもよろしいですか？"
+      }
+    },
+    "pwa": {
+      "newVersionAvailable": "新しいバージョンが利用可能です",
+      "updateNow": "今すぐ更新",
+      "updateMessage": "アプリの新しいバージョンが利用可能です。今すぐ更新しますか？",
+      "later": "後で",
+      "update": "更新"
+    }
+  },
+  "pages": {
+    "notFound": {
+      "title": "ページが見つかりません",
+      "content": "お探しのページは存在しません。",
+      "button": "ホームページに移動する"
+    },
+    "support": {
+      "title": "サポート",
+      "legal": "法的",
+      "name": "名前",
+      "email": "メール",
+      "subject": "件名",
+      "message": "メッセージ",
+      "send": "送信",
+      "success": "メッセージが正常に送信されました。",
+      "error": "メッセージの送信中にエラーが発生しました。",
+      "infoPage": "詳細については、弊社の法的ページをご覧ください。"
+    }
+  }
+}

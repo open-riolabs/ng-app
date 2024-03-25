@@ -66,7 +66,6 @@ export class LanguageService {
 
   public translateAsync(key: string | Array<string>, interpolateParams?: Object) {
     return this.translateService.get(key, interpolateParams)
-    //return this.translateService.getStreamOnTranslationChange(key, interpolateParams)
   }
 
   public get languageChanged$() {

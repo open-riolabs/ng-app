@@ -35,6 +35,11 @@ export class AppComponent {
       }
     }));
     store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+    this.store.dispatch(
+      AppContextActions.setSupportedLanguages({
+        supportedLanguages: ['en', 'it', 'ja'],
+      }),
+    );
     //store.dispatch(AppContextActions.setTheme({ theme: 'dark' }));
   }
 
