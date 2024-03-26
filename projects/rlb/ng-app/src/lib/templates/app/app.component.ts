@@ -6,7 +6,8 @@ import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
-import { AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
+import { AppContextActions, AppTheme, AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
+import { AppStorageService } from '../../services/utils/app-storage.service';
 
 @Component({
   selector: 'rlb-app',
@@ -28,7 +29,13 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
-    private appsService: AppsService) { }
+    private appsService: AppsService,
+    private storage: AppStorageService
+  ) {
+    const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
+    this.store.dispatch(AppContextActions.setTheme({ theme }));
+    this.store.dispatch(AppContextActions.setLanguage({ language: this.storage.readLocal('locale') || 'en' }));
+  }
 
   ngOnDestroy(): void {
     this.navbarItemsSubscription?.unsubscribe();
@@ -95,7 +102,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].rightItems);
   }
 
-  get theme(){
+  get theme() {
     return this.store.selectSignal(state => state[appContextFeatureKey].theme)();
   }
 

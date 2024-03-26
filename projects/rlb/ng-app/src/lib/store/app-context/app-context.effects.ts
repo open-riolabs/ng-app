@@ -3,6 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, tap } from 'rxjs/operators';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
 import { LanguageService } from '../../services';
+import { AppStorageService } from '../../services/utils/app-storage.service';
 
 @Injectable()
 export class AppContextEffects {
@@ -14,6 +15,7 @@ export class AppContextEffects {
       tap(({ language }) => {
         this.renderer.setAttribute(document.documentElement, 'lang', language);
       }),
+      tap(({ language }) => { this.store.writeLocal('locale', language); }),
       map(({ language }) => AppContextActionsInternal.setLanguage({ language })),
     );
   });
@@ -32,6 +34,7 @@ export class AppContextEffects {
       tap(({ theme }) => {
         this.renderer.setAttribute(document.documentElement, 'data-bs-theme', theme);
       }),
+      tap(({ theme }) => { this.store.writeLocal('theme', theme); }),
       map(({ theme }) => AppContextActionsInternal.setTheme({ theme })),
     );
   });
@@ -39,7 +42,9 @@ export class AppContextEffects {
   constructor(
     private actions$: Actions,
     private languageService: LanguageService,
-    rendererFactory: RendererFactory2) {
+    rendererFactory: RendererFactory2,
+    private readonly store: AppStorageService
+  ) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 }

@@ -2,11 +2,13 @@ import { AppItem } from "../../services/apps/app";
 
 export const appContextFeatureKey = 'app';
 
+export type AppTheme = 'light' | 'dark';
+
 export interface AppContext {
   apps: AppItem[]
   currentApp: AppItem | null | undefined,
   language: string | null,
-  theme: 'light' | 'dark',
+  theme: AppTheme,
   supportedLanguages: string[]
 }
 
