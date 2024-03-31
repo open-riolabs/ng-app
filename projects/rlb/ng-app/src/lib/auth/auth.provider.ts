@@ -24,7 +24,7 @@ export function provideRlbCodeBrowserAuth(auth: AuthConfiguration | undefined): 
         autoUserInfo: true,
         renewUserInfoAfterTokenRenew: true,
         renewTimeBeforeTokenExpiresInSeconds: 30,
-        logLevel: isDevMode() ? LogLevel.Debug : LogLevel.None,
+        logLevel: auth.debug ? LogLevel.Debug : LogLevel.Error,
       }
     }),
     { provide: RLB_CFG_AUTH, useValue: auth },

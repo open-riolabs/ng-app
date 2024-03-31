@@ -37,6 +37,7 @@ export interface AuthConfiguration {
   scope: string;
   showDebugInformation: boolean;
   allowedUrls: string[];
+  debug: boolean;
 }
 
 export interface InternationalizationConfiguration {
