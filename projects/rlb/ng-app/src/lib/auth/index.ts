@@ -7,3 +7,4 @@ export * from './token-oauth-interceptor';
 export * from './user-claims'
 export * from './user-info'
 export * from './auth.provider'
+export * from './keycloak'
