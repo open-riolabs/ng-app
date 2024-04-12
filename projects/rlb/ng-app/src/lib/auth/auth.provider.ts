@@ -23,6 +23,7 @@ export function provideRlbCodeBrowserAuth(auth: AuthConfiguration | undefined): 
         useRefreshToken: true,
         autoUserInfo: true,
         renewUserInfoAfterTokenRenew: true,
+        ignoreNonceAfterRefresh: true,
         renewTimeBeforeTokenExpiresInSeconds: 30,
         logLevel: auth.debug ? LogLevel.Debug : LogLevel.Error,
       }
