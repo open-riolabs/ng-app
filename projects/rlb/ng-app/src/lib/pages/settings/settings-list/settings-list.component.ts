@@ -18,8 +18,8 @@ export class SettingsListComponent {
     private appsService: AppsService,
     @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration) { }
 
-  get settings() {
-    return this.appsService.settings;
+  get apps() {
+    return this.appsService.apps;
   }
 
   backClicked() {

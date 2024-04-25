@@ -1,11 +1,17 @@
 <div class="container mt-2">
   <div class="container text-center position-relative my-3">
     <h3>{{ 'core.apps.title' | translate}}</h3>
-    <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y cur" style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
+    <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y cur"
+      style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
   </div>
+
   <rlb-list>
-    <rlb-list-item-image *ngFor="let app of apps" [icon]="app.icon" [avatar-size]="35" [line-1]="app.name | translate"
-      [line-2]="app.description | translate" [routerLink]="'/'+app.url">
-    </rlb-list-item-image>
+    <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
+      <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.core">
+        <rlb-list-item-image [icon]="app.core.icon" [avatar-size]="35" [line-1]="app.core.title| translate"
+          [line-2]="app.core.description| translate" [routerLink]="'/'+app.core.url">
+        </rlb-list-item-image>
+      </ng-container>
+    </ng-container>
   </rlb-list>
 </div>

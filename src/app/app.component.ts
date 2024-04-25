@@ -20,17 +20,20 @@ export class AppComponent {
     store.dispatch(AppContextActions.addApp({
       app: {
         id: 'chat',
-        name: 'Chat',
-        description: 'Chat with other users',
-        url: 'chat',
-        icon: 'bi-chat',
         enabled: true,
-        auth: true,
+        core: {
+          title: 'Chat',
+          description: 'Chat with other users',
+          url: 'chat',
+          icon: 'bi-chat',
+          auth: true
+        },
         settings: {
           title: 'Chat settings',
           description: 'Chat settings description',
           url: 'settings/chat',
-          icon: 'bi bi-gear'
+          icon: 'bi bi-gear',
+          auth: true
         }
       }
     }));

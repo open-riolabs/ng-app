@@ -17,10 +17,6 @@ export class AppsService {
     return this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
   }
 
-  get settings(): AppItemSettings[] {
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps?.filter(o => !!o.settings).map(o => (o.settings as AppItemSettings)))();
-  }
-
   constructor(
     private store: Store<BaseState>
   ) { }

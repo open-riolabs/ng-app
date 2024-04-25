@@ -1,12 +1,16 @@
 export interface AppItem {
   id: string;
-  name: string;
+  enabled: boolean;
+  core?: AppDetails;
+  settings?: AppItemSettings;
+}
+
+export interface AppDetails {
+  title: string;
   description: string;
   url: string;
   icon: string;
-  enabled: boolean;
   auth: boolean;
-  settings?: AppItemSettings;
 }
 
 export interface AppItemSettings {
@@ -14,4 +18,5 @@ export interface AppItemSettings {
   description: string;
   url: string;
   icon: string;
+  auth: boolean;
 }

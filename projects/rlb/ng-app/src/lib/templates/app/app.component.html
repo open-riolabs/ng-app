@@ -39,12 +39,14 @@
         </a>
         <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
         <rlb-navbar-form *ngIf="navSearchVisible$ | async">
-          <rlb-input class="mx-2" type="search" placeholder="Search" [(ngModel)]="navSearchText"
-            (keyup.enter)="setNavbarSearchText(navSearchText)">
-            <button rlb-button outline after class="me-2" type="submit" (click)="setNavbarSearchText(navSearchText)">
+          <rlb-input-group class="mx-2 me-2" validate>
+            <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
+              (keyup.enter)="setNavbarSearchText(navSearchText)" name="search">
+            </rlb-input>
+            <button rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)">
               <i class="bi bi-search"></i>
             </button>
-          </rlb-input>
+          </rlb-input-group>
         </rlb-navbar-form>
         <rlb-navbar-items>
           <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">

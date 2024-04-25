@@ -8,20 +8,20 @@
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.settings.generalTheme' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.settings.generalTheme' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-switch [(ngModel)]="darkMode" class="mt-2" />
+          <rlb-switch size="small" [(ngModel)]="darkMode" class="mt-2" />
         </div>
       </div>
     </rlb-list-item>
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.settings.generalLanguage' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.settings.generalLanguage' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-select [(ngModel)]="currentLanguage">
+          <rlb-select size="small" [(ngModel)]="currentLanguage">
             <rlb-option *ngFor="let l of languages" [value]="l.value">{{l.label}}</rlb-option>
           </rlb-select>
         </div>

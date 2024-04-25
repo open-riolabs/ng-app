@@ -8,9 +8,13 @@
     <rlb-list-item-image icon="bi bi-gear" [avatar-size]="35" [line-1]=" 'core.settings.generalTitle' | translate"
       [routerLink]="'/settings/general'" [line-2]=" 'core.settings.generalDescription' | translate">
     </rlb-list-item-image>
-    <rlb-list-item-image *ngFor="let setting of settings" [icon]="setting.icon" [avatar-size]="35"
-      [line-1]="setting.title | translate" [routerLink]="setting.url" [line-2]="setting.description | translate">
-    </rlb-list-item-image>
+    <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
+      <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.settings">
+        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35" [line-1]="app.settings.title| translate"
+          [line-2]="app.settings.description| translate" [routerLink]="'/'+app.settings.url">
+        </rlb-list-item-image>
+      </ng-container>
+    </ng-container>
   </rlb-list>
 
   <rlb-list class="mt-5"
