@@ -1,4 +1,5 @@
-import { EnvironmentProviders, Provider } from '@angular/core'
+import { EnvironmentProviders, Provider, isDevMode } from '@angular/core'
+import { provideRouter } from '@angular/router';
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
 import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb/ng-bootstrap';
@@ -9,10 +10,16 @@ import { authsFeature } from './lib/store/auth/auth.reducer'
 import { AuthEffects } from './lib/store/auth/auth.effects'
 import { navbarsFeature } from './lib/store/navbar/navbar.reducer'
 import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer'
+import { RLB_APPS } from './lib/store';
 import { appFeature } from './lib/store/app-context/app-context.reducer'
 import { AppContextEffects } from './lib/store/app-context/app-context.effects'
 import { ErrorModalComponent } from './lib/modals/error-modal.component';
 import { ToastComponent } from './lib/toasts/error-toast.component';
+import { getDefaultRoutes } from './lib/pages/shared.routes';
+import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
+import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
+import { provideServiceWorker } from '@angular/service-worker';
+import { AppDescriber } from './lib/services/apps/app-describer';
 
 export * from './lib/auth'
 export * from './lib/guards'
@@ -38,6 +45,13 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     provideState(sidebarsFeature),
     provideState(appFeature),
     provideEffects(AppContextEffects),
+    provideRouter(getDefaultRoutes(env.pages)),
+    provideRlbCodeBrowserOAuth(env.auth),
+    provideRlbI18n(env.i18n),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:15000',
+    }),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },
     { provide: RLB_CFG_CMS, useValue: env.cms },
@@ -61,4 +75,17 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
       multi: true,
     },
   ]
+}
+
+export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
+  const providers: (EnvironmentProviders | Provider)[] = [
+    { provide: RLB_APPS, useValue: app.info, multi: true },
+  ];
+  if (app.routes) {
+    providers.push(provideRouter(app.routes))
+  }
+  if (app.providers) {
+    providers.push(...app.providers)
+  }
+  return providers
 }

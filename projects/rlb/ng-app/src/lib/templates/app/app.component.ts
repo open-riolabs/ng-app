@@ -1,13 +1,14 @@
-import { Component, ContentChild, DoCheck, Inject, Input, OnDestroy, OnInit, Type } from '@angular/core';
+import { Component, Inject, Input, OnDestroy, OnInit, Type } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { NavigableItem } from '@rlb/ng-bootstrap';
-import { AppsService } from '../../services/apps/apps.service';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { AppContextActions, AppTheme, AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
 import { AppStorageService } from '../../services/utils/app-storage.service';
+import { Router } from '@angular/router';
+import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
 
 @Component({
   selector: 'rlb-app',
@@ -19,6 +20,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   private navbarItemsSubscription: Subscription | undefined;
   private sidebarItemsSubscription: Subscription | undefined;
   private sidebarFooterItemsSubscription: Subscription | undefined;
+  private swUpdateSubscription: Subscription | undefined;
   public navSearchText: string | null = null;
   public navbarItems: NavigableItem[] = [];
   public sidebarItems: NavigableItem[] = [];
@@ -29,8 +31,9 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
-    private appsService: AppsService,
-    private storage: AppStorageService
+    private storage: AppStorageService,
+    private readonly router: Router,
+    private readonly pwaUpdaterService: PwaUpdaterService,
   ) {
     const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
     this.store.dispatch(AppContextActions.setTheme({ theme }));
@@ -41,10 +44,20 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     this.navbarItemsSubscription?.unsubscribe();
     this.sidebarItemsSubscription?.unsubscribe();
     this.sidebarFooterItemsSubscription?.unsubscribe();
+    this.swUpdateSubscription?.unsubscribe();
   }
 
   ngOnInit(): void {
-
+    this.store
+      .select((state) => state[appContextFeatureKey].currentApp)
+      .subscribe((currentApp) => {
+        if (currentApp && currentApp.core) {
+          this.router.navigate([currentApp.core.url]);
+        }
+      });
+    this.swUpdateSubscription = this.pwaUpdaterService
+      .checkWithDialog()
+      .subscribe();
   }
 
   @Input('modal-container-id') modalContainerId!: string;

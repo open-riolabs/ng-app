@@ -28,7 +28,9 @@
       "support": "Supporto",
       "privacy": "Privacy",
       "cookies": "Cookie",
-      "legal": "Legale"
+      "legal": "Legale",
+      "status": "Stato",
+      "logger": "Logger"
     },
     "account": {
       "title": "Account",

@@ -1,12 +1,14 @@
-import { AppItem } from "../../services/apps/app";
+import { InjectionToken } from "@angular/core";
+import { AppInfo } from "../../services/apps/app";
+import { AppDescriber } from "../../services/apps/app-describer";
 
 export const appContextFeatureKey = 'app';
-
 export type AppTheme = 'light' | 'dark';
+export const RLB_APPS = new InjectionToken<AppDescriber>(`rlb.apps`);
 
 export interface AppContext {
-  apps: AppItem[]
-  currentApp: AppItem | null | undefined,
+  apps: AppInfo[]
+  currentApp: AppInfo | null | undefined,
   language: string | null,
   theme: AppTheme,
   supportedLanguages: string[]

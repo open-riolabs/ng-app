@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { IModal, ModalData, ModalDirective } from "@rlb/ng-bootstrap";
-import { AppItem } from "../services/apps/app";
+import { AppInfo } from "../services/apps/app";
 import { RlbAppModule } from "../rlb-app.module";
 import { CommonModule } from "@angular/common";
 
@@ -26,13 +26,13 @@ import { CommonModule } from "@angular/common";
     </div>`,
   hostDirectives: [{ directive: ModalDirective, inputs: ['id', 'data-instance', 'data-options'] }],
 })
-export class ModalAppsComponent implements IModal<AppItem[], AppItem> {
+export class ModalAppsComponent implements IModal<AppInfo[], AppInfo> {
   data!: ModalData<any>;
   valid?: boolean = true;
   result?: any;
-  apps: AppItem[] = [];
+  apps: AppInfo[] = [];
 
-  appSelected(app: AppItem) {
+  appSelected(app: AppInfo) {
     this.result = app;
   }
 }

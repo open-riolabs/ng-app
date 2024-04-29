@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { Store } from '@ngrx/store';
 import { BaseState, appContextFeatureKey } from '../../../../public-api';
-import { AppItem } from '../../../services/apps/app';
+import { AppInfo } from '../../../services/apps/app';
 import { CommonModule, Location } from '@angular/common';
 import { AppsService } from '../../../services/apps/apps.service';
 
@@ -15,7 +15,7 @@ import { AppsService } from '../../../services/apps/apps.service';
 })
 export class AppSelectorComponent implements OnInit {
 
-  apps: AppItem[] = [];
+  apps: AppInfo[] = [];
 
   ngOnInit() {
     this.apps = this.appsService.apps;

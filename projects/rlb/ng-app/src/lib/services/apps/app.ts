@@ -1,8 +1,8 @@
-export interface AppItem {
+export interface AppInfo {
   id: string;
   enabled: boolean;
   core?: AppDetails;
-  settings?: AppItemSettings;
+  settings?: AppInfoSettings;
 }
 
 export interface AppDetails {
@@ -13,7 +13,7 @@ export interface AppDetails {
   auth: boolean;
 }
 
-export interface AppItemSettings {
+export interface AppInfoSettings {
   title: string;
   description: string;
   url: string;

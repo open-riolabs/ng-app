@@ -1,13 +1,12 @@
 import { InjectionToken, Type } from "@angular/core";
 import { SidebarMode } from "@rlb/ng-bootstrap/lib/components/sidebar/sidebar-mode";
-export const RLB_CFG = 'options';
+export const RLB_CFG = 'rlb.options';
 export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
 export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
 export const RLB_CFG_PAGES = new InjectionToken<PagesConfiguration>(`${RLB_CFG}:pages`);
 export const RLB_CFG_ENV = new InjectionToken<EnvironmentConfiguration>(`${RLB_CFG}:env`);
 export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:auth`);
-
-export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`RLB_APP_NAVCOMP`);
+export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.navcomp`);
 
 export interface NavbarComponents {
   left: {
@@ -29,12 +28,15 @@ export interface CmsConfiguration {
 }
 
 export interface AuthConfiguration {
+  protocol: 'oauth';
+  storage: 'cookies' | 'localStorage' | 'sessionStorage';
+  interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
   configId: string;
-  issuer: string;
   redirectUrlLogin: string;
   redirectUrlLogout: string;
   clientId: string;
   scope: string;
+  issuer: string;
   showDebugInformation: boolean;
   allowedUrls: string[];
   debug: boolean;
@@ -68,13 +70,20 @@ export interface EnvironmentConfiguration {
   errorToastContainer?: string;
 }
 
+export interface Endpoint {
+  baseUrl: string;
+  healthPath: string;
+  auth?: boolean;
+  wss?: boolean;
+}
+
 export interface IConfiguration {
   environment?: EnvironmentConfiguration;
   cms?: CmsConfiguration;
   auth?: AuthConfiguration;
   i18n?: InternationalizationConfiguration;
   pages?: PagesConfiguration;
-  endpoints?: { [key: string]: string };
+  endpoints?: { [key: string]: Endpoint };
 }
 
 export type ProjectConfiguration<T = { [k: string]: any }> = IConfiguration & { production: boolean } & T;

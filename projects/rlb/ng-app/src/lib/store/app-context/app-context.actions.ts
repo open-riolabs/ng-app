@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { AppItem } from '../../services/apps/app';
+import { AppInfo } from '../../services/apps/app';
 import { AppTheme } from './app-context.model';
 
 export const AppContextActionsInternal = createActionGroup({
@@ -8,6 +8,7 @@ export const AppContextActionsInternal = createActionGroup({
     setLanguage: props<{ language: string }>(),
     setSupportedLanguages: props<{ supportedLanguages: string[] }>(),
     setTheme: props<{ theme: AppTheme }>(),
+    addApp: props<{ app: AppInfo }>(),
   }
 });
 
@@ -17,8 +18,7 @@ export const AppContextActions = createActionGroup({
   events: {
     setLanguage: props<{ language: string }>(),
     setSupportedLanguages: props<{ supportedLanguages: string[] }>(),
-    setCurrentApp: props<{ app: AppItem | null | undefined }>(),
-    addApp: props<{ app: AppItem }>(),
+    setCurrentApp: props<{ app: AppInfo | null | undefined }>(),
     removeApp: props<{ appId: string }>(),
     setTheme: props<{ theme: AppTheme }>(),
   }
