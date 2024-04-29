@@ -17,33 +17,12 @@ export class AppComponent {
   title = 'riolabs-mistral-web';
 
   constructor(public store: Store<BaseState>) {
-    store.dispatch(AppContextActions.addApp({
-      app: {
-        id: 'chat',
-        enabled: true,
-        core: {
-          title: 'Chat',
-          description: 'Chat with other users',
-          url: 'chat',
-          icon: 'bi-chat',
-          auth: true
-        },
-        settings: {
-          title: 'Chat settings',
-          description: 'Chat settings description',
-          url: 'settings/chat',
-          icon: 'bi bi-gear',
-          auth: true
-        }
-      }
-    }));
     store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
     this.store.dispatch(
       AppContextActions.setSupportedLanguages({
         supportedLanguages: ['en', 'it', 'ja'],
       }),
     );
-    //store.dispatch(AppContextActions.setTheme({ theme: 'dark' }));
   }
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];

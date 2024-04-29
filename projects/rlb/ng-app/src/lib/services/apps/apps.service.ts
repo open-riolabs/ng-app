@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { BaseState } from '../../../public-api';
-import { AppItemSettings } from './app';
 
 @Injectable({
   providedIn: 'root'

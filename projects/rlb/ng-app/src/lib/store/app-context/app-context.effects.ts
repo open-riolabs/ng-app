@@ -1,9 +1,13 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Inject, Injectable, Optional, Renderer2, RendererFactory2 } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, tap } from 'rxjs/operators';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
 import { LanguageService } from '../../services';
 import { AppStorageService } from '../../services/utils/app-storage.service';
+import { RLB_APPS } from './app-context.model';
+import { Store } from '@ngrx/store';
+import { BaseState } from '..';
+import { AppInfo } from '../../services/apps/app';
 
 @Injectable()
 export class AppContextEffects {
@@ -15,7 +19,7 @@ export class AppContextEffects {
       tap(({ language }) => {
         this.renderer.setAttribute(document.documentElement, 'lang', language);
       }),
-      tap(({ language }) => { this.store.writeLocal('locale', language); }),
+      tap(({ language }) => { this.storage.writeLocal('locale', language); }),
       map(({ language }) => AppContextActionsInternal.setLanguage({ language })),
     );
   });
@@ -34,17 +38,24 @@ export class AppContextEffects {
       tap(({ theme }) => {
         this.renderer.setAttribute(document.documentElement, 'data-bs-theme', theme);
       }),
-      tap(({ theme }) => { this.store.writeLocal('theme', theme); }),
+      tap(({ theme }) => { this.storage.writeLocal('theme', theme); }),
       map(({ theme }) => AppContextActionsInternal.setTheme({ theme })),
     );
   });
 
   constructor(
-    private actions$: Actions,
-    private languageService: LanguageService,
-    rendererFactory: RendererFactory2,
-    private readonly store: AppStorageService
+    private readonly actions$: Actions,
+    private readonly languageService: LanguageService,
+    readonly rendererFactory: RendererFactory2,
+    readonly storage: AppStorageService,
+    readonly store: Store<BaseState>,
+    @Inject(RLB_APPS) @Optional() private apps: AppInfo[],
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
+    if (this.apps && this.apps.length > 0) {
+      for (const app of this.apps) {
+        store.dispatch(AppContextActionsInternal.addApp({ app: app }));
+      }
+    }
   }
 }

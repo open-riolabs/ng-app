@@ -17,7 +17,16 @@
     </ng-container>
   </rlb-list>
 
-  <rlb-list class="mt-5"
+  <rlb-list class="mt-5" *ngIf="pages?.['status']?.path || pages?.['logger']?.path">
+    <rlb-list-item-image icon="bi bi-check2-circle" *ngIf="pages?.['status']?.path" [avatar-size]="18"
+    [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
+    </rlb-list-item-image>
+    <rlb-list-item-image icon="bi bi-file-text" *ngIf="pages?.['logger']?.path" [avatar-size]="18"
+      [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
+    </rlb-list-item-image>
+  </rlb-list>
+
+  <rlb-list class="mt-4"
     *ngIf="pages?.['privacy']?.path || pages?.['cookies']?.path || pages?.['terms']?.path || pages?.['support']?.path">
     <rlb-list-item-image icon="bi bi-shield-check" *ngIf="pages?.['privacy']?.path" [avatar-size]="18"
       [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">

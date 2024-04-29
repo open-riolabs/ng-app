@@ -1,6 +1,5 @@
 import { ProjectConfiguration } from "@rlb/ng-app";
 
-
 export const environment: ProjectConfiguration = {
   eventsEndpoint: 'wss://notify.addubby.com',
   production: false,
@@ -31,6 +30,9 @@ export const environment: ProjectConfiguration = {
     markdown: 'ignore'
   },
   auth: {
+    protocol: 'oauth',
+    storage: 'localStorage',
+    interceptor: 'oauth-code-ep',
     configId: 'riolabs',
     issuer: 'https://login.mistral.riolabs.net/realms/riolabs',
     redirectUrlLogin: 'http://localhost:4202',
@@ -51,6 +53,8 @@ export const environment: ProjectConfiguration = {
     privacy: { path: 'privacy', },
     support: { path: 'support', },
     terms: { path: 'terms', },
+    logger : { path: 'logger', },
+    status: { path: 'status', },
   },
   endpoints: {}
 }

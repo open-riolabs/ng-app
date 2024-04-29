@@ -12,9 +12,8 @@ export class TokenOauthInterceptor implements HttpInterceptor {
     @Inject(RLB_CFG) private appconfig: IConfiguration
   ) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const endpoints = this.appconfig.endpoints ? Object.values(this.appconfig.endpoints) : []
-    endpoints.some(e => request.url.includes(e))
-    if (!endpoints.some(e => request.url.includes(e))) {
+    const endpoints = !this.appconfig.endpoints ? [] : Object.values(this.appconfig.endpoints).filter(e => e.auth && !e.wss)
+    if (!endpoints.some(e => request.url.includes(e.baseUrl))) {
       return next.handle(request);
     }
     return this.authenticationService.accessToken$.pipe(
