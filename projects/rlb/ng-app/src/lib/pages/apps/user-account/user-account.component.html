@@ -3,7 +3,8 @@
     <h3>{{ 'core.account.title' | translate}}</h3>
     <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y"
       style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
-    <button rlb-button outline size="sm" class="position-absolute end-0 top-50 translate-middle-y" (click)="updateProfile()">
+    <button rlb-button outline size="sm" class="position-absolute end-0 top-50 translate-middle-y"
+      (click)="updateProfile()">
       <i class="bi bi-floppy"></i>
     </button>
   </div>
@@ -11,50 +12,50 @@
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.account.username' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.account.username' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-input type="text" [(ngModel)]="keyCloakUser.username" disabled />
+          <rlb-input size="small" type="text" [(ngModel)]="keyCloakUser.username" disabled />
         </div>
       </div>
     </rlb-list-item>
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.account.email' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.account.email' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-input type="text" [(ngModel)]="keyCloakUser.email" />
+          <rlb-input size="small" type="text" [(ngModel)]="keyCloakUser.email" />
         </div>
       </div>
     </rlb-list-item>
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.account.firstName' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.account.firstName' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-input type="text" [(ngModel)]="keyCloakUser.firstName" />
+          <rlb-input size="small" type="text" [(ngModel)]="keyCloakUser.firstName" />
         </div>
       </div>
     </rlb-list-item>
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.account.lastName' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.account.lastName' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <rlb-input type="text" [(ngModel)]="keyCloakUser.lastName" />
+          <rlb-input size="small" type="text" [(ngModel)]="keyCloakUser.lastName" />
         </div>
       </div>
     </rlb-list-item>
     <rlb-list-item class="settings-item">
       <div class="d-flex justify-content-between">
         <div class="settings-text">
-          <h5 class="mt-1">{{ 'core.account.logout' | translate}}</h5>
+          <h6 class="mt-1">{{ 'core.account.logout' | translate}}</h6>
         </div>
         <div class="settings-control">
-          <button rlb-button (click)="logout()" class="w-100">
+          <button size="sm" rlb-button (click)="logout()" class="w-100">
             <i class="bi bi-box-arrow-right"></i>
             {{ 'core.account.logout' | translate}}</button>
         </div>
@@ -66,7 +67,7 @@
   </div>
   <ng-container *ngFor="let type of keycloakCredentials">
     <div class="container position-relative my-3">
-      <h5>{{ ('core.account.credentials.'+type?.type) | translate }}</h5>
+      <h6>{{ ('core.account.credentials.'+type?.type) | translate }}</h6>
       <button *ngIf="type.type === 'otp'" rlb-button size="sm" class="position-absolute end-0 top-50 translate-middle-y"
         (click)="configureOTP()">
         {{ 'core.account.credentials.addOTP' | translate}}
@@ -100,12 +101,13 @@
                 <dt><span class="text-muted">{{'core.account.credentials.actions' |
                     translate}}</span></dt>
                 <dd>
-                  <button *ngIf="type.removeable" rlb-button class="w-100" color="danger"
+                  <button *ngIf="type.removeable" size="sm" rlb-button class="w-100" color="danger"
                     (click)="removeCredential(type.type, cred.credential.id)">
                     <i class="bi bi-trash"></i>
                     {{ 'core.account.credentials.delete' | translate}}
                   </button>
-                  <button *ngIf="!type.removeable" rlb-button class="w-100" outline (click)="updatePassword()">
+                  <button *ngIf="!type.removeable" size="sm" rlb-button class="w-100" outline
+                    (click)="updatePassword()">
                     <i class="bi bi-trash"></i>
                     {{ 'core.account.credentials.update' | translate}}
                   </button>
@@ -118,7 +120,7 @@
       <rlb-list-item *ngIf="type.userCredentialMetadatas.length === 0">
         <div class="d-flex justify-content-center">
           <div class="settings-text">
-            <h5 class="mt-1">{{ 'core.account.credentials.noCredentials' | translate}}</h5>
+            <h6 class="mt-1">{{ 'core.account.credentials.noCredentials' | translate}}</h6>
           </div>
         </div>
       </rlb-list-item>
