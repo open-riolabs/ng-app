@@ -1,5 +1,5 @@
 <div class="rlb-app">
-  <ng-container *ngIf="sidearVisible$ | async">
+  <ng-container *ngIf="sidebarVisible$ | async">
     <rlb-sidebar id="sidebar" *ngIf="env.sidebarMode !== 'none'">
       <rlb-sidebar-header *ngIf="env.sidebarMode ==='logo'" mode="logo"
         [data]="{ image:env.appLogo, text:env.appTitle }" />
@@ -32,20 +32,20 @@
   </ng-container>
   <div class="rlb-right-panel">
     <ng-container *ngIf="navVisible$ | async">
-      <rlb-navbar [color]="theme" expand="lg" *ngIf="env.navbarDisabled !== true" class="border-bottom">
-        <a *ngIf="sidearVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
+      <rlb-navbar [color]="theme" expand="lg" *ngIf="navVisible$ | async" class="border-bottom">
+        <a *ngIf="sidebarVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
           toggle-target="sidebar" [outline]="true">
           <span class="navbar-toggler-icon"></span>
         </a>
         <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
         <rlb-navbar-form *ngIf="navSearchVisible$ | async">
-          <rlb-input-group class="mx-2 me-2" validate>
+          <rlb-input-group class="my-1 ms-3" validate>
             <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
-              (keyup.enter)="setNavbarSearchText(navSearchText)" name="search">
+              (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
+              <button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
+                <i class="bi bi-search"></i>
+              </button>
             </rlb-input>
-            <button rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)">
-              <i class="bi bi-search"></i>
-            </button>
           </rlb-input-group>
         </rlb-navbar-form>
         <rlb-navbar-items>
