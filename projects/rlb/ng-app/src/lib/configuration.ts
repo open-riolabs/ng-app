@@ -68,6 +68,7 @@ export interface EnvironmentConfiguration {
   errorDialogSize?: 'sm' | 'lg' | 'xl' | 'md';
   errorToastName?: string;
   errorToastContainer?: string;
+  pwaUpdateEnabled?: boolean;
 }
 
 export interface Endpoint {

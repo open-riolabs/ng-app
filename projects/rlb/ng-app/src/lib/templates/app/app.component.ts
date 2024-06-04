@@ -55,9 +55,11 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
           this.router.navigate([currentApp.core.url]);
         }
       });
-    this.swUpdateSubscription = this.pwaUpdaterService
-      .checkWithDialog()
-      .subscribe();
+    if (this.env.pwaUpdateEnabled) {
+      this.swUpdateSubscription = this.pwaUpdaterService
+        .checkWithDialog()
+        .subscribe();
+    }
   }
 
   @Input('modal-container-id') modalContainerId!: string;

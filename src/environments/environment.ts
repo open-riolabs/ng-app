@@ -14,6 +14,7 @@ export const environment: ProjectConfiguration = {
     errorDialogName: 'error-dialog',
     errorToastName: 'error-toast',
     errorToastContainer: 'error-toast-container',
+    pwaUpdateEnabled: true,
   },
   i18n: {
     availableLangs: ['it'],
