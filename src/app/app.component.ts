@@ -17,7 +17,7 @@ export class AppComponent {
   title = 'riolabs-mistral-web';
 
   constructor(public store: Store<BaseState>) {
-    store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+    //store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
     this.store.dispatch(
       AppContextActions.setSupportedLanguages({
         supportedLanguages: ['en', 'it', 'ja'],

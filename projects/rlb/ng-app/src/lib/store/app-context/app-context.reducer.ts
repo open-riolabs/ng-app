@@ -12,7 +12,6 @@ export const appFeature = createFeature({
       if(!app) return state;
       const apps = state.apps.filter(a => a.id !== app.id);
       apps.push(app);
-      console.log('apps', apps);
       return { ...state, apps };
     }),
     on(AppContextActionsInternal.setLanguage, (state, { language }) => ({ ...state, language })),
