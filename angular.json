@@ -30,9 +30,9 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/scss/bootstrap.scss",
-              "node_modules/@rlb/ng-bootstrap/styles/style.scss",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+              "node_modules/@rlb/ng-bootstrap/assets/scss/app.scss",
+              "node_modules/@rlb/ng-bootstrap/assets/scss/icons.scss",
               "src/styles.scss"
             ],
             "scripts": []
