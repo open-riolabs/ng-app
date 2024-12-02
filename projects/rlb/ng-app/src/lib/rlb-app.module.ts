@@ -10,7 +10,7 @@ import { CmsPipe } from './pipes/cms/cms.pipe';
 import { BaseComponent } from './templates/base/base.component';
 import { CmsComponent } from './templates/cms/cms.component';
 import { ContentComponent } from './templates/content/content.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RlbBootstrapModule } from '@rlb/ng-bootstrap'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,58 +22,51 @@ import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
 import { AutolinkPipe, TruncatePipe } from './pipes';
 
-@NgModule({
-  declarations: [
-    // pages
-    CmsContentComponent,
-    CookiesComponent,
-    NotFoundComponent,
-    PrivacyComponent,
-    SupportComponent,
-    TermsAndConditionsComponent,
-    // pipes
-    CmsPipe,
-    AsMultiPipe,
-    AsSinglePipe,
-    LeftComponentPipe,
-    RightComponentPipe,
-    TruncatePipe,
-    AutolinkPipe,
-    // templates
-    BaseComponent,
-    CmsComponent,
-    ContentComponent,
-    AppTemplateComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    TranslateModule,
-    RlbBootstrapModule,
-    RouterModule
-  ],
-  exports: [
-    // pipes
-    CmsPipe,
-    AsMultiPipe,
-    AsSinglePipe,
-    LeftComponentPipe,
-    RightComponentPipe,
-    TruncatePipe,
-    AutolinkPipe,
-    // templates
-    BaseComponent,
-    CmsComponent,
-    ContentComponent,
-    AppTemplateComponent,
-    // modules
-    TranslateModule,
-    HttpClientModule,
-    RlbBootstrapModule,
-    RouterModule,
-    FormsModule
-  ]
-})
+@NgModule({ declarations: [
+        // pages
+        CmsContentComponent,
+        CookiesComponent,
+        NotFoundComponent,
+        PrivacyComponent,
+        SupportComponent,
+        TermsAndConditionsComponent,
+        // pipes
+        CmsPipe,
+        AsMultiPipe,
+        AsSinglePipe,
+        LeftComponentPipe,
+        RightComponentPipe,
+        TruncatePipe,
+        AutolinkPipe,
+        // templates
+        BaseComponent,
+        CmsComponent,
+        ContentComponent,
+        AppTemplateComponent
+    ],
+    exports: [
+        // pipes
+        CmsPipe,
+        AsMultiPipe,
+        AsSinglePipe,
+        LeftComponentPipe,
+        RightComponentPipe,
+        TruncatePipe,
+        AutolinkPipe,
+        // templates
+        BaseComponent,
+        CmsComponent,
+        ContentComponent,
+        AppTemplateComponent,
+        // modules
+        TranslateModule,
+        RlbBootstrapModule,
+        RouterModule,
+        FormsModule
+    ], imports: [CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TranslateModule,
+        RlbBootstrapModule,
+        RouterModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class RlbAppModule { }
