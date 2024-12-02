@@ -20,6 +20,7 @@ import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import { provideServiceWorker } from '@angular/service-worker';
 import { AppDescriber } from './lib/services/apps/app-describer';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 export * from './lib/auth'
 export * from './lib/guards'
@@ -48,6 +49,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
     provideRouter(getDefaultRoutes(env.pages)),
     provideRlbCodeBrowserOAuth(env.auth),
     provideRlbI18n(env.i18n),
+    provideHttpClient(withInterceptorsFromDi()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:15000',
