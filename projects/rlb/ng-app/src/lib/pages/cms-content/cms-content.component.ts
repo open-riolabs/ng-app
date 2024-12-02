@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'rlb-cms-content',
-  templateUrl: './cms-content.component.html',
-  styleUrl: './cms-content.component.scss'
+    selector: 'rlb-cms-content',
+    templateUrl: './cms-content.component.html',
+    styleUrl: './cms-content.component.scss',
+    standalone: false
 })
 export class CmsContentComponent {
 

@@ -5,9 +5,10 @@ import { LanguageService, Page, StrapiService, AbstractMdService } from '../../s
 import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
 
 @Component({
-  selector: 'rlb-cms-template',
-  templateUrl: './cms.component.html',
-  styleUrl: './cms.component.scss'
+    selector: 'rlb-cms-template',
+    templateUrl: './cms.component.html',
+    styleUrl: './cms.component.scss',
+    standalone: false
 })
 export class CmsComponent {
 

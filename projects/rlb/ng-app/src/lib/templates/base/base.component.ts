@@ -5,9 +5,10 @@ import { map, Observable, of, shareReplay } from 'rxjs';
 import { BreadcrumbItem } from '@rlb/ng-bootstrap';
 
 @Component({
-  selector: 'rlb-base-template',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss'],
+    selector: 'rlb-base-template',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent implements OnInit {
 

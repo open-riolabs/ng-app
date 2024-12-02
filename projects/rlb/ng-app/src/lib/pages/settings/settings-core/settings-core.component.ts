@@ -6,11 +6,10 @@ import { AppContextActions, BaseState, LanguageService, appContextFeatureKey } f
 import { ToastService } from '@rlb/ng-bootstrap';
 
 @Component({
-  selector: 'rlb-settings-core',
-  standalone: true,
-  imports: [RlbAppModule, CommonModule],
-  templateUrl: './settings-core.component.html',
-  styleUrl: './settings-core.component.scss'
+    selector: 'rlb-settings-core',
+    imports: [RlbAppModule, CommonModule],
+    templateUrl: './settings-core.component.html',
+    styleUrl: './settings-core.component.scss'
 })
 export class SettingsCoreComponent {
   constructor(

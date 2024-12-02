@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'rlb-cookies',
-
-  templateUrl: './cookies.component.html',
-  styleUrl: './cookies.component.scss'
+    selector: 'rlb-cookies',
+    templateUrl: './cookies.component.html',
+    styleUrl: './cookies.component.scss',
+    standalone: false
 })
 export class CookiesComponent {
 

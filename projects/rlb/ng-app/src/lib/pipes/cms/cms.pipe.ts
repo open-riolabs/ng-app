@@ -2,7 +2,8 @@ import { Inject, Optional, Pipe, PipeTransform } from '@angular/core';
 import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
 
 @Pipe({
-  name: 'cms',
+    name: 'cms',
+    standalone: false
 })
 export class CmsPipe implements PipeTransform {
 

@@ -6,11 +6,10 @@ import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 
 
 @Component({
-  selector: 'rlb-settings-list',
-  standalone: true,
-  imports: [RlbAppModule, CommonModule],
-  templateUrl: './settings-list.component.html',
-  styleUrl: './settings-list.component.scss'
+    selector: 'rlb-settings-list',
+    imports: [RlbAppModule, CommonModule],
+    templateUrl: './settings-list.component.html',
+    styleUrl: './settings-list.component.scss'
 })
 export class SettingsListComponent {
   constructor(

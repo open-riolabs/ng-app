@@ -3,9 +3,8 @@ import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@an
 import { RlbAppModule } from "../../projects/rlb/ng-app/src/lib/rlb-app.module";
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, RlbAppModule],
-  template: `
+    imports: [CommonModule, RlbAppModule],
+    template: `
     <ng-template #template>
       <rlb-navbar-item href="#">
         <i class="bi bi-123"></i>

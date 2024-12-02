@@ -7,11 +7,10 @@ import { CommonModule, Location } from '@angular/common';
 import { AppsService } from '../../../services/apps/apps.service';
 
 @Component({
-  selector: 'rlb-app-selector',
-  standalone: true,
-  imports: [RlbAppModule, CommonModule],
-  templateUrl: './app-selector.component.html',
-  styleUrl: './app-selector.component.scss'
+    selector: 'rlb-app-selector',
+    imports: [RlbAppModule, CommonModule],
+    templateUrl: './app-selector.component.html',
+    styleUrl: './app-selector.component.scss'
 })
 export class AppSelectorComponent implements OnInit {
 

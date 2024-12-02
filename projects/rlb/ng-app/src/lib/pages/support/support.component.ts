@@ -4,9 +4,10 @@ import { AbstractSupportService } from '../../services/abstraction/abstract-supp
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'rlb-support',
-  templateUrl: './support.component.html',
-  styleUrl: './support.component.scss'
+    selector: 'rlb-support',
+    templateUrl: './support.component.html',
+    styleUrl: './support.component.scss',
+    standalone: false
 })
 export class SupportComponent {
 

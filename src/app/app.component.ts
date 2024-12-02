@@ -7,11 +7,10 @@ import { NavbarItemDemoComponent } from './nav-item.component';
 import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-context/app-context.actions';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RlbAppModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    imports: [CommonModule, RlbAppModule],
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'riolabs-mistral-web';

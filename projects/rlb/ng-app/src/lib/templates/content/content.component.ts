@@ -4,9 +4,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable, map, of, shareReplay } from 'rxjs';
 
 @Component({
-  selector: 'rlb-content-template',
-  templateUrl: './content.component.html',
-  styleUrl: './content.component.scss'
+    selector: 'rlb-content-template',
+    templateUrl: './content.component.html',
+    styleUrl: './content.component.scss',
+    standalone: false
 })
 export class ContentComponent {
   constructor(

@@ -1,7 +1,10 @@
 import { Inject, Pipe, PipeTransform, Type } from "@angular/core";
 import { NavbarComponents, RLB_APP_NAVCOMP } from "../../configuration";
 
-@Pipe({ name: 'rightComponent' })
+@Pipe({
+    name: 'rightComponent',
+    standalone: false
+})
 export class RightComponentPipe implements PipeTransform {
 
   constructor(@Inject(RLB_APP_NAVCOMP) private config: NavbarComponents) { }

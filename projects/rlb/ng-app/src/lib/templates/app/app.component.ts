@@ -11,9 +11,10 @@ import { Router } from '@angular/router';
 import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
 
 @Component({
-  selector: 'rlb-app',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'rlb-app',
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss',
+    standalone: false
 })
 export class AppTemplateComponent implements OnInit, OnDestroy {
 

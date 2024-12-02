@@ -10,11 +10,10 @@ import { LanguageService } from '../../../services/i18n/language.service';
 import { BaseState } from '../../../../public-api';
 
 @Component({
-  selector: 'rlb-user-account',
-  standalone: true,
-  imports: [RlbAppModule, CommonModule],
-  templateUrl: './user-account.component.html',
-  styleUrl: './user-account.component.scss'
+    selector: 'rlb-user-account',
+    imports: [RlbAppModule, CommonModule],
+    templateUrl: './user-account.component.html',
+    styleUrl: './user-account.component.scss'
 })
 export class UserAccountComponent implements OnInit, OnDestroy {
   constructor(

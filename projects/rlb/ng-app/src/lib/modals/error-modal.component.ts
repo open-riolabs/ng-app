@@ -4,9 +4,8 @@ import { RlbAppModule } from '../rlb-app.module'
 import { IModal, ModalData, ModalDirective } from '@rlb/ng-bootstrap';
 
 @Component({
-  standalone: true,
-  imports: [RlbAppModule, CommonModule],
-  template: ` <div class="modal-header">
+    imports: [RlbAppModule, CommonModule],
+    template: ` <div class="modal-header">
       <h5 class="modal-title">{{ data.title }}</h5>
       <button
         type="button"
@@ -23,12 +22,12 @@ import { IModal, ModalData, ModalDirective } from '@rlb/ng-bootstrap';
         {{ data.ok }}
       </button>
     </div>`,
-  hostDirectives: [
-    {
-      directive: ModalDirective,
-      inputs: ['id', 'data-instance', 'data-options'],
-    },
-  ],
+    hostDirectives: [
+        {
+            directive: ModalDirective,
+            inputs: ['id', 'data-instance', 'data-options'],
+        },
+    ]
 })
 export class ErrorModalComponent implements IModal<string, void>, OnInit {
   data!: ModalData<string>;
