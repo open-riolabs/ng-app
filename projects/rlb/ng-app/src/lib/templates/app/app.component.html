@@ -24,7 +24,8 @@
         <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear" [url]="'settings'">
           {{'core.settings.title' | translate}}
         </rlb-sidebar-item>
-        <rlb-sidebar-item routerLink="apps" icon="bi bi-grid-3x3-gap-fill" [url]="'/apps'">
+        <rlb-sidebar-item *ngIf="sidearAppsVisible$ | async" routerLink="apps" icon="bi bi-grid-3x3-gap-fill"
+          [url]="'/apps'">
           {{'core.apps.button' | translate}}
         </rlb-sidebar-item>
       </rlb-sidebar-footer>
@@ -58,6 +59,27 @@
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
           </ng-container>
           <rlb-navbar-separator />
+          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && !(isAuth$ | async)"
+            (click)="loginNav($event)">
+            <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
+              <i class=" bi bi-box-arrow-in-left"></i>
+            </span>
+          </rlb-navbar-item>
+          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && (isAuth$ | async)">
+            <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate" [routerLink]="'/account'">
+              <i class="bi bi-person"></i>
+            </span>
+          </rlb-navbar-item>
+          <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/settings">
+            <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
+              <i class="bi bi-gear"></i>
+            </span>
+          </rlb-navbar-item>
+          <rlb-navbar-item *ngIf="navbarHasApps$ | async" href="/apps">
+            <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
+              <i class="bi bi-grid-3x3-gap-fill"></i>
+            </span>
+          </rlb-navbar-item>
         </rlb-navbar-items>
       </rlb-navbar>
     </ng-container>

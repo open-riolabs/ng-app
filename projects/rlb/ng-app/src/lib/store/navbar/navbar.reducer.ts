@@ -12,6 +12,9 @@ export const navbarsFeature = createFeature({
     on(NavbarActions.setSearchText, (state, { text }) => ({ ...state, searchText: text })),
     on(NavbarActions.setLeftItems, (state, { items }) => ({ ...state, leftItems: items })),
     on(NavbarActions.setRightItems, (state, { items }) => ({ ...state, rightItems: items })),
+    on(NavbarActions.setLoginVisible, (state, { visible }) => ({ ...state, loginVisible: visible })),
+    on(NavbarActions.setSettingsVisible, (state, { visible }) => ({ ...state, settingsVisible: visible })),
+    on(NavbarActions.setAppsVisible, (state, { visible }) => ({ ...state, appsVisible: visible }))
   )
 });
 

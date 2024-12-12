@@ -9,6 +9,9 @@ export interface Navbar {
   searchText: string | null,
   leftItems: string[],
   rightItems: string[],
+  loginVisible: boolean,
+  settingsVisible: boolean,
+  appsVisible: boolean,
 }
 
 export const initialNavbarState: Navbar = {
@@ -18,6 +21,9 @@ export const initialNavbarState: Navbar = {
   searchText: null,
   leftItems: [],
   rightItems: [],
+  loginVisible: false,
+  settingsVisible: false,
+  appsVisible: false,
 }
 
 export interface NavbarState { [navbarsFeatureKey]: Navbar }

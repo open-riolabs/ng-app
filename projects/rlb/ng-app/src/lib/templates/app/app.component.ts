@@ -11,10 +11,10 @@ import { Router } from '@angular/router';
 import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
 
 @Component({
-    selector: 'rlb-app',
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss',
-    standalone: false
+  selector: 'rlb-app',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+  standalone: false
 })
 export class AppTemplateComponent implements OnInit, OnDestroy {
 
@@ -90,6 +90,10 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[sidebarsFeatureKey].settingsVisible);
   }
 
+  get sidearAppsVisible$() {
+    return this.store.select(state => state[sidebarsFeatureKey].appsVisible);
+  }
+
   get navVisible$() {
     return this.store.select(state => state[navbarsFeatureKey].visible);
   }
@@ -120,6 +124,24 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
 
   get theme() {
     return this.store.selectSignal(state => state[appContextFeatureKey].theme)();
+  }
+
+  get navbarHasLogin$() {
+    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+  }
+
+  get navbarHasSettings$() {
+    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+  }
+
+  get navbarHasApps$() {
+    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+  }
+
+  loginNav(event: MouseEvent){
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.store.dispatch(AuthActions.login());
   }
 
   login(): void {

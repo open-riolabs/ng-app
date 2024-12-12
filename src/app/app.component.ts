@@ -22,6 +22,13 @@ export class AppComponent {
         supportedLanguages: ['en', 'it', 'ja'],
       }),
     );
+    this.store.dispatch(NavbarActions.setLoginVisible({ visible: true }));
+    this.store.dispatch(NavbarActions.setSettingsVisible({ visible: true }));
+    this.store.dispatch(NavbarActions.setAppsVisible({ visible: true }));
+    this.store.dispatch(SidebarActions.setLoginVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setSettingsVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setAppsVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setSearchVisible({ visible: false }));
   }
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];

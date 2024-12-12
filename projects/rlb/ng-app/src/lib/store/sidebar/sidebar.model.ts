@@ -7,6 +7,7 @@ export interface Sidebar {
   visible: boolean
   loginVisible: boolean
   searchVisible: boolean
+  appsVisible: boolean
   settingsVisible: boolean
   searchText: string | null
 }
@@ -17,6 +18,7 @@ export const initialSidebarState: Sidebar = {
   loginVisible: true,
   searchVisible: true,
   settingsVisible: true,
+  appsVisible: true,
   searchText: null
 }
 
