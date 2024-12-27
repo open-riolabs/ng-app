@@ -8,6 +8,7 @@ import { RLB_APPS } from './app-context.model';
 import { Store } from '@ngrx/store';
 import { BaseState } from '..';
 import { AppInfo } from '../../services/apps/app';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AppContextEffects {
@@ -43,12 +44,24 @@ export class AppContextEffects {
     );
   });
 
+  setApp$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AppContextActions.setCurrentApp),
+      tap(({ app, type }) => {
+        this.router.navigate([`/${app?.core?.url}`]);
+      }),
+      tap(({ app }) => { this.storage.writeLocal('current-app', app?.id); }),
+      map(({ app }) => AppContextActionsInternal.setCurrentApp({ app })),
+    );
+  });
+
   constructor(
     private readonly actions$: Actions,
     private readonly languageService: LanguageService,
     readonly rendererFactory: RendererFactory2,
     readonly storage: AppStorageService,
     readonly store: Store<BaseState>,
+    private readonly router: Router,
     @Inject(RLB_APPS) @Optional() private apps: AppInfo[],
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);

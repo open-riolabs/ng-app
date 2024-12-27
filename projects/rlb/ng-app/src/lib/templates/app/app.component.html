@@ -65,8 +65,8 @@
               <i class=" bi bi-box-arrow-in-left"></i>
             </span>
           </rlb-navbar-item>
-          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && (isAuth$ | async)">
-            <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate" [routerLink]="'/account'">
+          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && (isAuth$ | async)" href="/account">
+            <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
               <i class="bi bi-person"></i>
             </span>
           </rlb-navbar-item>

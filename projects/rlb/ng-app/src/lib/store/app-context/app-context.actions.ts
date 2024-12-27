@@ -6,6 +6,7 @@ export const AppContextActionsInternal = createActionGroup({
   source: 'AppContext/Internal',
   events: {
     setLanguage: props<{ language: string }>(),
+    setCurrentApp: props<{ app: AppInfo | null | undefined }>(),
     setSupportedLanguages: props<{ supportedLanguages: string[] }>(),
     setTheme: props<{ theme: AppTheme }>(),
     addApp: props<{ app: AppInfo }>(),
