@@ -49,13 +49,6 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store
-      .select((state) => state[appContextFeatureKey].currentApp)
-      .subscribe((currentApp) => {
-        if (currentApp && currentApp.core) {
-          this.router.navigate([currentApp.core.url]);
-        }
-      });
     if (this.env.pwaUpdateEnabled) {
       this.swUpdateSubscription = this.pwaUpdaterService
         .checkWithDialog()
