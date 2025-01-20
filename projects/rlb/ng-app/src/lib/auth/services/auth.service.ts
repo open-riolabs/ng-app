@@ -1,9 +1,10 @@
-import { Inject, Injectable, NgZone, Optional } from '@angular/core'
-import { Router } from '@angular/router'
-import { map, Observable, tap } from 'rxjs'
-import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client'
-import { CookiesService } from '../../services'
-import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration'
+import { Inject, Injectable, NgZone, Optional } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, Observable, tap } from 'rxjs';
+import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
+import { CookiesService } from '../../services';
+import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
+import { ParseJwtService } from './parse-jwt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AuthenticationService {
     private cookiesService: CookiesService,
     private zone: NgZone,
     private router: Router,
+    private readonly parseJwtService: ParseJwtService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
   ) {
@@ -35,24 +37,24 @@ export class AuthenticationService {
     return this.oidcSecurityService.checkAuthMultiple(url)
       .pipe(tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
         if (isAuthenticated) {
-          const redirect = this.cookiesService.getCookie('loginRedirectUrl')
+          const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           if (redirect) {
-            this.cookiesService.deleteCookie('loginRedirectUrl')
-            this.router.navigate([redirect])
+            this.cookiesService.deleteCookie('loginRedirectUrl');
+            this.router.navigate([redirect]);
           }
         }
-      }))
+      }));
     //}
   }
 
   public login() {
-    this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1)
+    this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1);
     // electron
     if (typeof (process) !== 'undefined' &&
       typeof (process?.version) !== 'undefined' &&
       typeof (process?.versions['electron']) !== undefined) {
       const urlHandler = (authUrl: string) => {
-        console.log(authUrl)
+        console.log(authUrl);
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
       };
       return this.oidcSecurityService.authorize(this.authConfig?.configId, { urlHandler });
@@ -76,30 +78,45 @@ export class AuthenticationService {
   }
 
   logout$() {
-    return this.oidcSecurityService.logoff(this.authConfig?.configId)
+    return this.oidcSecurityService.logoff(this.authConfig?.configId);
   }
 
   public get userInfo$(): Observable<any> {
-    return this.oidcSecurityService.userData$.pipe(map((userData) => userData.userData))
+    return this.oidcSecurityService.userData$.pipe(map((userData) => userData.userData));
   }
 
   public get isAuthenticated$(): Observable<boolean> {
-    return this.oidcSecurityService.isAuthenticated$.pipe(map((isAuthenticated) => isAuthenticated.isAuthenticated))
+    return this.oidcSecurityService.isAuthenticated$.pipe(map((isAuthenticated) => isAuthenticated.isAuthenticated));
   }
 
   public get accessToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getAccessToken()
+    return this.oidcSecurityService.getAccessToken();
   }
 
   public get idToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getIdToken()
+    return this.oidcSecurityService.getIdToken();
   }
 
   public get refreshToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getRefreshToken()
+    return this.oidcSecurityService.getRefreshToken();
   }
 
   public get oidc(): OidcSecurityService {
-    return this.oidcSecurityService
+    return this.oidcSecurityService;
+  }
+
+  public get roles$(): Observable<string[]> {
+    return this.accessToken$.pipe(
+      map((token) => (this.parseJwtService.parseJwt(token))),
+      map((payload) => payload['roles'] as string[]),
+    );
+  }
+
+  public matchRoles(roles: string[]): Observable<boolean> {
+    return this.accessToken$.pipe(
+      map(token => this.parseJwtService.parseJwt(token)),
+      map(payload => payload['roles'] as string[]),
+      map(userRoles => roles.some(role => userRoles.includes(role))),
+    );
   }
 }
