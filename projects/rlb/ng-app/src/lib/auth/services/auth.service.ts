@@ -1,4 +1,4 @@
-import { Inject, Injectable, NgZone, Optional } from '@angular/core';
+import { Inject, Injectable, NgZone, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
@@ -9,19 +9,42 @@ import { ParseJwtService } from './parse-jwt.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService {
+export class AuthenticationService implements OnInit {
   modal!: Window | null;
+  private authSnapshot: { isAuthenticated: boolean; userData: any; accessToken?: string; idToken?: string; refreshToken?: string; } =
+    { isAuthenticated: false, userData: null, accessToken: undefined, idToken: undefined, refreshToken: undefined, };
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
     private cookiesService: CookiesService,
-    private zone: NgZone,
     private router: Router,
     private readonly parseJwtService: ParseJwtService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
   ) {
 
+  }
+
+  ngOnInit() {
+    this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
+      this.authSnapshot.isAuthenticated = isAuthenticated;
+    });
+
+    this.oidcSecurityService.userData$.subscribe(({ userData }) => {
+      this.authSnapshot.userData = userData;
+    });
+
+    this.oidcSecurityService.getAccessToken().subscribe((accessToken) => {
+      this.authSnapshot.accessToken = accessToken;
+    });
+
+    this.oidcSecurityService.getIdToken().subscribe((idToken) => {
+      this.authSnapshot.idToken = idToken;
+    });
+
+    this.oidcSecurityService.getRefreshToken().subscribe((refreshToken) => {
+      this.authSnapshot.refreshToken = refreshToken;
+    });
   }
 
   public authorize(url?: string | undefined): Observable<LoginResponse[]> {
@@ -103,6 +126,10 @@ export class AuthenticationService {
 
   public get oidc(): OidcSecurityService {
     return this.oidcSecurityService;
+  }
+
+  public get snapshot() {
+    return this.authSnapshot;
   }
 
   public get roles$(): Observable<string[]> {
