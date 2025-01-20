@@ -38,7 +38,7 @@ export class ErrorManagementService {
       console.info("%c Error service: ShowDialog", 'background: #ffcdc9; color: #000', error)
     }
     return this.dialogService.openModal<string, void>(
-      this.options?.environment?.errorDialogName || 'error-dialog',
+      this.options?.environment?.errorDialogName || 'error-modal-component',
       {
         content: error?.message || '',
         title: error?.name || '',
