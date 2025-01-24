@@ -71,6 +71,10 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[sidebarsFeatureKey].searchVisible);
   }
 
+  get sidebarItems$() {
+    return this.store.select(state => state[sidebarsFeatureKey].items);
+  }
+
   setSidearSearchText(text: string | null) {
     this.store.dispatch(SidebarActions.setSearchText({ text }));
   }

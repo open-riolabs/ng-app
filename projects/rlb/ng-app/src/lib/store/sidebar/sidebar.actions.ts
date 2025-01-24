@@ -1,6 +1,5 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Sidebar } from './sidebar.model';
-import { NavigableItem } from '@rlb/ng-bootstrap';
+import { createActionGroup, props } from '@ngrx/store';
+import { SidebarNavigableItem } from '@rlb/ng-bootstrap';
 
 export const SidebarActionsInternal = createActionGroup({
   source: 'Sidebar/Internal',
@@ -11,7 +10,7 @@ export const SidebarActionsInternal = createActionGroup({
 export const SidebarActions = createActionGroup({
   source: 'Sidebar/API',
   events: {
-    SetItems: props<{ items: NavigableItem[] }>(),
+    SetItems: props<{ items: SidebarNavigableItem[] }>(),
     SetVisible: props<{ visible: boolean }>(),
     SetLoginVisible: props<{ visible: boolean }>(),
     SetAppsVisible: props<{ visible: boolean }>(),

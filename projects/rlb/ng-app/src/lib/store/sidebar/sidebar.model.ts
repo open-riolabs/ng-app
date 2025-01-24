@@ -1,15 +1,15 @@
-import { NavigableItem } from "@rlb/ng-bootstrap";
+import { NavigableItem, SidebarNavigableItem } from "@rlb/ng-bootstrap";
 
 export const sidebarsFeatureKey = 'sidebar';
 
 export interface Sidebar {
-  items: NavigableItem[]
-  visible: boolean
-  loginVisible: boolean
-  searchVisible: boolean
-  appsVisible: boolean
-  settingsVisible: boolean
-  searchText: string | null
+  items: SidebarNavigableItem[];
+  visible: boolean;
+  loginVisible: boolean;
+  searchVisible: boolean;
+  appsVisible: boolean;
+  settingsVisible: boolean;
+  searchText: string | null;
 }
 
 export const initialSidebarState: Sidebar = {
@@ -20,6 +20,6 @@ export const initialSidebarState: Sidebar = {
   settingsVisible: true,
   appsVisible: true,
   searchText: null
-}
+};
 
-export interface SidebarState { [sidebarsFeatureKey]: Sidebar }
+export interface SidebarState { [sidebarsFeatureKey]: Sidebar; }

@@ -1,5 +1,4 @@
 import { InjectionToken, Type } from "@angular/core";
-import { SidebarMode } from "@rlb/ng-bootstrap/lib/components/sidebar/sidebar-mode";
 export const RLB_CFG = 'rlb.options';
 export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
 export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
@@ -59,7 +58,6 @@ export interface PagesConfiguration {
 export interface EnvironmentConfiguration {
   appLogo: string;
   appTitle: string;
-  sidebarMode?: SidebarMode | 'none';
   navbarDisabled?: boolean;
   baseUrl: string;
   ssr: boolean;

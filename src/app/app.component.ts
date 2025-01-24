@@ -7,10 +7,10 @@ import { NavbarItemDemoComponent } from './nav-item.component';
 import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-context/app-context.actions';
 
 @Component({
-    selector: 'app-root',
-    imports: [CommonModule, RlbAppModule],
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+  selector: 'app-root',
+  imports: [CommonModule, RlbAppModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'riolabs-mistral-web';
@@ -29,6 +29,14 @@ export class AppComponent {
     this.store.dispatch(SidebarActions.setSettingsVisible({ visible: false }));
     this.store.dispatch(SidebarActions.setAppsVisible({ visible: false }));
     this.store.dispatch(SidebarActions.setSearchVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setItems({
+      items: [
+        { title: 'Home', url: '' },
+        { label: 'About', url: '/about', icon: 'bi bi-person' },
+        { label: 'Contact', icon: 'bi bi-person', url: '/contact' },
+        { label: 'Contact', url: '/contact', icon: 'bi bi-person', items: [{ label: 'Contact', url: '/contact' }] },
+      ]
+    }));
   }
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];

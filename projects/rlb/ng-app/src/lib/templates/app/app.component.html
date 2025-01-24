@@ -1,91 +1,64 @@
 <div class="rlb-app">
-  <ng-container *ngIf="sidebarVisible$ | async">
-    <rlb-sidebar id="sidebar" *ngIf="env.sidebarMode !== 'none'">
-      <rlb-sidebar-header *ngIf="env.sidebarMode ==='logo'" mode="logo"
-        [data]="{ image:env.appLogo, text:env.appTitle }" />
-      <rlb-sidebar-header *ngIf="env.sidebarMode ==='user'" mode="user" />
-      <rlb-sidebar-search *ngIf="sidearHasSearch$ | async" search-title="Search"
-        (on-search)="setSidearSearchText($event)"></rlb-sidebar-search>
-      <rlb-sidebar-item *ngFor="let sideItem of sidebarItems" [icon]="sideItem.icon">
-        {{sideItem.label}}
+  <rlb-sidebar class="rlb-sidebar">
+    <rlb-sidebar-item *ngFor="let item of  (sidebarItems$ | async)" [icon]="item.icon" [link]="item.url"
+      [title]="item.title" [label]="item.label">{{item.label}}
+      <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="item.icon" [link]="item.url" [title]="item.title"
+        [label]="item.label">{{item.label}}
       </rlb-sidebar-item>
-      <rlb-sidebar-footer>
-        <rlb-sidebar-item *ngFor="let sideItem of sidebarFooterItems" [icon]="sideItem.icon">
-          {{sideItem.label}}
-        </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && !(isAuth$ | async)"
-          icon="bi bi-box-arrow-in-left" (action)="login()">
-          {{'core.account.login' | translate}}
-        </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="env.sidebarMode !== 'user' && (sidearHasLogin$ | async) && (isAuth$ | async)"
-          icon="bi bi-person" url="/account">
-          {{'core.account.title' | translate}}
-        </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="sidearHasSettings$ | async" icon="bi bi-gear" [url]="'settings'">
-          {{'core.settings.title' | translate}}
-        </rlb-sidebar-item>
-        <rlb-sidebar-item *ngIf="sidearAppsVisible$ | async" routerLink="apps" icon="bi bi-grid-3x3-gap-fill"
-          [url]="'/apps'">
-          {{'core.apps.button' | translate}}
-        </rlb-sidebar-item>
-      </rlb-sidebar-footer>
-    </rlb-sidebar>
+    </rlb-sidebar-item>
+  </rlb-sidebar>
+  <ng-container *ngIf="navVisible$ | async">
+    <rlb-navbar expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1 rlb-navbar">
+      <a *ngIf="sidebarVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
+        toggle-target="sidebar" [outline]="true">
+        <span class="navbar-toggler-icon"></span>
+      </a>
+      <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
+      <rlb-navbar-form *ngIf="navSearchVisible$ | async">
+        <rlb-input-group class="my-1 ms-3" validate>
+          <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
+            (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
+            <button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
+              <i class="bi bi-search"></i>
+            </button>
+          </rlb-input>
+        </rlb-input-group>
+      </rlb-navbar-form>
+      <rlb-navbar-items>
+        <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
+          <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
+        </ng-container>
+      </rlb-navbar-items>
+      <rlb-navbar-items class="ms-auto">
+        <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
+          <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
+        </ng-container>
+        <rlb-navbar-separator />
+        <rlb-navbar-item *ngIf="(navbarHasLogin$ | async) && !(isAuth$ | async)" (click)="loginNav($event)">
+          <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
+            <i class=" bi bi-box-arrow-in-left"></i>
+          </span>
+        </rlb-navbar-item>
+        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" href="/account">
+          <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
+            <i class="bi bi-person"></i>
+          </span>
+        </rlb-navbar-item>
+        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/settings">
+          <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
+            <i class="bi bi-gear"></i>
+          </span>
+        </rlb-navbar-item>
+        <rlb-navbar-item *ngIf="navbarHasApps$ | async" href="/apps">
+          <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+          </span>
+        </rlb-navbar-item>
+      </rlb-navbar-items>
+    </rlb-navbar>
   </ng-container>
-  <div class="rlb-right-panel">
-    <ng-container *ngIf="navVisible$ | async">
-      <rlb-navbar expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1">
-        <a *ngIf="sidebarVisible$ | async" class="d-block d-sm-none" rlb-button href="#" toggle="collapse"
-          toggle-target="sidebar" [outline]="true">
-          <span class="navbar-toggler-icon"></span>
-        </a>
-        <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
-        <rlb-navbar-form *ngIf="navSearchVisible$ | async">
-          <rlb-input-group class="my-1 ms-3" validate>
-            <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
-              (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
-              <button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
-                <i class="bi bi-search"></i>
-              </button>
-            </rlb-input>
-          </rlb-input-group>
-        </rlb-navbar-form>
-        <rlb-navbar-items>
-          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
-            <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
-          </ng-container>
-        </rlb-navbar-items>
-        <rlb-navbar-items class="ms-auto">
-          <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
-            <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
-          </ng-container>
-          <rlb-navbar-separator />
-          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && !(isAuth$ | async)"
-            (click)="loginNav($event)">
-            <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
-              <i class=" bi bi-box-arrow-in-left"></i>
-            </span>
-          </rlb-navbar-item>
-          <rlb-navbar-item *ngIf="env.sidebarMode !== 'user' && (navbarHasLogin$ | async) && (isAuth$ | async)" href="/account">
-            <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
-              <i class="bi bi-person"></i>
-            </span>
-          </rlb-navbar-item>
-          <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/settings">
-            <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
-              <i class="bi bi-gear"></i>
-            </span>
-          </rlb-navbar-item>
-          <rlb-navbar-item *ngIf="navbarHasApps$ | async" href="/apps">
-            <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
-              <i class="bi bi-grid-3x3-gap-fill"></i>
-            </span>
-          </rlb-navbar-item>
-        </rlb-navbar-items>
-      </rlb-navbar>
-    </ng-container>
-    <div class="rlb-content">
-      <ng-content></ng-content>
-    </div>
+  <div class="rlb-content">
+    <ng-content></ng-content>
   </div>
 </div>
 

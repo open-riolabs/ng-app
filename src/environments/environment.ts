@@ -9,7 +9,6 @@ export const environment: ProjectConfiguration = {
     phone: false,
     appLogo: 'assets/logo.svg',
     appTitle: 'Riolabs',
-    sidebarMode: 'logo',
     navbarDisabled: false,
     errorDialogName: 'error-modal-component',
     errorToastName: 'error-toast',
