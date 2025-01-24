@@ -1,9 +1,9 @@
 <div class="rlb-app">
-  <rlb-sidebar class="rlb-sidebar">
+  <rlb-sidebar class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
     <rlb-sidebar-item *ngFor="let item of  (sidebarItems$ | async)" [icon]="item.icon" [link]="item.url"
       [title]="item.title" [label]="item.label">{{item.label}}
-      <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="sitem.icon" [link]="sitem.url" [title]="sitem.title"
-        [label]="sitem.label">{{sitem.label}}
+      <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="sitem.icon" [link]="sitem.url"
+        [title]="sitem.title" [label]="sitem.label">{{sitem.label}}
       </rlb-sidebar-item>
     </rlb-sidebar-item>
   </rlb-sidebar>
@@ -57,7 +57,7 @@
       </rlb-navbar-items>
     </rlb-navbar>
   </ng-container>
-  <div class="rlb-content">
+  <div class="rlb-content" [class.rlb-sidebar-en]="(sidebarVisible$ | async)">
     <ng-content></ng-content>
   </div>
 </div>
