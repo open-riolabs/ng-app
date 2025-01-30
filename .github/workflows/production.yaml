@@ -55,7 +55,7 @@ jobs:
           name: node_modules-tar # Artifact name
           path: node_modules.tar.gz # Path to the created `.tar.gz`
 
-  build:
+  build-lib:
     needs: dependencies
     runs-on: ubuntu-latest
     container:
@@ -74,22 +74,22 @@ jobs:
         run: |
           npm link husky
           npm link @nestjs/cli
-          npm run build
+          npm run lib:build
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-artifacts-lib
           path: |
             dist
 
-  deploy:
+  deploy-lib:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
       deployments: write
     needs:
-      - build
+      - build-lib
       - versioning
     steps:
       - name: Checkout Code
@@ -104,7 +104,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: build-artifacts-lib
           path: dist
 
       - name: Set Version and Publish
@@ -115,7 +115,7 @@ jobs:
           scope: "@sicilyaction"
       - run: |
           cp ./package.json ./dist
-          cd ./dist
+          cd ./dist/rlb/ng-app
           npm version ${{ needs.versioning.outputs.GitVersion_SemVer }} --git-tag-version false
           npm publish --access restricted
         env:
