@@ -1,4 +1,4 @@
-import { NavigableItem } from "@rlb/ng-bootstrap";
+import { NavigableItem } from "@sicilyaction/lib-ng-bootstrap";
 
 export const navbarsFeatureKey = 'navbar';
 
@@ -27,3 +27,4 @@ export const initialNavbarState: Navbar = {
 }
 
 export interface NavbarState { [navbarsFeatureKey]: Navbar }
+

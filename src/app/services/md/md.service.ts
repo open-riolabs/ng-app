@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractMdService } from '@rlb/ng-app';
+import { AbstractMdService } from '@sicilyaction/lib-ng-app';
 
 
 @Injectable({
@@ -19,3 +19,4 @@ export class MdService extends AbstractMdService {
     throw new Error('Method not implemented.');
   }
 }
+

@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnDestroy, OnInit, Type } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
-import { NavigableItem } from '@rlb/ng-bootstrap';
+import { NavigableItem } from '@sicilyaction/lib-ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
@@ -145,3 +145,4 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     this.store.dispatch(AuthActions.login());
   }
 }
+

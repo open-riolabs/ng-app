@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractSupportService } from '@rlb/ng-app';
+import { AbstractSupportService } from '@sicilyaction/lib-ng-app';
 
 @Injectable({ 'providedIn': 'root' })
 export class SupportService extends AbstractSupportService {
@@ -7,3 +7,4 @@ export class SupportService extends AbstractSupportService {
     console.log(data)
   }
 }
+

@@ -1,6 +1,6 @@
 import { Component, OnInit, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions, appContextFeatureKey } from '@rlb/ng-app';
+import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions, appContextFeatureKey } from '@sicilyaction/lib-ng-app';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { NavbarItemDemoComponent } from './nav-item.component';
@@ -97,3 +97,4 @@ export class AppComponent {
 
 
 }
+

@@ -2,7 +2,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { map, Observable, of, shareReplay } from 'rxjs';
-import { BreadcrumbItem } from '@rlb/ng-bootstrap';
+import { BreadcrumbItem } from '@sicilyaction/lib-ng-bootstrap';
 
 @Component({
     selector: 'rlb-base-template',
@@ -38,3 +38,4 @@ export class BaseComponent implements OnInit {
   ngOnInit() { }
 
 }
+

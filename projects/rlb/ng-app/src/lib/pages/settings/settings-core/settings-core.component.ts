@@ -3,7 +3,7 @@ import { RlbAppModule } from '../../../rlb-app.module';
 import { CommonModule, Location } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AppContextActions, BaseState, LanguageService, appContextFeatureKey } from '../../../../public-api';
-import { ToastService } from '@rlb/ng-bootstrap';
+import { ToastService } from '@sicilyaction/lib-ng-bootstrap';
 
 @Component({
     selector: 'rlb-settings-core',
@@ -63,3 +63,4 @@ export class SettingsCoreComponent {
     });
   }
 }
+

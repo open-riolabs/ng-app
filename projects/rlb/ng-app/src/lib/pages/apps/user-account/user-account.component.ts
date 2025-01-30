@@ -5,7 +5,7 @@ import { KeycloakProfileService, KeycloakUser, KeycloakCredential, KeycloakSessi
 import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
 import { AuthActions } from '../../../store/auth/auth.actions';
 import { Store } from '@ngrx/store';
-import { ModalService } from '@rlb/ng-bootstrap';
+import { ModalService } from '@sicilyaction/lib-ng-bootstrap';
 import { LanguageService } from '../../../services/i18n/language.service';
 import { BaseState } from '../../../../public-api';
 
@@ -88,3 +88,4 @@ export class UserAccountComponent implements OnInit, OnDestroy {
     this.keycloakProfileService.configureOTP();
   }
 }
+

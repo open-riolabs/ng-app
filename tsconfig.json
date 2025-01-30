@@ -3,13 +3,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@rlb/ng-app": [
+      "@sicilyaction/lib-ng-app": [
         "./projects/rlb/ng-app/src/public-api.ts"
       ],
       "@shared/*": [
         "./src/app/shared/*"
       ],
-      "@rlb/ng-store": [
+      "@sicilyaction/lib-ng-store": [
         "./dist/rlb/ng-store"
       ],
       "@/*": [

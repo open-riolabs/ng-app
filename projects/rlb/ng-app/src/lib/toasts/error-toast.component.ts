@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
-import { ToastData, ToastDirective, IToast } from '@rlb/ng-bootstrap';
+import { ToastData, ToastDirective, IToast } from '@sicilyaction/lib-ng-bootstrap';
 
 @Component({
     imports: [RlbAppModule, CommonModule],
@@ -43,3 +43,4 @@ export class ToastComponent implements IToast<string, void> {
   valid?: boolean = true;
   result?: any;
 }
+

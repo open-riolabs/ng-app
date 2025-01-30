@@ -7,11 +7,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lib:build": "ng build @rlb/ng-app",
-    "lib:test": "ng test @rlb/ng-app",
-    "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @rlb/ng-app",
-    "lib:lint": "ng lint @rlb/ng-app",
-    "lib:pack": "ng build @rlb/ng-app && npm pack ./dist/rlb/ng-app/core"
+    "lib:build": "ng build @sicilyaction/lib-ng-app",
+    "lib:test": "ng test @sicilyaction/lib-ng-app",
+    "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @sicilyaction/lib-ng-app",
+    "lib:lint": "ng lint @sicilyaction/lib-ng-app",
+    "lib:pack": "ng build @sicilyaction/lib-ng-app && npm pack ./dist/rlb/ng-app/core"
   },
   "private": true,
   "author": {
@@ -38,7 +38,7 @@
     "@ngrx/store": "^19.0.0-beta.0",
     "@ngx-translate/core": "^16.0.3",
     "@ngx-translate/http-loader": "^16.0.0",
-    "@rlb/ng-bootstrap": "^2.2.8",
+    "@sicilyaction/lib-ng-bootstrap": "^2.2.8",
     "@types/bootstrap": "^5.2.10",
     "angular-auth-oidc-client": "^18.0.2",
     "bootstrap-icons": "^1.11.3",
@@ -65,3 +65,4 @@
     "typescript": "~5.6.3"
   }
 }
+

@@ -1,5 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
-import { AbstractMdService, AbstractSupportService, provideApp, provideRlbConfig } from '@rlb/ng-app'
+import { AbstractMdService, AbstractSupportService, provideApp, provideRlbConfig } from '@sicilyaction/lib-ng-app'
 import { environment } from '~/environments/environment';
 import { SupportService } from './services/support/support.service';
 import { MdService } from './services/md/md.service';
@@ -13,3 +13,4 @@ export const appConfig: ApplicationConfig = {
     { provide: AbstractMdService, useClass: MdService },
   ]
 };
+
