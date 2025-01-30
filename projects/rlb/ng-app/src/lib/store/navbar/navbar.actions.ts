@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { NavigableItem } from '@rlb/ng-bootstrap'
+import { NavigableItem } from '@rlb-core/lib-ng-bootstrap'
 export const NavbarActionsInternal = createActionGroup({
   source: 'Navbar/Internal',
   events: {}
@@ -20,3 +20,4 @@ export const NavbarActions = createActionGroup({
     SetAppsVisible: props<{ visible: boolean }>(),
   }
 });
+

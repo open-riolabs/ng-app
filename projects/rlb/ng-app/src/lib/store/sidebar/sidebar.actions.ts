@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { SidebarNavigableItem } from '@rlb/ng-bootstrap';
+import { SidebarNavigableItem } from '@rlb-core/lib-ng-bootstrap';
 
 export const SidebarActionsInternal = createActionGroup({
   source: 'Sidebar/Internal',
@@ -19,3 +19,4 @@ export const SidebarActions = createActionGroup({
     SetSearchText: props<{ text: string | null }>(),
   }
 });
+

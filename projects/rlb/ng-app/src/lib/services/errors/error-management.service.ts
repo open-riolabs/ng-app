@@ -1,5 +1,5 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import { ModalService, ModalType, ToastService } from '@rlb/ng-bootstrap';
+import { ModalService, ModalType, ToastService } from '@rlb-core/lib-ng-bootstrap';
 import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
 import { LanguageService } from '..';
@@ -90,3 +90,4 @@ export class ErrorManagementService {
     };
   }
 }
+

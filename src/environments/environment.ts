@@ -1,4 +1,4 @@
-import { ProjectConfiguration } from "@rlb/ng-app";
+import { ProjectConfiguration } from "@rlb-core/lib-ng-app";
 
 export const environment: ProjectConfiguration = {
   eventsEndpoint: 'wss://notify.addubby.com',
@@ -58,3 +58,4 @@ export const environment: ProjectConfiguration = {
   },
   endpoints: {}
 }
+

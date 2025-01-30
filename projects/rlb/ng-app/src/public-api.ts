@@ -2,7 +2,7 @@ import { EnvironmentProviders, Provider, isDevMode } from '@angular/core'
 import { provideRouter } from '@angular/router';
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
 import { RlbAppModule } from './lib/rlb-app.module'
-import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb/ng-bootstrap';
+import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb-core/lib-ng-bootstrap';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
@@ -91,3 +91,4 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
   }
   return providers
 }
+

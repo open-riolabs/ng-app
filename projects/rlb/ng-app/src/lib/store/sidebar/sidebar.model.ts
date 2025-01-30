@@ -1,4 +1,4 @@
-import { NavigableItem, SidebarNavigableItem } from "@rlb/ng-bootstrap";
+import { NavigableItem, SidebarNavigableItem } from "@rlb-core/lib-ng-bootstrap";
 
 export const sidebarsFeatureKey = 'sidebar';
 

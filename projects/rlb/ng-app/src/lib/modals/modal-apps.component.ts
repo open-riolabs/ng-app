@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { IModal, ModalData, ModalDirective } from "@rlb/ng-bootstrap";
+import { IModal, ModalData, ModalDirective } from "@rlb-core/lib-ng-bootstrap";
 import { AppInfo } from "../services/apps/app";
 import { RlbAppModule } from "../rlb-app.module";
 import { CommonModule } from "@angular/common";
@@ -35,3 +35,4 @@ export class ModalAppsComponent implements IModal<AppInfo[], AppInfo> {
     this.result = app;
   }
 }
+

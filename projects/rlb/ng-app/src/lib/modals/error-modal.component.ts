@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module'
-import { IModal, ModalData, ModalDirective } from '@rlb/ng-bootstrap';
+import { IModal, ModalData, ModalDirective } from '@rlb-core/lib-ng-bootstrap';
 
 @Component({
     imports: [RlbAppModule, CommonModule],
@@ -36,3 +36,4 @@ export class ErrorModalComponent implements IModal<string, void>, OnInit {
 
   ngOnInit(): void { }
 }
+

@@ -1,4 +1,4 @@
-import { RLB_APP_NAVCOMP } from "@rlb/ng-app";
+import { RLB_APP_NAVCOMP } from "@rlb-core/lib-ng-app";
 import { NavbarItemDemoComponent } from "./nav-item.component";
 import { routes } from "./app.routes";
 
@@ -31,3 +31,4 @@ export const appDescriber = {
   ],
   routes
 }
+

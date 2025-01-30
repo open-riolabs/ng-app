@@ -11,7 +11,7 @@ import { BaseComponent } from './templates/base/base.component';
 import { CmsComponent } from './templates/cms/cms.component';
 import { ContentComponent } from './templates/content/content.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { RlbBootstrapModule } from '@rlb/ng-bootstrap';
+import { RlbBootstrapModule } from '@rlb-core/lib-ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
@@ -75,3 +75,4 @@ import { AutolinkPipe, TruncatePipe } from './pipes';
   ]
 })
 export class RlbAppModule { }
+
