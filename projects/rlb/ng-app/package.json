@@ -2,23 +2,23 @@
   "name": "@rlb-core/lib-ng-app",
   "version": "0.0.0",
   "peerDependencies": {
-    "@angular/common": "^19.0.1",
-    "@angular/core": "^19.0.1",
-    "@angular/forms": "^19.0.1",
-    "@angular/router": "^19.0.1",
-    "@angular/service-worker": "^19.0.1",
-    "@ngx-translate/core": "~16.0.3",
-    "@ngx-translate/http-loader": "~16.0.0",
+    "@angular/common": ">=19.0.1",
+    "@angular/core": ">=19.0.1",
+    "@angular/forms": ">=19.0.1",
+    "@angular/router": ">=19.0.1",
+    "@angular/service-worker": ">=19.0.1",
+    "@ngx-translate/core": ">=16.0.3",
+    "@ngx-translate/http-loader": ">=16.0.0",
     "@rlb-core/lib-ng-bootstrap": ">=2.2.8",
-    "angular-auth-oidc-client": "~18.0.2",
-    "ngx-cookie-service-ssr": "~19.0.0"
+    "angular-auth-oidc-client": ">=18.0.2",
+    "ngx-cookie-service-ssr": ">=19.0.0"
   },
   "dependencies": {
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@types/bootstrap": ">5.2.10",
-    "@types/node": ">22.10.1"
+    "@types/bootstrap": ">=5.2.10",
+    "@types/node": ">=22.10.1"
   },
   "sideEffects": false
 }
