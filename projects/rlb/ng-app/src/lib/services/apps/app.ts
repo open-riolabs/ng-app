@@ -1,8 +1,9 @@
-export interface AppInfo {
+export interface AppInfo<T = any> {
   id: string;
   enabled: boolean;
   core?: AppDetails;
   settings?: AppInfoSettings;
+  data?: T;
 }
 
 export interface AppDetails {

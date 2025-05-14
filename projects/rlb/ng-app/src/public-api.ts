@@ -21,6 +21,7 @@ import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import { provideServiceWorker } from '@angular/service-worker';
 import { AppDescriber } from './lib/services/apps/app-describer';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { AppInfo } from './lib/services/apps/app';
 
 export * from './lib/auth'
 export * from './lib/guards'
@@ -81,7 +82,14 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
   const providers: (EnvironmentProviders | Provider)[] = [
-    { provide: RLB_APPS, useValue: app.info, multi: true },
+    {
+      provide: RLB_APPS, useValue: {
+        enabled: app.info.enabled,
+        core: app.info.core,
+        settings: app.info.settings,
+        data: app.data
+      } as AppInfo, multi: true
+    },
   ];
   if (app.routes) {
     providers.push(provideRouter(app.routes))
