@@ -84,6 +84,7 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
   const providers: (EnvironmentProviders | Provider)[] = [
     {
       provide: RLB_APPS, useValue: {
+        id: app.info.id,
         enabled: app.info.enabled,
         core: app.info.core,
         settings: app.info.settings,
