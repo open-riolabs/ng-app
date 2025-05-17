@@ -1,42 +1,41 @@
-import { EnvironmentProviders, Provider, isDevMode } from '@angular/core'
-import { provideRouter } from '@angular/router';
-import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration'
-import { RlbAppModule } from './lib/rlb-app.module'
-import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb-core/lib-ng-bootstrap';
-import { ModalAppsComponent } from './lib/modals/modal-apps.component'
-import { provideState, provideStore } from '@ngrx/store'
-import { provideEffects } from '@ngrx/effects'
-import { authsFeature } from './lib/store/auth/auth.reducer'
-import { AuthEffects } from './lib/store/auth/auth.effects'
-import { navbarsFeature } from './lib/store/navbar/navbar.reducer'
-import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer'
-import { RLB_APPS } from './lib/store';
-import { appFeature } from './lib/store/app-context/app-context.reducer'
-import { AppContextEffects } from './lib/store/app-context/app-context.effects'
-import { ErrorModalComponent } from './lib/modals/error-modal.component';
-import { ToastComponent } from './lib/toasts/error-toast.component';
-import { getDefaultRoutes } from './lib/pages/shared.routes';
-import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
-import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
-import { provideServiceWorker } from '@angular/service-worker';
-import { AppDescriber } from './lib/services/apps/app-describer';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AppInfo } from './lib/services/apps/app';
+import { EnvironmentProviders, Provider, isDevMode } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
+import { provideEffects } from '@ngrx/effects';
+import { provideState, provideStore } from '@ngrx/store';
+import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@rlb-core/lib-ng-bootstrap';
+import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
+import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration';
+import { ErrorModalComponent } from './lib/modals/error-modal.component';
+import { ModalAppsComponent } from './lib/modals/modal-apps.component';
+import { getDefaultRoutes } from './lib/pages/shared.routes';
+import { RlbAppModule } from './lib/rlb-app.module';
+import { AppDescriber } from './lib/services/apps/app-describer';
+import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
+import { RLB_APPS } from './lib/store';
+import { AppContextEffects } from './lib/store/app-context/app-context.effects';
+import { appFeature } from './lib/store/app-context/app-context.reducer';
+import { AuthEffects } from './lib/store/auth/auth.effects';
+import { authsFeature } from './lib/store/auth/auth.reducer';
+import { navbarsFeature } from './lib/store/navbar/navbar.reducer';
+import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer';
+import { ToastComponent } from './lib/toasts/error-toast.component';
 
-export * from './lib/auth'
-export * from './lib/guards'
-export * from './lib/modals'
-export * from './lib/pages/shared.routes'
-export * from './lib/pipes'
-export * from './lib/services'
-export * from './lib/store'
-export * from './lib/templates'
-export * from './lib/toasts'
+export * from './lib/auth';
+export * from './lib/guards';
+export * from './lib/modals';
+export * from './lib/pages/shared.routes';
+export * from './lib/pipes';
+export * from './lib/services';
+export * from './lib/store';
+export * from './lib/templates';
+export * from './lib/toasts';
 
-export * from './lib/configuration'
-export * from './lib/rlb-app.module'
+export * from './lib/configuration';
+export * from './lib/rlb-app.module';
 
-export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
+export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
   return [
     provideRlbBootstrap(),
     RlbAppModule,
@@ -77,27 +76,17 @@ export function provideRlbConfig<T = { [k: string]: any }>(env: ProjectConfigura
       },
       multi: true,
     },
-  ]
+  ];
 }
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
-  const providers: (EnvironmentProviders | Provider)[] = [
-    {
-      provide: RLB_APPS, useValue: {
-        id: app.info.id,
-        enabled: app.info.enabled,
-        core: app.info.core,
-        settings: app.info.settings,
-        data: app.data
-      } as AppInfo, multi: true
-    },
-  ];
+  const providers: (EnvironmentProviders | Provider)[] = [{ provide: RLB_APPS, useValue: app.info, multi: true },];
   if (app.routes) {
-    providers.push(provideRouter(app.routes))
+    providers.push(provideRouter(app.routes));
   }
   if (app.providers) {
-    providers.push(...app.providers)
+    providers.push(...app.providers);
   }
-  return providers
+  return providers;
 }
 

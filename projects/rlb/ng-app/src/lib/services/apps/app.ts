@@ -3,6 +3,7 @@ export interface AppInfo<T = any> {
   enabled: boolean;
   core?: AppDetails;
   settings?: AppInfoSettings;
+  viewMode?: 'app' | 'settings';
   data?: T;
 }
 
