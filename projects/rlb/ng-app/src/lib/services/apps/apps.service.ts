@@ -23,7 +23,7 @@ export class AppsService {
       return;
     }
     if (!app) {
-      this.store.dispatch(AppContextActions.setCurrentApp({}));
+      this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
       return;
     }
     if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {

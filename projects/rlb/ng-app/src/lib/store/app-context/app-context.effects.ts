@@ -48,8 +48,7 @@ export class AppContextEffects {
     return this.actions$.pipe(
       ofType(AppContextActions.setCurrentApp),
       map(({ app, mode }) => {
-        AppContextActionsInternal.setViewMode({ viewMode: mode });
-        return AppContextActionsInternal.setCurrentApp({ app });
+        return AppContextActionsInternal.setCurrentApp({ app, mode });
       }),
       // tap(({ app }) => {
       //   this.router.navigate([`/${app?.core?.url}`]);

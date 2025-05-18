@@ -6,7 +6,7 @@ export const appFeature = createFeature({
   name: appContextFeatureKey,
   reducer: createReducer(
     initialAppContextState,
-    on(AppContextActions.setCurrentApp, (state, { app }) => ({ ...state, currentApp: app })),
+    on(AppContextActions.setCurrentApp, (state, { app, mode }) => ({ ...state, currentApp: app ? { ...app, viewMode: mode } : null })),
     on(AppContextActions.removeApp, (state, { appId }) => ({ ...state, apps: state.apps.filter(a => a.id !== appId) })),
     on(AppContextActionsInternal.addApp, (state, { app }) => {
       if (!app) return state;

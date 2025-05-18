@@ -7,11 +7,11 @@ export type AppTheme = 'light' | 'dark';
 export const RLB_APPS = new InjectionToken<AppDescriber>(`rlb.apps`);
 
 export interface AppContext {
-  apps: AppInfo[]
-  currentApp: AppInfo | null | undefined,
+  apps: AppInfo[];
+  currentApp: AppInfo | null,
   language: string | null,
   theme: AppTheme,
-  supportedLanguages: string[]
+  supportedLanguages: string[];
 }
 
 export const initialAppContextState: AppContext = {
@@ -20,6 +20,6 @@ export const initialAppContextState: AppContext = {
   language: null,
   supportedLanguages: ['en'],
   theme: 'light'
-}
+};
 
-export interface AppState { [appContextFeatureKey]: AppContext }
+export interface AppState { [appContextFeatureKey]: AppContext; }
