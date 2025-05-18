@@ -27,7 +27,6 @@ export class AppSelectorComponent {
   }
 
   selectApp(app: AppInfo) {
-    app.viewMode = 'app';
-    this.appsService.selectApp(app);
+    this.appsService.selectApp(app, 'app');
   }
 }

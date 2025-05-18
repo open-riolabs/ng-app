@@ -27,8 +27,7 @@ export class SettingsListComponent {
   }
 
   selectApp(app: AppInfo) {
-    app.viewMode = 'settings';
-    this.appsService.selectApp(app);
+    this.appsService.selectApp(app, 'settings');
   }
 
   get pages() {
