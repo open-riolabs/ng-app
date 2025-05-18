@@ -17,9 +17,16 @@ export class AppsService {
     return this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
   }
 
-  selectApp(app: AppInfo, viewMode: 'app' | 'settings' = 'app') {
+  selectApp(app?: AppInfo, viewMode?: 'app' | 'settings') {
     const currentApp = this.currentApp;
-    if (currentApp && currentApp.id === app.id) {
+    if (!app && !currentApp) {
+      return;
+    }
+    if (!app) {
+      this.store.dispatch(AppContextActions.setCurrentApp({}));
+      return;
+    }
+    if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
       return;
     }
     this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode }));
