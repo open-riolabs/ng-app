@@ -19,11 +19,10 @@ export class AppsService {
 
   selectApp(app: AppInfo, viewMode: 'app' | 'settings' = 'app') {
     const currentApp = this.currentApp;
-    app.viewMode = viewMode;
     if (currentApp && currentApp.id === app.id) {
       return;
     }
-    this.store.dispatch(AppContextActions.setCurrentApp({ app }));
+    this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode }));
   }
 
   constructor(

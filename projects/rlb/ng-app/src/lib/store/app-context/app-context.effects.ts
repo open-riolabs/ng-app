@@ -1,14 +1,14 @@
 import { Inject, Injectable, Optional, Renderer2, RendererFactory2 } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, tap } from 'rxjs/operators';
-import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
-import { LanguageService } from '../../services';
-import { AppStorageService } from '../../services/utils/app-storage.service';
-import { RLB_APPS } from './app-context.model';
-import { Store } from '@ngrx/store';
-import { BaseState } from '..';
-import { AppInfo } from '../../services/apps/app';
 import { Router } from '@angular/router';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { map, tap } from 'rxjs/operators';
+import { BaseState } from '..';
+import { LanguageService } from '../../services';
+import { AppInfo } from '../../services/apps/app';
+import { AppStorageService } from '../../services/utils/app-storage.service';
+import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
+import { RLB_APPS } from './app-context.model';
 
 @Injectable()
 export class AppContextEffects {
@@ -47,11 +47,13 @@ export class AppContextEffects {
   setApp$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AppContextActions.setCurrentApp),
-      tap(({ app, type }) => {
-        this.router.navigate([`/${app?.core?.url}`]);
+      map(({ app, mode }) => {
+        AppContextActionsInternal.setViewMode({ viewMode: mode });
+        return AppContextActionsInternal.setCurrentApp({ app });
       }),
-      tap(({ app }) => { this.storage.writeLocal('current-app', app?.id); }),
-      map(({ app }) => AppContextActionsInternal.setCurrentApp({ app })),
+      // tap(({ app }) => {
+      //   this.router.navigate([`/${app?.core?.url}`]);
+      // }),
     );
   });
 
