@@ -39,7 +39,7 @@
             <i class=" bi bi-box-arrow-in-left"></i>
           </span>
         </rlb-navbar-item>
-        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" href="/account">
+        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" href="/profile">
           <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
             <i class="bi bi-person"></i>
           </span>

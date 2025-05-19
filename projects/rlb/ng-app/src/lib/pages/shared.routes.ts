@@ -10,8 +10,8 @@ export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   const defaultRoutes: Routes = [
     { path: 'settings', component: SettingsListComponent },
     { path: 'settings/general', component: SettingsCoreComponent, },
-    { path: 'apps', component: AppSelectorComponent, },
-    { path: 'account', component: UserAccountComponent, }
+    { path: 'apps', component: AppSelectorComponent },
+    { path: 'profile', component: UserAccountComponent }
   ];
   if (config?.['content']?.path) {
     defaultRoutes.push({ path: config?.['content'].path, component: CmsContentComponent });
