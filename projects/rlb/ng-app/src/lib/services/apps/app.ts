@@ -1,3 +1,5 @@
+import { Routes } from "@angular/router";
+
 export type AppViewMode = 'app' | 'settings';
 export interface AppInfo<T = any> {
   id: string;
@@ -5,6 +7,7 @@ export interface AppInfo<T = any> {
   core?: AppDetails;
   settings?: AppInfoSettings;
   viewMode?: AppViewMode;
+  routes?: Routes;
   data?: T;
 }
 

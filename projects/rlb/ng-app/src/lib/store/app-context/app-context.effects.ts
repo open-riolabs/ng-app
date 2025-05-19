@@ -50,9 +50,13 @@ export class AppContextEffects {
       map(({ app, mode }) => {
         return AppContextActionsInternal.setCurrentApp({ app, mode });
       }),
-      // tap(({ app }) => {
-      //   this.router.navigate([`/${app?.core?.url}`]);
-      // }),
+      tap(({ app }) => {
+        if (app) {
+          localStorage.setItem('c-app-id', app.id);
+        } else {
+          localStorage.removeItem('c-app-id');
+        }
+      }),
     );
   });
 
