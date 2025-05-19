@@ -19,7 +19,7 @@ export class AppsService {
   ) {
     const appRoutes: { id: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
       id: app.id,
-      routes: app.routes?.map(route => route.path!)?.filter(route => !!route) || []
+      routes: app.routes || [],
     }));
     this.router.events
       .pipe(

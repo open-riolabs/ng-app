@@ -80,9 +80,14 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
 }
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
-  const providers: (EnvironmentProviders | Provider)[] = [{ provide: RLB_APPS, useValue: { ...app.info, routes: app.routes || app.info.routes }, multi: true },];
+  const providers: (EnvironmentProviders | Provider)[] = [{
+    provide: RLB_APPS, useValue: {
+      ...app.info,
+      routes: app.routes?.map(route => route.path).filter(o => !!o) || [],
+    }, multi: true
+  },];
   if (app.routes) {
-    providers.push(provideRouter(app.routes || app.info.routes));
+    providers.push(provideRouter(app.routes));
   }
   if (app.providers) {
     providers.push(...app.providers);
