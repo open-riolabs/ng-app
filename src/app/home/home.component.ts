@@ -1,11 +1,25 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { appContextFeatureKey, BaseState } from '@rlb-core/lib-ng-app';
+import { AppInfo } from '../../../dist/rlb/ng-app/lib/services/apps/app';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  title = 'Home';
+  constructor(private readonly store: Store<BaseState>) { }
 
+  app!: AppInfo | null;
+
+  ngOnInit(): void {
+    this.store.select(o => o[appContextFeatureKey]).subscribe(o => console.info('AppContext', o));
+    this.store.select(o => o[appContextFeatureKey].currentApp).subscribe(app => {
+      this.app = app;
+    });
+  }
 }

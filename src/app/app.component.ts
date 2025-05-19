@@ -1,10 +1,11 @@
-import { Component, OnInit, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions, appContextFeatureKey } from '@rlb-core/lib-ng-app';
+import { Component, Type } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Auth, AuthActions, BaseState, NavbarActions, RlbAppModule, SidebarActions, appContextFeatureKey, authsFeatureKey } from '@rlb-core/lib-ng-app';
 import { Observable } from 'rxjs';
-import { NavbarItemDemoComponent } from './nav-item.component';
 import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-context/app-context.actions';
+import { NavbarItemDemoComponent } from './nav-item.component';
 
 @Component({
   selector: 'app-root',
@@ -15,8 +16,11 @@ import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-c
 export class AppComponent {
   title = 'riolabs-mistral-web';
 
-  constructor(public store: Store<BaseState>) {
-    //store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+  constructor(
+    public store: Store<BaseState>,
+    private readonly router: Router
+  ) {
+    store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.info(o));
     this.store.dispatch(
       AppContextActions.setSupportedLanguages({
         supportedLanguages: ['en', 'it', 'ja'],
@@ -37,7 +41,20 @@ export class AppComponent {
         { label: 'Contact', url: '/contact', icon: 'bi bi-person', items: [{ label: 'Contact', url: '/contact' }] },
       ]
     }));
+
+    this.store
+      .select((state) => state[appContextFeatureKey].currentApp)
+      .subscribe((currentApp) => {
+        if (currentApp && currentApp.viewMode === 'app' && currentApp.core) {
+          this.router.navigate([currentApp.core.url]);
+        }
+        if (currentApp && currentApp.viewMode === 'settings' && currentApp.settings) {
+          this.router.navigate([currentApp.settings.url]);
+        }
+      });
   }
+
+
 
   navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];
 

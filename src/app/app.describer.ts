@@ -1,6 +1,6 @@
 import { RLB_APP_NAVCOMP } from "@rlb-core/lib-ng-app";
-import { NavbarItemDemoComponent } from "./nav-item.component";
 import { routes } from "./app.routes";
+import { NavbarItemDemoComponent } from "./nav-item.component";
 
 export const appDescriber = {
   info: {
@@ -9,14 +9,14 @@ export const appDescriber = {
     core: {
       title: 'Chat',
       description: 'Chat with other users',
-      url: 'chat',
+      url: 'chatto',
       icon: 'bi-chat',
       auth: true
     },
     settings: {
       title: 'Chat settings',
       description: 'Chat settings description',
-      url: 'settings/chat',
+      url: 'settings/chatto',
       icon: 'bi bi-gear',
       auth: true
     }

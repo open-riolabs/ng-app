@@ -78,9 +78,6 @@ export class AppsService {
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings') {
     const currentApp = this.currentApp;
-    if (!app && !currentApp) {
-      return;
-    }
     if (!app) {
       this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
       return;

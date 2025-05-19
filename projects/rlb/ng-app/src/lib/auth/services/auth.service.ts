@@ -1,9 +1,9 @@
-import { Inject, Injectable, NgZone, OnInit, Optional } from '@angular/core';
+import { Inject, Injectable, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable, tap } from 'rxjs';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { CookiesService } from '../../services';
+import { map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
+import { CookiesService } from '../../services';
 import { ParseJwtService } from './parse-jwt.service';
 
 @Injectable({
