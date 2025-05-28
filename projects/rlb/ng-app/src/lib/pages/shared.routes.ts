@@ -8,7 +8,7 @@ import { SettingsListComponent } from './settings/settings-list/settings-list.co
 
 export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   const defaultRoutes: Routes = [
-    { path: 'settings', component: SettingsListComponent },
+    { path: 'settings', component: SettingsListComponent, data: { title: 'Settings' } },
     { path: 'settings/general', component: SettingsCoreComponent, },
     { path: 'apps', component: AppSelectorComponent },
     { path: 'profile', component: UserAccountComponent }

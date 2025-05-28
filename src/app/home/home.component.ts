@@ -8,7 +8,6 @@ import { AppInfo } from '../../../dist/rlb/ng-app/lib/services/apps/app';
   selector: 'app-home',
   imports: [CommonModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   title = 'Home';
@@ -17,7 +16,6 @@ export class HomeComponent implements OnInit {
   app!: AppInfo | null;
 
   ngOnInit(): void {
-    this.store.select(o => o[appContextFeatureKey]).subscribe(o => console.info('AppContext', o));
     this.store.select(o => o[appContextFeatureKey].currentApp).subscribe(app => {
       this.app = app;
     });

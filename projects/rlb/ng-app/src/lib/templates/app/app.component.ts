@@ -1,40 +1,36 @@
-import { Component, Inject, Input, OnDestroy, OnInit, Type } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
-import { NavigableItem } from '@rlb-core/lib-ng-bootstrap';
+import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
-import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
+import { NavigableItem } from '@rlb-core/lib-ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { AppContextActions, AppTheme, AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
+import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppStorageService } from '../../services/utils/app-storage.service';
-import { Router } from '@angular/router';
-import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
+import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
+import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 
 @Component({
-  selector: 'rlb-app',
+  selector: 'rlb-app-template',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: false
 })
-export class AppTemplateComponent implements OnInit, OnDestroy {
+export class AppTemplateComponent implements OnDestroy {
 
   private navbarItemsSubscription: Subscription | undefined;
   private sidebarItemsSubscription: Subscription | undefined;
   private sidebarFooterItemsSubscription: Subscription | undefined;
-  private swUpdateSubscription: Subscription | undefined;
   public navSearchText: string | null = null;
   public navbarItems: NavigableItem[] = [];
   public sidebarItems: NavigableItem[] = [];
   public sidebarFooterItems: NavigableItem[] = [];
 
-  @Input() navbarComponents: Type<any>[] = [];
+  @Input('modal-container-id') modalContainerId!: string;
+  @Input('toast-container-ids') toastContainerIds!: string | string[];
 
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
-    private storage: AppStorageService,
-    private readonly router: Router,
-    private readonly pwaUpdaterService: PwaUpdaterService,
+    private storage: AppStorageService
   ) {
     const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
     this.store.dispatch(AppContextActions.setTheme({ theme }));
@@ -45,19 +41,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     this.navbarItemsSubscription?.unsubscribe();
     this.sidebarItemsSubscription?.unsubscribe();
     this.sidebarFooterItemsSubscription?.unsubscribe();
-    this.swUpdateSubscription?.unsubscribe();
   }
-
-  ngOnInit(): void {
-    if (this.env.pwaUpdateEnabled) {
-      this.swUpdateSubscription = this.pwaUpdaterService
-        .checkWithDialog()
-        .subscribe();
-    }
-  }
-
-  @Input('modal-container-id') modalContainerId!: string;
-  @Input('toast-container-ids') toastContainerIds!: string | string[];
 
   get sidebarVisible$() {
     return this.store.select(state => state[sidebarsFeatureKey].visible);
@@ -135,7 +119,7 @@ export class AppTemplateComponent implements OnInit, OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].loginVisible);
   }
 
-  loginNav(event: MouseEvent){
+  loginNav(event: MouseEvent) {
     event?.preventDefault();
     event?.stopPropagation();
     this.store.dispatch(AuthActions.login());

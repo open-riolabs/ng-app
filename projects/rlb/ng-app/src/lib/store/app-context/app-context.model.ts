@@ -4,6 +4,7 @@ import { AppDescriber } from "../../services/apps/app-describer";
 
 export const appContextFeatureKey = 'app';
 export type AppTheme = 'light' | 'dark';
+export type PageTemplate = 'app' | 'basic' | 'cms' | 'content';
 export const RLB_APPS = new InjectionToken<AppDescriber>(`rlb.apps`);
 
 export interface AppContext {
