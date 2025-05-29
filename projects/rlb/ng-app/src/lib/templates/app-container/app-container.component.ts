@@ -2,11 +2,11 @@ import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router, RoutesRecognized } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, filter, map, Subscription, tap } from 'rxjs';
-import { AppContextActions, appContextFeatureKey, AppTheme, BaseState, PageTemplate } from '../../../public-api';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services/apps/apps.service';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
+import { AppContextActions, appContextFeatureKey, AppTheme, BaseState, PageTemplate } from '../../store';
 
 @Component({
   selector: 'rlb-app',

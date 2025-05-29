@@ -2,9 +2,9 @@ import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NavigableItem } from '@rlb-core/lib-ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { AppContextActions, AppTheme, AuthActions, BaseState, NavbarActions, SidebarActions, appContextFeatureKey, authsFeatureKey } from '../../../public-api';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppStorageService } from '../../services/utils/app-storage.service';
+import { AppContextActions, appContextFeatureKey, AppTheme, AuthActions, authsFeatureKey, BaseState, NavbarActions, SidebarActions } from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 
