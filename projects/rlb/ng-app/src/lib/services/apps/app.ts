@@ -7,6 +7,7 @@ export interface AppInfo<T = any> {
   settings?: AppInfoSettings;
   viewMode?: AppViewMode;
   routes?: string[];
+  navigationUrl?: string;
   data?: T;
 }
 

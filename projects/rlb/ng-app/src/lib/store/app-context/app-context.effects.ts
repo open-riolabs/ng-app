@@ -47,8 +47,8 @@ export class AppContextEffects {
   setApp$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AppContextActions.setCurrentApp),
-      map(({ app, mode }) => {
-        return AppContextActionsInternal.setCurrentApp({ app, mode });
+      map(({ app, mode, url }) => {
+        return AppContextActionsInternal.setCurrentApp({ app, mode, url });
       }),
       tap(({ app }) => {
         if (app) {

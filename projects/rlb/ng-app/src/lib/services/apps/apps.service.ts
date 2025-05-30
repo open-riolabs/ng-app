@@ -53,17 +53,17 @@ export class AppsService {
           return;
         }
         if (data.apps.length === 1) {
-          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app');
+          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
           return;
         }
         const app = data.apps.find(app => app.id === localStorage.getItem('c-app-id'));
         if (app) {
-          this.selectApp(app, data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app');
+          this.selectApp(app, data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
           return;
         }
         else {
           console.error(`No unique app was found for the current route: ${data?.routeConfig.path}. Check app ids configuration`);
-          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app');
+          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
         }
       });
   }
@@ -76,7 +76,7 @@ export class AppsService {
     return this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
   }
 
-  selectApp(app?: AppInfo, viewMode?: 'app' | 'settings') {
+  selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
     const currentApp = this.currentApp;
     if (!app) {
       this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
@@ -85,7 +85,7 @@ export class AppsService {
     if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
       return;
     }
-    this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode }));
+    this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 
 

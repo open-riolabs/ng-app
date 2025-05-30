@@ -34,10 +34,10 @@ export class AppContainerComponent implements OnInit, OnDestroy {
       .select((state) => state[appContextFeatureKey].currentApp)
       .subscribe((currentApp) => {
         if (currentApp && currentApp.viewMode === 'app' && currentApp.core) {
-          this.router.navigate([currentApp.core.url]);
+          this.router.navigate([currentApp.navigationUrl || currentApp.core.url]);
         }
         if (currentApp && currentApp.viewMode === 'settings' && currentApp.settings) {
-          this.router.navigate([currentApp.settings.url]);
+          this.router.navigate([currentApp.navigationUrl || currentApp.settings.url]);
         }
       });
 
