@@ -29,21 +29,22 @@ export class AppsService {
           while (route.firstChild) {
             route = route.firstChild;
           }
-          return route.routeConfig;
+          return route;
         }),
-        map(routeConfig => {
-          if (!routeConfig) return null;
-          const appRoute = appRoutes?.filter(app => app.routes?.includes(routeConfig.path!));
+        map(route => {
+          if (!route.routeConfig) return null;
+          const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
           if (appRoute) {
             const apps = this.confApps?.filter(app => appRoute?.some(a => a.id === app.id));
             if (apps && apps.length > 0) {
-              return { routeConfig, apps };
+              return { route, apps };
             }
           }
           return null;
         })
       )
       .subscribe((data) => {
+
         if (!data) {
           this.selectApp();
           return;
@@ -52,18 +53,19 @@ export class AppsService {
           this.selectApp();
           return;
         }
+        const url = data.route.snapshot.url.map(segment => segment.path).join('/');
         if (data.apps.length === 1) {
-          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
+          this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
           return;
         }
         const app = data.apps.find(app => app.id === localStorage.getItem('c-app-id'));
         if (app) {
-          this.selectApp(app, data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
+          this.selectApp(app, data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
           return;
         }
         else {
-          console.error(`No unique app was found for the current route: ${data?.routeConfig.path}. Check app ids configuration`);
-          this.selectApp(data.apps[0], data?.routeConfig?.path?.includes('settings') ? 'settings' : 'app', data?.routeConfig?.path);
+          console.error(`No unique app was found for the current route: ${data.route.routeConfig?.path}. Check app ids configuration`);
+          this.selectApp(data.apps[0], data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
         }
       });
   }
