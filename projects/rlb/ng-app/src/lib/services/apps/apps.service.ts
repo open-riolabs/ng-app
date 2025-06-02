@@ -53,8 +53,8 @@ export class AppsService {
           this.selectApp();
           return;
         }
-        const url = data.route.snapshot.url.map(segment => segment.path).join('/');
-        console.log(`AppsService url: ${url}`);
+        const qp = new URLSearchParams(data.route.snapshot.queryParams).toString();
+        const url = data.route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
         if (data.apps.length === 1) {
           this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
           return;
