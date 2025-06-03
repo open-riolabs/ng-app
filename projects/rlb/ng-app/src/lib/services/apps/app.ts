@@ -1,7 +1,8 @@
 
 export type AppViewMode = 'app' | 'settings';
 export interface AppInfo<T = any> {
-  id: string;
+  id?: string;
+  type: string;
   enabled: boolean;
   core?: AppDetails;
   settings?: AppInfoSettings;
