@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs';
 import { AppContextActions, BaseState } from '../../../public-api';
 import { appContextFeatureKey, RLB_APPS } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
@@ -17,8 +17,8 @@ export class AppsService {
     private router: Router,
     @Inject(RLB_APPS) @Optional() private confApps: AppInfo[] | undefined,
   ) {
-    const appRoutes: { id: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
-      id: app.id,
+    const appRoutes: { type: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
+      type: app.type,
       routes: app.routes || [],
     }));
     this.router.events
@@ -35,22 +35,28 @@ export class AppsService {
           if (!route.routeConfig) return null;
           const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
           if (appRoute) {
-            const apps = this.confApps?.filter(app => appRoute?.some(a => a.id === app.id));
+            const apps = this.confApps?.filter(app => appRoute?.some(a => a.type === app.type));
             if (apps && apps.length > 0) {
               return { route, apps };
             }
           }
           return null;
-        })
-      )
+        }),
+        mergeMap(data => {
+          return this.store.select(state => state[appContextFeatureKey].apps)
+            .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
+        }))
       .subscribe((data) => {
-
         if (!data) {
           this.selectApp();
           return;
         }
         if (!data.apps || data.apps.length === 0) {
           this.selectApp();
+          return;
+        }
+        if (data && data.apps.some(app => !app.id)) {
+          console.warn(`Some apps are not finalized. Please finalize all apps before using the AppsService.`);
           return;
         }
         const qp = new URLSearchParams(data.route.snapshot.queryParams).toString();
@@ -72,7 +78,7 @@ export class AppsService {
   }
 
   get apps() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps)();
+    return this.store.selectSignal(state => state[appContextFeatureKey].apps)().filter(app => app.id);
   }
 
   get currentApp() {

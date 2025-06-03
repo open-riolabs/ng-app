@@ -21,7 +21,8 @@ export const AppContextActions = createActionGroup({
     setLanguage: props<{ language: string; }>(),
     setSupportedLanguages: props<{ supportedLanguages: string[]; }>(),
     setCurrentApp: props<{ app: AppInfo | null, mode?: AppViewMode; url?: string; }>(),
-    removeApp: props<{ appId: string; }>(),
+    removeApp: props<{ appType: string; }>(),
     setTheme: props<{ theme: AppTheme; }>(),
+    finalizeApp: props<{ appType: string; appId: string; data?: any; }>(),
   }
 });

@@ -52,7 +52,7 @@ export class AppContextEffects {
       }),
       tap(({ app }) => {
         if (app) {
-          localStorage.setItem('c-app-id', app.id);
+          localStorage.setItem('c-app-id', app.id!);
         } else {
           localStorage.removeItem('c-app-id');
         }

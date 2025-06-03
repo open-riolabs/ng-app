@@ -1,10 +1,11 @@
 import { RLB_APP_NAVCOMP } from "@rlb-core/lib-ng-app";
+import { AppDescriber } from "../../projects/rlb/ng-app/src/lib/services/apps/app-describer";
 import { routes } from "./app.routes";
 import { NavbarItemDemoComponent } from "./nav-item.component";
 
-export const appDescriber = {
+export const appDescriber: AppDescriber = {
   info: {
-    id: 'chat',
+    type: 'chat',
     enabled: true,
     core: {
       title: 'Chat',

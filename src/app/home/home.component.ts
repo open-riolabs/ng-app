@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { appContextFeatureKey, BaseState } from '@rlb-core/lib-ng-app';
-import { AppInfo } from '../../../dist/rlb/ng-app/lib/services/apps/app';
+import { AppInfo } from '../../../projects/rlb/ng-app/src/lib/services/apps/app';
 
 @Component({
   selector: 'app-home',
