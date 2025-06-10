@@ -2,15 +2,15 @@
   "name": "@sicilyaction/lib-ng-app",
   "version": "0.0.0",
   "peerDependencies": {
-    "@angular/common": "*",
-    "@angular/core": "*",
-    "@angular/forms": "*",
-    "@angular/router": "*",
-    "@angular/service-worker": "*",
-    "@ngx-translate/core": "*",
-    "@ngx-translate/http-loader": "*",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/router": "^19.0.0",
+    "@angular/service-worker": "^19.0.0",
+    "@ngx-translate/core": "^16.0.0",
+    "@ngx-translate/http-loader": "^16.0.0",
     "@rlb-core/lib-ng-bootstrap": "*",
-    "angular-auth-oidc-client": "*",
+    "angular-auth-oidc-client": "^19.0.0",
     "ngx-cookie-service-ssr": "^19.0.0"
   },
   "dependencies": {
