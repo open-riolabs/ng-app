@@ -1,10 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, Optional } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { AuthConfiguration, BaseState, ErrorManagementService, RLB_CFG_AUTH, authsFeatureKey } from "../../../public-api";
-import { EMPTY, Observable, map } from "rxjs";
-import { KeycloakUser, KeycloakDevice, KeycloakCredential, KeycloakSession } from "./";
 import { OidcSecurityService } from "angular-auth-oidc-client";
+import { EMPTY, map, Observable } from "rxjs";
+import { AuthConfiguration, RLB_CFG_AUTH } from "../../configuration";
+import { ErrorManagementService } from "../../services/errors/error-management.service";
+import { authsFeatureKey, BaseState } from "../../store";
+import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } from "./";
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,7 @@ import { OidcSecurityService } from "angular-auth-oidc-client";
 export class KeycloakProfileService {
 
   private get baseUrl() {
-    return `${this.authOptions.issuer}/account`
+    return `${this.authOptions.issuer}/account`;
   }
 
   constructor(
@@ -106,7 +108,7 @@ export class KeycloakProfileService {
       customParams: {
         kc_action: "CONFIGURE_TOTP"
       }
-    })
+    });
   }
 
   updatePassword() {
@@ -114,6 +116,6 @@ export class KeycloakProfileService {
       customParams: {
         kc_action: "UPDATE_PASSWORD"
       }
-    })
+    });
   }
 }

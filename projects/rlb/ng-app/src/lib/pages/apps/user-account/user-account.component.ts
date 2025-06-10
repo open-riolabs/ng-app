@@ -1,19 +1,19 @@
-import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
-import { RlbAppModule } from '../../../rlb-app.module';
 import { CommonModule, Location } from '@angular/common';
-import { KeycloakProfileService, KeycloakUser, KeycloakCredential, KeycloakSession } from '../../../auth/keycloak';
-import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
-import { AuthActions } from '../../../store/auth/auth.actions';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@sicilyaction/lib-ng-bootstrap';
-import { LanguageService } from '../../../services/i18n/language.service';
+import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
 import { BaseState } from '../../../../public-api';
+import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
+import { RlbAppModule } from '../../../rlb-app.module';
+import { LanguageService } from '../../../services/i18n/language.service';
+import { AuthActions } from '../../../store/auth/auth.actions';
 
 @Component({
-    selector: 'rlb-user-account',
-    imports: [RlbAppModule, CommonModule],
-    templateUrl: './user-account.component.html',
-    styleUrl: './user-account.component.scss'
+  selector: 'rlb-user-account',
+  imports: [RlbAppModule, CommonModule],
+  templateUrl: './user-account.component.html',
+  styleUrl: './user-account.component.scss'
 })
 export class UserAccountComponent implements OnInit, OnDestroy {
   constructor(
@@ -65,8 +65,8 @@ export class UserAccountComponent implements OnInit, OnDestroy {
       this.languageService.translate("common.cancel")).pipe(switchMap((result) => {
         if (result) {
           return this.keycloakProfileService.removeCredential(id).pipe(tap(() => {
-            const meta = this.keycloakCredentials.find((c) => c.type === type)?.userCredentialMetadatas
-            const idx = meta?.findIndex((m) => m.credential.id === id)
+            const meta = this.keycloakCredentials.find((c) => c.type === type)?.userCredentialMetadatas;
+            const idx = meta?.findIndex((m) => m.credential.id === id);
             if (meta && idx !== undefined && idx !== -1) {
               meta.splice(idx, 1);
             }

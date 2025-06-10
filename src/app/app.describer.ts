@@ -1,22 +1,23 @@
 import { RLB_APP_NAVCOMP } from "@sicilyaction/lib-ng-app";
-import { NavbarItemDemoComponent } from "./nav-item.component";
+import { AppDescriber } from "../../projects/rlb/ng-app/src/lib/services/apps/app-describer";
 import { routes } from "./app.routes";
+import { NavbarItemDemoComponent } from "./nav-item.component";
 
-export const appDescriber = {
+export const appDescriber: AppDescriber = {
   info: {
-    id: 'chat',
+    type: 'chat',
     enabled: true,
     core: {
       title: 'Chat',
       description: 'Chat with other users',
-      url: 'chat',
+      url: 'chatto',
       icon: 'bi-chat',
       auth: true
     },
     settings: {
       title: 'Chat settings',
       description: 'Chat settings description',
-      url: 'settings/chat',
+      url: 'settings/chatto',
       icon: 'bi bi-gear',
       auth: true
     }

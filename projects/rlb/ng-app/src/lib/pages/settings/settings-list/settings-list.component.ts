@@ -1,20 +1,21 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, Inject, Optional } from '@angular/core';
-import { RlbAppModule } from '../../../rlb-app.module';
-import { AppsService } from '../../../services/apps/apps.service';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
+import { RlbAppModule } from '../../../rlb-app.module';
+import { AppInfo } from '../../../services/apps/app';
+import { AppsService } from '../../../services/apps/apps.service';
 
 
 @Component({
-    selector: 'rlb-settings-list',
-    imports: [RlbAppModule, CommonModule],
-    templateUrl: './settings-list.component.html',
-    styleUrl: './settings-list.component.scss'
+  selector: 'rlb-settings-list',
+  imports: [RlbAppModule, CommonModule],
+  templateUrl: './settings-list.component.html',
+  styleUrl: './settings-list.component.scss'
 })
 export class SettingsListComponent {
   constructor(
-    private _location: Location,
-    private appsService: AppsService,
+    private readonly _location: Location,
+    private readonly appsService: AppsService,
     @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration) { }
 
   get apps() {
@@ -23,6 +24,10 @@ export class SettingsListComponent {
 
   backClicked() {
     this._location.back();
+  }
+
+  selectApp(app: AppInfo) {
+    this.appsService.selectApp(app, 'settings');
   }
 
   get pages() {

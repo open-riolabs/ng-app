@@ -1,8 +1,15 @@
-export interface AppInfo {
-  id: string;
+
+export type AppViewMode = 'app' | 'settings';
+export interface AppInfo<T = any> {
+  id?: string;
+  type: string;
   enabled: boolean;
   core?: AppDetails;
   settings?: AppInfoSettings;
+  viewMode?: AppViewMode;
+  routes?: string[];
+  navigationUrl?: string;
+  data?: T;
 }
 
 export interface AppDetails {

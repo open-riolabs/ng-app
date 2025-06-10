@@ -1,27 +1,28 @@
-import { Component, OnInit, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RlbAppModule, BaseState, AuthActions, authsFeatureKey, Auth, SidebarActions, NavbarActions, appContextFeatureKey } from '@sicilyaction/lib-ng-app';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { NavbarItemDemoComponent } from './nav-item.component';
-import { AppContextActions } from '../../projects/rlb/ng-app/src/lib/store/app-context/app-context.actions';
+import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActions } from '@sicilyaction/lib-ng-app';
+
 
 @Component({
   selector: 'app-root',
   imports: [CommonModule, RlbAppModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  template: `<rlb-app modal-container-id="modal-c-1" toast-container-ids="toast-c-1" />`,
 })
 export class AppComponent {
-  title = 'riolabs-mistral-web';
 
   constructor(public store: Store<BaseState>) {
-    //store.select(o => o[appContextFeatureKey].currentApp).subscribe(o => console.log(o))
+
+    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App' }, appId: 'chat-app-1' }));
+    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App' }, appId: 'chat-app-2' }));
+    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App' }, appId: 'chat-app-3' }));
     this.store.dispatch(
       AppContextActions.setSupportedLanguages({
         supportedLanguages: ['en', 'it', 'ja'],
       }),
     );
+
+
     this.store.dispatch(NavbarActions.setLoginVisible({ visible: true }));
     this.store.dispatch(NavbarActions.setSettingsVisible({ visible: true }));
     this.store.dispatch(NavbarActions.setAppsVisible({ visible: true }));
@@ -38,63 +39,4 @@ export class AppComponent {
       ]
     }));
   }
-
-  navbarComponents: Type<any>[] = [NavbarItemDemoComponent, NavbarItemDemoComponent, NavbarItemDemoComponent];
-
-  login(): void {
-    this.store.dispatch(AuthActions.login());
-  }
-
-  logout(): void {
-    this.store.dispatch(AuthActions.logout());
-  }
-
-  get auth(): Observable<Auth> {
-    return this.store.select(o => o[authsFeatureKey]);
-  }
-
-  applyStore(action: "sideVisible"
-    | "sideLogin" |
-    "sideSearch" |
-    "sideSettings" |
-    "navVisible" |
-    "navSearch" |
-    "navHeader" |
-    "navLeftItems" |
-    "navRightItems", payload: any): void {
-    switch (action) {
-      case "sideVisible":
-        this.store.dispatch(SidebarActions.setVisible({ visible: payload }));
-        break;
-      case "sideLogin":
-        this.store.dispatch(SidebarActions.setLoginVisible({ visible: payload }));
-        break;
-      case "sideSearch":
-        this.store.dispatch(SidebarActions.setSearchVisible({ visible: payload }));
-        break;
-      case "sideSettings":
-        this.store.dispatch(SidebarActions.setSettingsVisible({ visible: payload }));
-        break;
-      case "navVisible":
-        this.store.dispatch(NavbarActions.setVisible({ visible: payload }));
-        break;
-      case "navSearch":
-        this.store.dispatch(NavbarActions.setSearchVisible({ visible: payload }));
-        break;
-      case "navHeader":
-        this.store.dispatch(NavbarActions.setHeader({ header: payload }));
-        break;
-      case "navLeftItems":
-        if (payload === "clear") this.store.dispatch(NavbarActions.setLeftItems({ items: [] }));
-        if (payload === "add") this.store.dispatch(NavbarActions.setLeftItems({ items: ["demo"] }));
-        break;
-      case "navRightItems":
-        if (payload === "clear") this.store.dispatch(NavbarActions.setRightItems({ items: [] }));
-        if (payload === "add") this.store.dispatch(NavbarActions.setRightItems({ items: ["demo"] }));
-        break;
-    }
-  }
-
-
 }
-

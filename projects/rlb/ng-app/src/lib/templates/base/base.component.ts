@@ -1,14 +1,14 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
-import { map, Observable, of, shareReplay } from 'rxjs';
+import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbItem } from '@sicilyaction/lib-ng-bootstrap';
+import { map, Observable, of, shareReplay } from 'rxjs';
 
 @Component({
-    selector: 'rlb-base-template',
-    templateUrl: './base.component.html',
-    styleUrls: ['./base.component.scss'],
-    standalone: false
+  selector: 'rlb-base-template',
+  templateUrl: './base.component.html',
+  styleUrls: ['./base.component.scss'],
+  standalone: false
 })
 export class BaseComponent implements OnInit {
 
@@ -21,17 +21,17 @@ export class BaseComponent implements OnInit {
   breadcrumb: BreadcrumbItem[] | undefined;
 
   @Input()
-  title!: string
+  title!: string;
 
   @Input()
-  subtitle!: string
+  subtitle!: string;
 
   get isHandset$(): Observable<boolean> {
     if (isPlatformServer(this.platformId)) {
-      return of(true)
+      return of(true);
     } else {
       return this.breakpointObserver.observe(Breakpoints.Handset)
-        .pipe(map(result => result.matches), shareReplay())
+        .pipe(map(result => result.matches), shareReplay());
     }
   }
 

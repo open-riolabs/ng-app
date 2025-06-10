@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { RlbAppModule } from "../../projects/rlb/ng-app/src/lib/rlb-app.module";
+import { RlbAppModule } from "@sicilyaction/lib-ng-app";
 
 @Component({
-    imports: [CommonModule, RlbAppModule],
-    template: `
+  imports: [CommonModule, RlbAppModule],
+  template: `
     <ng-template #template>
       <rlb-navbar-item href="#">
         <i class="bi bi-123"></i>

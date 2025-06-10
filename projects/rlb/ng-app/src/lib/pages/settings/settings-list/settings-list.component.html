@@ -10,8 +10,8 @@
     </rlb-list-item-image>
     <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
       <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.settings">
-        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35" [line-1]="app.settings.title| translate"
-          [line-2]="app.settings.description| translate" [routerLink]="'/'+app.settings.url">
+        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35" [line-1]="app.settings.title | translate"
+          [line-2]="app.settings.description | translate" (click)="selectApp(app)">
         </rlb-list-item-image>
       </ng-container>
     </ng-container>
@@ -19,7 +19,7 @@
 
   <rlb-list class="mt-5" *ngIf="pages?.['status']?.path || pages?.['logger']?.path">
     <rlb-list-item-image icon="bi bi-check2-circle" *ngIf="pages?.['status']?.path" [avatar-size]="18"
-    [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
+      [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
     </rlb-list-item-image>
     <rlb-list-item-image icon="bi bi-file-text" *ngIf="pages?.['logger']?.path" [avatar-size]="18"
       [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
