@@ -1,15 +1,14 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { map, tap } from 'rxjs';
 import { AuthenticationService } from '../services/auth.service';
 import { ParseJwtService } from '../services/parse-jwt.service';
-import { combineLatestWith, map, Subject, tap } from 'rxjs';
 
 @Directive({
   selector: '[roles]',
   standalone: false
 })
 export class RlbRole implements OnInit {
-  private allowedRoles: Subject<string[]> = new Subject<string[]>();
-  private allowedRoles$ = this.allowedRoles.asObservable();
+
   constructor(
     private readonly templateRef: TemplateRef<any>,
     private readonly viewContainer: ViewContainerRef,
@@ -17,18 +16,24 @@ export class RlbRole implements OnInit {
     private readonly parseJwtService: ParseJwtService,
   ) { }
 
-  @Input() set roles(roles: string[]) {
-    this.allowedRoles.next(roles);
+  @Input() set roles(roles: string[] | string) {
+    if (typeof roles === 'string') {
+      if (roles.includes(',')) roles = roles.split(',').map(role => role.trim());
+      else roles = [roles];
+    }
   }
 
   private updateView() {
     return this.authenticationService.
       accessToken$.pipe(
-        combineLatestWith(this.allowedRoles$),
-        map(([token, roles]) => ([this.parseJwtService.parseJwt(token), roles])),
-        map(([payload, roles]) => [payload['roles'] as string[], roles as string[]]),
-        tap(([roles, allowedRoles]) => {
-          if (allowedRoles.some(role => roles.includes(role))) {
+        map(token => this.parseJwtService.parseJwt(token)),
+        map(payload => payload['resource_access']?.['account']?.['roles'] || []),
+        tap(roles => {
+          let valid = true;
+          for (const role of this.roles) {
+            if (roles.includes(role)) valid &&= true;
+          }
+          if (valid) {
             this.viewContainer.createEmbeddedView(this.templateRef);
           } else {
             this.viewContainer.clear();
