@@ -146,4 +146,8 @@ export class AuthenticationService implements OnInit {
       map(userRoles => roles.some(role => userRoles.includes(role))),
     );
   }
+
+  get config(): AuthConfiguration {
+    return this.authConfig;
+  }
 }

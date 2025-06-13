@@ -40,6 +40,7 @@ export const environment: ProjectConfiguration = {
     clientId: 'admin',
     scope: 'openid profile offline_access',
     showDebugInformation: false,
+    roleClaim: (data) => data['resource_access']?.['account']?.['roles'] || [],
     allowedUrls: [
       'http://localhost:5002',
       'http://localhost:5001',
@@ -53,7 +54,7 @@ export const environment: ProjectConfiguration = {
     privacy: { path: 'privacy', },
     support: { path: 'support', },
     terms: { path: 'terms', },
-    logger : { path: 'logger', },
+    logger: { path: 'logger', },
     status: { path: 'status', },
   },
   endpoints: {}

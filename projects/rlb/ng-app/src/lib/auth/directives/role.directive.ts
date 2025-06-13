@@ -27,7 +27,7 @@ export class RlbRole implements OnInit {
     return this.authenticationService.
       accessToken$.pipe(
         map(token => this.parseJwtService.parseJwt(token)),
-        map(payload => payload['resource_access']?.['account']?.['roles'] || []),
+        map(payload => this.authenticationService.config.roleClaim?.(payload) || []),
         tap(roles => {
           let valid = true;
           for (const role of this.roles) {
