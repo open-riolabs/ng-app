@@ -77,8 +77,17 @@ export class AppsService {
       });
   }
 
+  get currentDomain() {
+    return window.location.hostname;
+  }
+
   get apps() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps)().filter(app => app.id);
+    return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+      .filter(app => {
+        console.log(`Checking app ${app.id} for domain ${this.currentDomain}`);
+
+        return app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
+      });
   }
 
   get currentApp() {
@@ -96,6 +105,4 @@ export class AppsService {
     }
     this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
-
-
 }

@@ -20,7 +20,7 @@ export const initialAppContextState: AppContext = {
   currentApp: null,
   language: null,
   supportedLanguages: ['en'],
-  theme: 'light'
+  theme: 'light',
 };
 
 export interface AppState { [appContextFeatureKey]: AppContext; }
