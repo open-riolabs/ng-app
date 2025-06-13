@@ -15,7 +15,7 @@ export interface NavbarComponents {
   right: {
     component: Type<any>,
     name: string,
-  }[]
+  }[];
 }
 
 export interface CmsConfiguration {
@@ -30,15 +30,18 @@ export interface AuthConfiguration {
   protocol: 'oauth';
   storage: 'cookies' | 'localStorage' | 'sessionStorage';
   interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
-  configId: string;
-  redirectUrlLogin: string;
-  redirectUrlLogout: string;
-  clientId: string;
-  scope: string;
-  issuer: string;
-  showDebugInformation: boolean;
+  currentProvider?: string;
   allowedUrls: string[];
-  debug: boolean;
+  providers: {
+    configId: string;
+    redirectUrlLogin: string;
+    redirectUrlLogout: string;
+    clientId: string;
+    scope: string;
+    issuer: string;
+    roleClaim?: (data: any) => string | string[];
+    debug: boolean;
+  }[];
 }
 
 export interface InternationalizationConfiguration {
@@ -52,7 +55,7 @@ export interface InternationalizationConfiguration {
 export interface PagesConfiguration {
   [key: string]: {
     path: string;
-  }
+  };
 }
 
 export interface EnvironmentConfiguration {
@@ -82,7 +85,7 @@ export interface IConfiguration {
   auth?: AuthConfiguration;
   i18n?: InternationalizationConfiguration;
   pages?: PagesConfiguration;
-  endpoints?: { [key: string]: Endpoint };
+  endpoints?: { [key: string]: Endpoint; };
 }
 
-export type ProjectConfiguration<T = { [k: string]: any }> = IConfiguration & { production: boolean } & T;
+export type ProjectConfiguration<T = { [k: string]: any; }> = IConfiguration & { production: boolean; } & T;

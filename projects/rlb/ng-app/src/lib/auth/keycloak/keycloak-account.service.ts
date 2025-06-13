@@ -13,17 +13,24 @@ import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } fro
 })
 export class KeycloakProfileService {
 
+  get currentProvider() {
+    const cp = this.authOptions.providers.find((provider) => provider.configId === this.authOptions.currentProvider);
+    if (!cp) {
+      throw new Error(`Current provider not set or not found in auth configuration: '${this.authOptions.currentProvider}'`);
+    }
+    return cp;
+  }
+
   private get baseUrl() {
-    return `${this.authOptions.issuer}/account`;
+    return `${this.currentProvider?.issuer}/account`;
   }
 
   constructor(
-    @Inject(RLB_CFG_AUTH) @Optional() private authOptions: AuthConfiguration,
+    @Optional() @Inject(RLB_CFG_AUTH) @Optional() private authOptions: AuthConfiguration,
     private http: HttpClient,
     private readonly store: Store<BaseState>,
     private readonly errorManagementService: ErrorManagementService,
-    private readonly oidcSecurityService: OidcSecurityService,
-    @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration) { }
+    private readonly oidcSecurityService: OidcSecurityService) { }
 
   getUserProfile(): Observable<KeycloakUser> {
     if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
@@ -104,7 +111,7 @@ export class KeycloakProfileService {
   }
 
   configureOTP() {
-    return this.oidcSecurityService.authorize(this.authConfig?.configId, {
+    return this.oidcSecurityService.authorize(this.currentProvider?.configId, {
       customParams: {
         kc_action: "CONFIGURE_TOTP"
       }
@@ -112,7 +119,7 @@ export class KeycloakProfileService {
   }
 
   updatePassword() {
-    return this.oidcSecurityService.authorize(this.authConfig?.configId, {
+    return this.oidcSecurityService.authorize(this.currentProvider?.configId, {
       customParams: {
         kc_action: "UPDATE_PASSWORD"
       }

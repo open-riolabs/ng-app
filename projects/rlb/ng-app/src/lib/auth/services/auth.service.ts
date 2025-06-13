@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { map, Observable, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 import { CookiesService } from '../../services';
 import { ParseJwtService } from './parse-jwt.service';
@@ -70,7 +70,7 @@ export class AuthenticationService implements OnInit {
     //}
   }
 
-  public login() {
+  public login(configId?: string) {
     this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1);
     // electron
     if (typeof (process) !== 'undefined' &&
@@ -80,7 +80,7 @@ export class AuthenticationService implements OnInit {
         console.log(authUrl);
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
       };
-      return this.oidcSecurityService.authorize(this.authConfig?.configId, { urlHandler });
+      return this.oidcSecurityService.authorize(configId || this.authConfig.currentProvider, { urlHandler });
     }
     // capacitor
     // else if (Capacitor.isNativePlatform()) {
@@ -92,16 +92,16 @@ export class AuthenticationService implements OnInit {
     // }
     // browser
     else {
-      return this.oidcSecurityService.authorize(this.authConfig?.configId);
+      return this.oidcSecurityService.authorize(configId || this.authConfig.currentProvider);
     }
   }
 
-  logout() {
-    this.oidcSecurityService.logoff(this.authConfig?.configId).subscribe((result) => console.log(result));
+  async logout(configId?: string) {
+    await lastValueFrom(this.oidcSecurityService.logoff(configId || this.authConfig.currentProvider));
   }
 
-  logout$() {
-    return this.oidcSecurityService.logoff(this.authConfig?.configId);
+  logout$(configId?: string) {
+    return this.oidcSecurityService.logoff(configId || this.authConfig.currentProvider);
   }
 
   public get userInfo$(): Observable<any> {
@@ -145,5 +145,17 @@ export class AuthenticationService implements OnInit {
       map(payload => payload['roles'] as string[]),
       map(userRoles => roles.some(role => userRoles.includes(role))),
     );
+  }
+
+  get config(): AuthConfiguration {
+    return this.authConfig;
+  }
+
+  get currentProvider() {
+    const cp = this.authConfig.providers.find((provider) => provider.configId === this.authConfig.currentProvider);
+    if (!cp) {
+      throw new Error(`Current provider not set or not found in auth configuration: '${this.authConfig.currentProvider}'`);
+    }
+    return cp;
   }
 }
