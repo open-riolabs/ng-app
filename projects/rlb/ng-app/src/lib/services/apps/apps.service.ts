@@ -83,11 +83,7 @@ export class AppsService {
 
   get apps() {
     return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-      .filter(app => {
-        console.log(`Checking app ${app.id} for domain ${this.currentDomain}`);
-
-        return app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
-      });
+      .filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
   }
 
   get currentApp() {
