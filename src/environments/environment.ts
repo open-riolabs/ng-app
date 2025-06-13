@@ -33,19 +33,22 @@ export const environment: ProjectConfiguration = {
     protocol: 'oauth',
     storage: 'localStorage',
     interceptor: 'oauth-code-ep',
-    configId: 'transfeero',
-    issuer: 'https://login.transfeero.com/realms/transfeero-dev',
-    redirectUrlLogin: 'http://localhost:4202',
-    redirectUrlLogout: 'http://localhost:4202',
-    clientId: 'admin',
-    scope: 'openid profile offline_access',
-    showDebugInformation: false,
-    roleClaim: (data) => data['resource_access']?.['account']?.['roles'] || [],
+    currentProvider: 'transfeero',
+    providers: [{
+      clientId: 'admin',
+      configId: 'transfeero',
+      debug: false,
+      issuer: 'https://login.transfeero.com/realms/transfeero-dev',
+      redirectUrlLogin: 'http://localhost:4202',
+      redirectUrlLogout: 'http://localhost:4202',
+      scope: 'openid profile offline_access',
+      roleClaim: (data) => data['resource_access']?.['account']?.['roles'] || [],
+    }],
     allowedUrls: [
       'http://localhost:5002',
       'http://localhost:5001',
     ],
-    debug: false
+
   },
   pages: {
     content: { path: 'content', },

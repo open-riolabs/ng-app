@@ -30,16 +30,18 @@ export interface AuthConfiguration {
   protocol: 'oauth';
   storage: 'cookies' | 'localStorage' | 'sessionStorage';
   interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
-  configId: string;
-  redirectUrlLogin: string;
-  redirectUrlLogout: string;
-  clientId: string;
-  scope: string;
-  issuer: string;
-  showDebugInformation: boolean;
+  currentProvider?: string;
   allowedUrls: string[];
-  roleClaim?: (data: any) => string | string[];
-  debug: boolean;
+  providers: {
+    configId: string;
+    redirectUrlLogin: string;
+    redirectUrlLogout: string;
+    clientId: string;
+    scope: string;
+    issuer: string;
+    roleClaim?: (data: any) => string | string[];
+    debug: boolean;
+  }[];
 }
 
 export interface InternationalizationConfiguration {
