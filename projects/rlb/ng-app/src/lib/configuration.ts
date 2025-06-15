@@ -34,6 +34,7 @@ export interface AuthConfiguration {
   allowedUrls: string[];
   providers: {
     configId: string;
+    domains?: string[];
     redirectUrlLogin: string;
     redirectUrlLogout: string;
     clientId: string;
