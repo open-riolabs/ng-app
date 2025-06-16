@@ -1,10 +1,10 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { BaseState } from '@sicilyaction/lib-ng-app';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
+import { BaseState } from '../../../store';
 import { authsFeatureKey } from '../../../store/auth/auth.model';
 
 @Component({

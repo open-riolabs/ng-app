@@ -4,6 +4,8 @@
     <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y cur"
       style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
   </div>
+  {{ auth$ | async }}
+
   <rlb-list>
     <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
       <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.core">

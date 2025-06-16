@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
-import { RlbAppModule } from '../../../rlb-app.module';
 import { CommonModule, Location } from '@angular/common';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppContextActions, BaseState, LanguageService, appContextFeatureKey } from '../../../../public-api';
 import { ToastService } from '@sicilyaction/lib-ng-bootstrap';
+import { RlbAppModule } from '../../../rlb-app.module';
+import { LanguageService } from '../../../services/i18n/language.service';
+import { AppContextActions, BaseState, appContextFeatureKey } from '../../../store';
 
 @Component({
-    selector: 'rlb-settings-core',
-    imports: [RlbAppModule, CommonModule],
-    templateUrl: './settings-core.component.html',
-    styleUrl: './settings-core.component.scss'
+  selector: 'rlb-settings-core',
+  imports: [RlbAppModule, CommonModule],
+  templateUrl: './settings-core.component.html',
+  styleUrl: './settings-core.component.scss'
 })
 export class SettingsCoreComponent {
   constructor(
