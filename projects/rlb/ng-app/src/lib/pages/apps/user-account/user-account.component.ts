@@ -3,10 +3,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@rlb-core/lib-ng-bootstrap';
 import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
-import { BaseState } from '../../../../public-api';
 import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { LanguageService } from '../../../services/i18n/language.service';
+import { BaseState } from '../../../store';
 import { AuthActions } from '../../../store/auth/auth.actions';
 
 @Component({
