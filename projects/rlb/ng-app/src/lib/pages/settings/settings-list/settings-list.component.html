@@ -10,7 +10,8 @@
     </rlb-list-item-image>
     <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
       <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.settings">
-        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35" [line-1]="app.settings.title | translate"
+        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35"
+          [line-1]="(app.settings.title | translate) + (app.data?.appName ? ' - ' + app.data?.appName : '')"
           [disabled]="!app.enabled && (app.settings.auth && !(auth$ | async))"
           [line-2]="app.settings.description | translate" (click)="selectApp(app)">
         </rlb-list-item-image>

@@ -9,7 +9,8 @@
   <rlb-list>
     <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
       <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.core">
-        <rlb-list-item-image [icon]="app.core.icon" [avatar-size]="35" [line-1]="app.core.title| translate"
+        <rlb-list-item-image [icon]="app.core.icon" [avatar-size]="35"
+          [line-1]="(app.core.title | translate) + app.data?.appName ? ' - ' + app.data?.appName : ''"
           [disabled]="!app.enabled && (app.core.auth && !(auth$ | async))" [line-2]="app.core.description | translate"
           (click)="selectApp(app)">
         </rlb-list-item-image>
