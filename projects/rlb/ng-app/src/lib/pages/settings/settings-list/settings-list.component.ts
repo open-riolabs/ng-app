@@ -1,9 +1,12 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, Inject, Optional } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { BaseState } from '@sicilyaction/lib-ng-app';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
+import { authsFeatureKey } from '../../../store/auth/auth.model';
 
 
 @Component({
@@ -16,6 +19,7 @@ export class SettingsListComponent {
   constructor(
     private readonly _location: Location,
     private readonly appsService: AppsService,
+    private readonly store: Store<BaseState>,
     @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration) { }
 
   get apps() {
@@ -32,5 +36,9 @@ export class SettingsListComponent {
 
   get pages() {
     return this.pageOptions;
+  }
+
+  get auth$() {
+    return this.store.select(state => state[authsFeatureKey]?.isAuth || false);
   }
 }

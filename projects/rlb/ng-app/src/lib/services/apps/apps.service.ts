@@ -2,7 +2,8 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, mergeMap } from 'rxjs';
-import { AppContextActions, BaseState } from '../../../public-api';
+import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
+import { AppContextActions, BaseState } from '../../store';
 import { appContextFeatureKey, RLB_APPS } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
 
@@ -16,6 +17,7 @@ export class AppsService {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     @Inject(RLB_APPS) @Optional() private confApps: AppInfo[] | undefined,
+    @Inject(RLB_CFG_AUTH) @Optional() private confAuth: AuthConfiguration | undefined,
   ) {
     const appRoutes: { type: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
       type: app.type,
@@ -75,10 +77,27 @@ export class AppsService {
           this.selectApp(data.apps[0], data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
         }
       });
+    if (confAuth?.providers && confAuth.providers.length === 1) {
+      confAuth.currentProvider = confAuth.providers[0].configId;
+    } else if (confAuth?.providers && confAuth.providers.length > 1) {
+      const auth = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
+      if (auth && auth.length === 1) {
+        confAuth.currentProvider = auth[0].configId;
+      } else if (auth && auth.length > 1) {
+        console.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
+      } else {
+        console.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
+      }
+    }
+  }
+
+  get currentDomain() {
+    return window.location.hostname;
   }
 
   get apps() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps)().filter(app => app.id);
+    return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+      .filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
   }
 
   get currentApp() {
@@ -96,6 +115,4 @@ export class AppsService {
     }
     this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
-
-
 }

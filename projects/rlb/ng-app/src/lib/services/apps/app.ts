@@ -5,22 +5,15 @@ export interface AppInfo<T = any> {
   type: string;
   enabled: boolean;
   core?: AppDetails;
-  settings?: AppInfoSettings;
+  settings?: AppDetails;
   viewMode?: AppViewMode;
   routes?: string[];
+  domains?: string[];
   navigationUrl?: string;
   data?: T;
 }
 
 export interface AppDetails {
-  title: string;
-  description: string;
-  url: string;
-  icon: string;
-  auth: boolean;
-}
-
-export interface AppInfoSettings {
   title: string;
   description: string;
   url: string;
