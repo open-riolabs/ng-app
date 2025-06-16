@@ -5,7 +5,7 @@ export interface AppInfoData {
   appName?: string;
 }
 
-export interface AppInfo<T extends AppInfoData = AppInfoData> {
+export interface AppInfo<T extends AppInfoData = any> {
   id?: string;
   type: string;
   enabled: boolean;
