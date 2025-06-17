@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { filter, map, mergeMap } from 'rxjs';
 import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, BaseState } from '../../store';
-import { appContextFeatureKey, RLB_APPS } from '../../store/app-context/app-context.model';
+import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
 
 @Injectable({
@@ -16,8 +16,7 @@ export class AppsService {
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    @Inject(RLB_APPS) @Optional() private confApps: AppInfo[] | undefined,
-    @Inject(RLB_CFG_AUTH) @Optional() private confAuth: AuthConfiguration | undefined,
+    @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
     if (confAuth?.providers && confAuth.providers.length === 1) {
       store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
@@ -31,10 +30,11 @@ export class AppsService {
         console.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
       }
     }
-    const appRoutes: { type: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
-      type: app.type,
-      routes: app.routes || [],
-    }));
+    const appRoutes: { type: string; routes: string[]; }[] | undefined = this.apps
+      ?.map(app => ({
+        type: app.type,
+        routes: app.routes || [],
+      }));
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -49,7 +49,7 @@ export class AppsService {
           if (!route.routeConfig) return null;
           const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
           if (appRoute) {
-            const apps = this.confApps?.filter(app => appRoute?.some(a => a.type === app.type));
+            const apps = this.apps?.filter(app => appRoute?.some(a => a.type === app.type));
             if (apps && apps.length > 0) {
               return { route, apps };
             }
@@ -61,7 +61,9 @@ export class AppsService {
             .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
         }))
       .subscribe((data) => {
-        console.debug(`AppsService: route changed`, data);
+        if (!data && this.activatedRoute.snapshot.url.join('/') === '' && this.apps.length === 1) {
+          this.selectApp(this.apps[0], 'app');
+        }
         if (!data) {
           this.selectApp();
           return;
