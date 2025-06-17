@@ -6,7 +6,7 @@ import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services/apps/apps.service';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
-import { AppContextActions, appContextFeatureKey, AppTheme, BaseState, PageTemplate } from '../../store';
+import { AppContextActions, appContextFeatureKey, AppTheme, AuthActions, authsFeatureKey, BaseState, PageTemplate } from '../../store';
 
 @Component({
   selector: 'rlb-app',
@@ -32,12 +32,19 @@ export class AppContainerComponent implements OnInit, OnDestroy {
     this.store.dispatch(AppContextActions.setLanguage({ language: this.storage.readLocal('locale') || 'en' }));
     this.store
       .select((state) => state[appContextFeatureKey].currentApp)
-      .subscribe((currentApp) => {
+      .subscribe(async (currentApp) => {
         if (currentApp && currentApp.viewMode === 'app' && currentApp.core) {
-          this.router.navigate([currentApp.navigationUrl || currentApp.core.url]);
+          await this.router.navigate([currentApp.navigationUrl || currentApp.core.url]);
+          console.debug(`AppContainerComponent: Navigating to app `, this.store.selectSignal((state) => state[authsFeatureKey].isAuth)());
+          if (currentApp.core.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+            this.store.dispatch(AuthActions.login());
+          }
         }
         if (currentApp && currentApp.viewMode === 'settings' && currentApp.settings) {
-          this.router.navigate([currentApp.navigationUrl || currentApp.settings.url]);
+          await this.router.navigate([currentApp.navigationUrl || currentApp.settings.url]);
+          if (currentApp.settings.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+            this.store.dispatch(AuthActions.login());
+          }
         }
       });
 

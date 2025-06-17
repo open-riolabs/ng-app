@@ -61,7 +61,11 @@ export class AppsService {
             .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
         }))
       .subscribe((data) => {
-        if (!data && this.activatedRoute.snapshot.url.join('/') === '' && this.apps.length === 1) {
+        let route = this.activatedRoute;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
           this.selectApp(this.apps[0], 'app');
         }
         if (!data) {

@@ -1,12 +1,13 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@rlb-core/lib-ng-bootstrap';
-import { EMPTY, Subscription, lastValueFrom, switchMap, tap } from 'rxjs';
+import { EMPTY, lastValueFrom, Subscription, switchMap, tap } from 'rxjs';
 import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { LanguageService } from '../../../services/i18n/language.service';
-import { BaseState } from '../../../store';
+import { authsFeatureKey, BaseState } from '../../../store';
 import { AuthActions } from '../../../store/auth/auth.actions';
 
 @Component({
@@ -21,8 +22,14 @@ export class UserAccountComponent implements OnInit, OnDestroy {
     public store: Store<BaseState>,
     private keycloakProfileService: KeycloakProfileService,
     private modalService: ModalService,
-    private languageService: LanguageService
-  ) { }
+    private languageService: LanguageService,
+    private router: Router
+  ) {
+    const isAuth = this.store.selectSignal((state) => state[authsFeatureKey].isAuth)();
+    if (!isAuth) {
+      this.router.navigate(['/']);
+    }
+  }
 
 
   keyCloakUser!: KeycloakUser;

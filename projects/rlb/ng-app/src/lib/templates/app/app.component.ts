@@ -4,8 +4,7 @@ import { NavigableItem } from '@rlb-core/lib-ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services';
-import { AppStorageService } from '../../services/utils/app-storage.service';
-import { AppContextActions, appContextFeatureKey, AppTheme, AuthActions, authsFeatureKey, BaseState, NavbarActions, SidebarActions } from '../../store';
+import { appContextFeatureKey, AuthActions, authsFeatureKey, BaseState, NavbarActions, SidebarActions } from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 
@@ -32,12 +31,7 @@ export class AppTemplateComponent implements OnDestroy {
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
     public appsService: AppsService,
-    private storage: AppStorageService
-  ) {
-    const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
-    this.store.dispatch(AppContextActions.setTheme({ theme }));
-    this.store.dispatch(AppContextActions.setLanguage({ language: this.storage.readLocal('locale') || 'en' }));
-  }
+  ) { }
 
   ngOnDestroy(): void {
     this.navbarItemsSubscription?.unsubscribe();
@@ -124,8 +118,6 @@ export class AppTemplateComponent implements OnDestroy {
   get apps() {
     return this.appsService.apps;
   }
-
-
 
   loginNav(event: MouseEvent) {
     event?.preventDefault();
