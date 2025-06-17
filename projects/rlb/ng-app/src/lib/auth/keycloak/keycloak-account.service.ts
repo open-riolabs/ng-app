@@ -14,11 +14,8 @@ import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } fro
 export class KeycloakProfileService {
 
   get currentProvider() {
-    const cp = this.authOptions.providers.find((provider) => provider.configId === this.authOptions.currentProvider);
-    if (!cp) {
-      throw new Error(`Current provider not set or not found in auth configuration: '${this.authOptions.currentProvider}'`);
-    }
-    return cp;
+    const currentProvider = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
+    return this.authOptions?.providers.find((provider) => provider.configId === currentProvider);
   }
 
   private get baseUrl() {

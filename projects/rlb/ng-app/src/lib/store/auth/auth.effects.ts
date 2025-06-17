@@ -1,10 +1,10 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { concatMap, map, tap } from 'rxjs/operators';
-import { AuthActions, AuthActionsInternal } from './auth.actions';
 import { Store } from '@ngrx/store';
+import { concatMap, map, tap } from 'rxjs/operators';
 import { AuthenticationService } from '../../auth/services/auth.service';
-import { AuthConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
+import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
+import { AuthActions, AuthActionsInternal } from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -23,8 +23,15 @@ export class AuthEffects {
       concatMap(() => {
         return this.auth.logout$().pipe(
           map(() => AuthActionsInternal.reset()),
-        )
+        );
       })
+    );
+  });
+
+  setCurrentProvider$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.setCurrentProvider),
+      map(({ currentProvider }) => AuthActionsInternal.setCurrentProvider({ currentProvider }))
     );
   });
 
@@ -43,23 +50,23 @@ export class AuthEffects {
                 idToken,
                 isAuth: isAuthenticated,
                 user: userData,
-                loading: false
+                loading: false,
               }
-            }))
+            }));
           })).subscribe();
 
       auth.idToken$.subscribe((idToken) => {
-        store.dispatch(AuthActionsInternal.setIdToken({ idToken }))
-      })
+        store.dispatch(AuthActionsInternal.setIdToken({ idToken }));
+      });
       auth.accessToken$.subscribe((accessToken) => {
-        store.dispatch(AuthActionsInternal.setAccessToken({ accessToken }))
-      })
+        store.dispatch(AuthActionsInternal.setAccessToken({ accessToken }));
+      });
       auth.userInfo$.subscribe((user) => {
-        store.dispatch(AuthActionsInternal.setUser({ user }))
-      })
+        store.dispatch(AuthActionsInternal.setUser({ user }));
+      });
       auth.isAuthenticated$.subscribe((isAuth) => {
-        store.dispatch(AuthActionsInternal.setIsAuth({ isAuth }))
-      })
+        store.dispatch(AuthActionsInternal.setIsAuth({ isAuth }));
+      });
     }
   }
 }

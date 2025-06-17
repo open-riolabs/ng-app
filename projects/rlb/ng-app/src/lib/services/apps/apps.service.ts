@@ -3,8 +3,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, mergeMap } from 'rxjs';
 import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
-import { AppContextActions, BaseState } from '../../store';
-import { appContextFeatureKey, RLB_APPS } from '../../store/app-context/app-context.model';
+import { AppContextActions, AuthActions, BaseState } from '../../store';
+import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
 
 @Injectable({
@@ -16,13 +16,25 @@ export class AppsService {
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    @Inject(RLB_APPS) @Optional() private confApps: AppInfo[] | undefined,
-    @Inject(RLB_CFG_AUTH) @Optional() private confAuth: AuthConfiguration | undefined,
+    @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
-    const appRoutes: { type: string; routes: string[]; }[] | undefined = confApps?.map(app => ({
-      type: app.type,
-      routes: app.routes || [],
-    }));
+    if (confAuth?.providers && confAuth.providers.length === 1) {
+      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
+    } else if (confAuth?.providers && confAuth.providers.length > 1) {
+      const auth = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
+      if (auth && auth.length === 1) {
+        store.dispatch(AuthActions.setCurrentProvider({ currentProvider: auth[0].configId }));
+      } else if (auth && auth.length > 1) {
+        console.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
+      } else {
+        console.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
+      }
+    }
+    const appRoutes: { type: string; routes: string[]; }[] | undefined = this.apps
+      ?.map(app => ({
+        type: app.type,
+        routes: app.routes || [],
+      }));
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -37,7 +49,7 @@ export class AppsService {
           if (!route.routeConfig) return null;
           const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
           if (appRoute) {
-            const apps = this.confApps?.filter(app => appRoute?.some(a => a.type === app.type));
+            const apps = this.apps?.filter(app => appRoute?.some(a => a.type === app.type));
             if (apps && apps.length > 0) {
               return { route, apps };
             }
@@ -49,6 +61,13 @@ export class AppsService {
             .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
         }))
       .subscribe((data) => {
+        let route = this.activatedRoute;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
+          this.selectApp(this.apps[0], 'app');
+        }
         if (!data) {
           this.selectApp();
           return;
@@ -77,18 +96,7 @@ export class AppsService {
           this.selectApp(data.apps[0], data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
         }
       });
-    if (confAuth?.providers && confAuth.providers.length === 1) {
-      confAuth.currentProvider = confAuth.providers[0].configId;
-    } else if (confAuth?.providers && confAuth.providers.length > 1) {
-      const auth = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
-      if (auth && auth.length === 1) {
-        confAuth.currentProvider = auth[0].configId;
-      } else if (auth && auth.length > 1) {
-        console.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
-      } else {
-        console.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
-      }
-    }
+
   }
 
   get currentDomain() {

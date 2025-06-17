@@ -6,7 +6,7 @@ import { NavbarItemDemoComponent } from "./nav-item.component";
 export const appDescriber: AppDescriber = {
   info: {
     type: 'chat',
-    enabled: true,
+    enabled: false,
     core: {
       title: 'Chat',
       description: 'Chat with other users',

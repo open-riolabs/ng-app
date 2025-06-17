@@ -33,18 +33,16 @@ export const environment: ProjectConfiguration = {
     protocol: 'oauth',
     storage: 'localStorage',
     interceptor: 'oauth-code-ep',
-    configId: 'transfeero',
-    issuer: 'https://login.transfeero.com/realms/transfeero-dev',
-    redirectUrlLogin: 'http://localhost:4202',
-    redirectUrlLogout: 'http://localhost:4202',
-    clientId: 'admin',
-    scope: 'openid profile offline_access',
-    showDebugInformation: false,
-    allowedUrls: [
-      'http://localhost:5002',
-      'http://localhost:5001',
-    ],
-    debug: false
+    allowedUrls: ['https://api.riolabs.net', 'http://localhost:8000'],
+    providers: [{
+      configId: 'riolabs',
+      issuer: 'https://login.riolabs.net/realms/customers',
+      redirectUrlLogin: 'http://localhost:4202',
+      redirectUrlLogout: 'http://localhost:4202',
+      clientId: 'chatbot',
+      scope: 'openid profile offline_access',
+      debug: false,
+    }]
   },
   pages: {
     content: { path: 'content', },
@@ -53,7 +51,7 @@ export const environment: ProjectConfiguration = {
     privacy: { path: 'privacy', },
     support: { path: 'support', },
     terms: { path: 'terms', },
-    logger : { path: 'logger', },
+    logger: { path: 'logger', },
     status: { path: 'status', },
   },
   endpoints: {}

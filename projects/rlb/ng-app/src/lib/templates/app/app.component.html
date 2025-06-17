@@ -44,12 +44,12 @@
             <i class="bi bi-person"></i>
           </span>
         </rlb-navbar-item>
-        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/settings">
+        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/setting">
           <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
             <i class="bi bi-gear"></i>
           </span>
         </rlb-navbar-item>
-        <rlb-navbar-item *ngIf="navbarHasApps$ | async" href="/apps">
+        <rlb-navbar-item *ngIf="(navbarHasApps$ | async) && apps.length > 1" href="/apps">
           <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
             <i class="bi bi-grid-3x3-gap-fill"></i>
           </span>

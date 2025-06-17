@@ -10,12 +10,6 @@ import { TokenOauthInterceptor } from "./token-oauth-interceptor";
 
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
-  if (auth.providers.length === 0) {
-    throw new Error('No OAuth providers configured in RLB_CFG_AUTH');
-  }
-  if (auth.providers.length === 1) {
-    auth.currentProvider = auth.providers[0].configId;
-  }
   const providers: (Provider | EnvironmentProviders)[] = [
     { provide: RLB_CFG_AUTH, useValue: auth },
     { provide: AbstractLoggerService, useClass: LoggerService },

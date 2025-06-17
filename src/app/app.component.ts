@@ -32,10 +32,10 @@ export class AppComponent {
     this.store.dispatch(SidebarActions.setSearchVisible({ visible: false }));
     this.store.dispatch(SidebarActions.setItems({
       items: [
-        { title: 'Home', url: '' },
-        { label: 'About', url: '/about', icon: 'bi bi-person' },
-        { label: 'Contact', icon: 'bi bi-person', url: '/contact' },
-        { label: 'Contact', url: '/contact', icon: 'bi bi-person', items: [{ label: 'Contact', url: '/contact' }] },
+        { title: 'Home' },
+        { label: 'Home', url: '/', icon: 'bi bi-house' },
+        { label: 'Profile', icon: 'bi bi-person', url: '/profile' },
+        { label: 'Contact', url: '/contact', icon: 'bi bi-person' },
       ]
     }));
   }

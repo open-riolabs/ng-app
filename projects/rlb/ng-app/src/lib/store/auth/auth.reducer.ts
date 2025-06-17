@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { authsFeatureKey, initialAuthState } from './auth.model';
 import { AuthActionsInternal } from './auth.actions';
+import { authsFeatureKey, initialAuthState } from './auth.model';
 
 export const authsFeature = createFeature({
   name: authsFeatureKey,
@@ -12,7 +12,13 @@ export const authsFeature = createFeature({
     on(AuthActionsInternal.setAccessToken, (state, action) => ({ ...state, accessToken: action.accessToken })),
     on(AuthActionsInternal.setIdToken, (state, action) => ({ ...state, idToken: action.idToken })),
     on(AuthActionsInternal.setIsAuth, (state, action) => ({ ...state, isAuth: action.isAuth })),
-    on(AuthActionsInternal.reset, () => ({ ...initialAuthState }))
+    on(AuthActionsInternal.reset, () => ({ ...initialAuthState })),
+    on(AuthActionsInternal.setCurrentProvider, (state, action) => {
+      if (action.currentProvider && state.currentProvider !== action.currentProvider) {
+        return { ...state, currentProvider: action.currentProvider };
+      }
+      return state;
+    })
   )
 });
 
