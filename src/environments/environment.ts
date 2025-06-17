@@ -34,7 +34,6 @@ export const environment: ProjectConfiguration = {
     storage: 'localStorage',
     interceptor: 'oauth-code-ep',
     allowedUrls: ['https://api.riolabs.net', 'http://localhost:8000'],
-    currentProvider: 'riolabs',
     providers: [{
       configId: 'riolabs',
       issuer: 'https://login.riolabs.net/realms/customers',
@@ -42,7 +41,7 @@ export const environment: ProjectConfiguration = {
       redirectUrlLogout: 'http://localhost:4202',
       clientId: 'chatbot',
       scope: 'openid profile offline_access',
-      debug: true,
+      debug: false,
     }]
   },
   pages: {

@@ -30,7 +30,6 @@ export interface AuthConfiguration {
   protocol: 'oauth';
   storage: 'cookies' | 'localStorage' | 'sessionStorage';
   interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
-  currentProvider?: string;
   allowedUrls: string[];
   providers: {
     configId: string;

@@ -6,6 +6,7 @@ export interface Auth<T = any> {
   accessToken: string | null | undefined;
   isAuth: boolean;
   loading: boolean;
+  currentProvider: string | null;
 }
 
 export const initialAuthState: Auth = {
@@ -14,6 +15,7 @@ export const initialAuthState: Auth = {
   isAuth: false,
   user: null,
   loading: false,
-}
+  currentProvider: null,
+};
 
-export interface AuthState<User = any> { [authsFeatureKey]: Auth<User> }
+export interface AuthState<User = any> { [authsFeatureKey]: Auth<User>; }
