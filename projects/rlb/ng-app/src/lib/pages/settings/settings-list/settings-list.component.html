@@ -6,7 +6,7 @@
   </div>
   <rlb-list>
     <rlb-list-item-image icon="bi bi-gear" [avatar-size]="35" [line-1]=" 'core.settings.generalTitle' | translate"
-      [routerLink]="'/settings/general'" [line-2]=" 'core.settings.generalDescription' | translate">
+      [routerLink]="'/setting/general'" [line-2]=" 'core.settings.generalDescription' | translate">
     </rlb-list-item-image>
     <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
       <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.settings">

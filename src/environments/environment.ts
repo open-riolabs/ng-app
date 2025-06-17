@@ -33,22 +33,17 @@ export const environment: ProjectConfiguration = {
     protocol: 'oauth',
     storage: 'localStorage',
     interceptor: 'oauth-code-ep',
-    currentProvider: 'transfeero',
+    allowedUrls: ['https://api.riolabs.net', 'http://localhost:8000'],
+    currentProvider: 'riolabs',
     providers: [{
-      clientId: 'admin',
-      configId: 'transfeero',
-      debug: false,
-      issuer: 'https://login.transfeero.com/realms/transfeero-dev',
+      configId: 'riolabs',
+      issuer: 'https://login.riolabs.net/realms/customers',
       redirectUrlLogin: 'http://localhost:4202',
       redirectUrlLogout: 'http://localhost:4202',
+      clientId: 'chatbot',
       scope: 'openid profile offline_access',
-      roleClaim: (data) => data['resource_access']?.['account']?.['roles'] || [],
-    }],
-    allowedUrls: [
-      'http://localhost:5002',
-      'http://localhost:5001',
-    ],
-
+      debug: true,
+    }]
   },
   pages: {
     content: { path: 'content', },
