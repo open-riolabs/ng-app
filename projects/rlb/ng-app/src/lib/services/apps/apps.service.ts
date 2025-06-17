@@ -49,6 +49,7 @@ export class AppsService {
             .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
         }))
       .subscribe((data) => {
+        console.debug(`AppsService: route changed`, data);
         if (!data) {
           this.selectApp();
           return;
