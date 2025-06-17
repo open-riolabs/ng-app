@@ -1,9 +1,11 @@
 import { Inject, Injectable, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 import { CookiesService } from '../../services';
+import { authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 
 @Injectable({
@@ -19,6 +21,7 @@ export class AuthenticationService implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private readonly parseJwtService: ParseJwtService,
+    private readonly store: Store<BaseState>,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
   ) {
@@ -80,7 +83,7 @@ export class AuthenticationService implements OnInit {
         console.log(authUrl);
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
       };
-      return this.oidcSecurityService.authorize(configId || this.authConfig.currentProvider, { urlHandler });
+      return this.oidcSecurityService.authorize(configId || this.currentProvider?.configId, { urlHandler });
     }
     // capacitor
     // else if (Capacitor.isNativePlatform()) {
@@ -92,16 +95,16 @@ export class AuthenticationService implements OnInit {
     // }
     // browser
     else {
-      return this.oidcSecurityService.authorize(configId || this.authConfig.currentProvider);
+      return this.oidcSecurityService.authorize(configId || this.currentProvider?.configId);
     }
   }
 
   async logout(configId?: string) {
-    await lastValueFrom(this.oidcSecurityService.logoff(configId || this.authConfig.currentProvider));
+    await lastValueFrom(this.oidcSecurityService.logoff(configId || this.currentProvider?.configId));
   }
 
   logout$(configId?: string) {
-    return this.oidcSecurityService.logoff(configId || this.authConfig.currentProvider);
+    return this.oidcSecurityService.logoff(configId || this.currentProvider?.configId);
   }
 
   public get userInfo$(): Observable<any> {
@@ -152,10 +155,7 @@ export class AuthenticationService implements OnInit {
   }
 
   get currentProvider() {
-    const cp = this.authConfig.providers.find((provider) => provider.configId === this.authConfig.currentProvider);
-    if (!cp) {
-      throw new Error(`Current provider not set or not found in auth configuration: '${this.authConfig.currentProvider}'`);
-    }
-    return cp;
+    const currentProvider = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
+    return this.authConfig?.providers.find((provider) => provider.configId === currentProvider);
   }
 }
