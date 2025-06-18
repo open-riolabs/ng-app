@@ -18,6 +18,7 @@ export class AppsService {
     private router: Router,
     @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
+    console.log('AppsService initialized');
     if (confAuth?.providers && confAuth.providers.length === 1) {
       store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
     } else if (confAuth?.providers && confAuth.providers.length > 1) {
