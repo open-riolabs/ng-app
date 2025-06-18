@@ -27,7 +27,7 @@ export class UserAccountComponent implements OnInit, OnDestroy {
   ) {
     const isAuth = this.store.selectSignal((state) => state[authsFeatureKey].isAuth)();
     if (!isAuth) {
-      this.router.navigate(['/']);
+      //this.router.navigate(['/']);
     }
   }
 

@@ -30,7 +30,6 @@ export class AuthenticationService implements OnInit {
 
   ngOnInit() {
     this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
-      console.log('AuthenticationService: isAuthenticated', isAuthenticated);
       this.authSnapshot.isAuthenticated = isAuthenticated;
     });
 
