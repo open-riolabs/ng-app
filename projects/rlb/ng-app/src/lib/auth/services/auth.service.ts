@@ -11,10 +11,8 @@ import { ParseJwtService } from './parse-jwt.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService implements OnInit {
+export class AuthenticationService {
   modal!: Window | null;
-  private authSnapshot: { isAuthenticated: boolean; userData: any; accessToken?: string; idToken?: string; refreshToken?: string; } =
-    { isAuthenticated: false, userData: null, accessToken: undefined, idToken: undefined, refreshToken: undefined, };
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -28,26 +26,17 @@ export class AuthenticationService implements OnInit {
 
   }
 
-  ngOnInit() {
-    this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
-      this.authSnapshot.isAuthenticated = isAuthenticated;
-    });
+  public get oidc(): OidcSecurityService {
+    return this.oidcSecurityService;
+  }
 
-    this.oidcSecurityService.userData$.subscribe(({ userData }) => {
-      this.authSnapshot.userData = userData;
-    });
+  get config(): AuthConfiguration {
+    return this.authConfig;
+  }
 
-    this.oidcSecurityService.getAccessToken().subscribe((accessToken) => {
-      this.authSnapshot.accessToken = accessToken;
-    });
-
-    this.oidcSecurityService.getIdToken().subscribe((idToken) => {
-      this.authSnapshot.idToken = idToken;
-    });
-
-    this.oidcSecurityService.getRefreshToken().subscribe((refreshToken) => {
-      this.authSnapshot.refreshToken = refreshToken;
-    });
+  get currentProvider() {
+    const currentProvider = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
+    return this.authConfig?.providers.find((provider) => provider.configId === currentProvider);
   }
 
   public authorize(url?: string | undefined): Observable<LoginResponse[]> {
@@ -60,9 +49,9 @@ export class AuthenticationService implements OnInit {
     //     })
     //   });
     // } else {
-    return this.oidcSecurityService.checkAuthMultiple(url)
-      .pipe(tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
-        if (isAuthenticated) {
+    return this.oidc.checkAuthMultiple(url)
+      .pipe(tap(data => {
+        if (data.some(o => o.isAuthenticated)) {
           const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           if (redirect) {
             this.cookiesService.deleteCookie('loginRedirectUrl');
@@ -73,7 +62,7 @@ export class AuthenticationService implements OnInit {
     //}
   }
 
-  public login(configId?: string) {
+  public login() {
     this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1);
     // electron
     if (typeof (process) !== 'undefined' &&
@@ -83,7 +72,7 @@ export class AuthenticationService implements OnInit {
         console.log(authUrl);
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
       };
-      return this.oidcSecurityService.authorize(configId || this.currentProvider?.configId, { urlHandler });
+      return this.oidc.authorize(this.currentProvider?.configId, { urlHandler });
     }
     // capacitor
     // else if (Capacitor.isNativePlatform()) {
@@ -91,48 +80,45 @@ export class AuthenticationService implements OnInit {
     //     console.log('opening', url);
     //     await Browser.open({ url, windowName: '_self' })
     //   };
-    //   this.oidcSecurityService.authorize(config, { urlHandler });
+    //   this.oidc.authorize(config, { urlHandler });
     // }
     // browser
     else {
-      return this.oidcSecurityService.authorize(configId || this.currentProvider?.configId);
+      return this.oidc.authorize(this.currentProvider?.configId);
     }
   }
 
-  async logout(configId?: string) {
-    await lastValueFrom(this.oidcSecurityService.logoff(configId || this.currentProvider?.configId));
+  async logout() {
+    await lastValueFrom(this.oidc.logoff(this.currentProvider?.configId));
   }
 
-  logout$(configId?: string) {
-    return this.oidcSecurityService.logoff(configId || this.currentProvider?.configId);
+  logout$() {
+    return this.oidc.logoff(this.currentProvider?.configId);
   }
 
   public get userInfo$(): Observable<any> {
-    return this.oidcSecurityService.userData$.pipe(map((userData) => userData.userData));
+    return this.oidc.userData$.pipe(map((userData) => {
+      const user = userData.allUserData.find(o => o.configId === this.currentProvider?.configId);
+      return user ? user.userData : null;
+    }));
   }
 
   public get isAuthenticated$(): Observable<boolean> {
-    return this.oidcSecurityService.isAuthenticated$.pipe(map((isAuthenticated) => isAuthenticated.isAuthenticated));
+    return this.oidc.isAuthenticated$.pipe(map((isAuthenticated) => {
+      return isAuthenticated.allConfigsAuthenticated.find(o => o.configId === this.currentProvider?.configId)?.isAuthenticated || false;
+    }));
   }
 
   public get accessToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getAccessToken();
+    return this.oidc.getAccessToken(this.currentProvider?.configId);
   }
 
   public get idToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getIdToken();
+    return this.oidc.getIdToken(this.currentProvider?.configId);
   }
 
   public get refreshToken$(): Observable<string | undefined> {
-    return this.oidcSecurityService.getRefreshToken();
-  }
-
-  public get oidc(): OidcSecurityService {
-    return this.oidcSecurityService;
-  }
-
-  public get snapshot() {
-    return this.authSnapshot;
+    return this.oidc.getRefreshToken(this.currentProvider?.configId);
   }
 
   public get roles$(): Observable<string[]> {
@@ -150,12 +136,4 @@ export class AuthenticationService implements OnInit {
     );
   }
 
-  get config(): AuthConfiguration {
-    return this.authConfig;
-  }
-
-  get currentProvider() {
-    const currentProvider = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
-    return this.authConfig?.providers.find((provider) => provider.configId === currentProvider);
-  }
 }

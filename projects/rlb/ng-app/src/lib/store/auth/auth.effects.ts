@@ -43,16 +43,20 @@ export class AuthEffects {
     if (authConfig) {
       auth.authorize()
         .pipe(
-          tap(([{ isAuthenticated, userData, accessToken, idToken }]) => {
-            store.dispatch(AuthActionsInternal.setAuth({
-              auth: {
-                accessToken,
-                idToken,
-                isAuth: isAuthenticated,
-                user: userData,
-                loading: false,
-              }
-            }));
+          tap(data => {
+            const auth = data.find(o => o.isAuthenticated);
+            if (auth) {
+              store.dispatch(AuthActionsInternal.setAuth({
+                auth: {
+                  accessToken: auth.accessToken,
+                  idToken: auth.idToken,
+                  isAuth: auth.isAuthenticated,
+                  user: auth.userData,
+                  loading: false,
+                  currentProvider: auth.configId
+                }
+              }));
+            }
           })).subscribe();
 
       auth.idToken$.subscribe((idToken) => {
