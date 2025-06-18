@@ -1,11 +1,10 @@
-import { NavigableItem } from "@rlb-core/lib-ng-bootstrap";
 
 export const navbarsFeatureKey = 'navbar';
 
 export interface Navbar {
-  visible: boolean
+  visible: boolean;
   header: string | null,
-  searchVisible: boolean
+  searchVisible: boolean;
   searchText: string | null,
   leftItems: string[],
   rightItems: string[],
@@ -24,7 +23,7 @@ export const initialNavbarState: Navbar = {
   loginVisible: false,
   settingsVisible: false,
   appsVisible: false,
-}
+};
 
-export interface NavbarState { [navbarsFeatureKey]: Navbar }
+export interface NavbarState { [navbarsFeatureKey]: Navbar; }
 

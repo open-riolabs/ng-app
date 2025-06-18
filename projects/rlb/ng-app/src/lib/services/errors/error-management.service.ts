@@ -1,9 +1,9 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { ModalService, ModalType, ToastService } from '@rlb-core/lib-ng-bootstrap';
-import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
 import { LanguageService } from '..';
 import { ProjectConfiguration, RLB_CFG } from '../../configuration';
+import { ErrorOutput, } from './errors';
 
 @Injectable({
   providedIn: 'root'
@@ -26,16 +26,16 @@ export class ErrorManagementService {
     }
     if (out === 'console') {
       if (!this.options.production) {
-        console.info("%c Error service: ShowToast", 'background: #ffcdc9; color: #000', error)
+        console.info("%c Error service: ShowToast", 'background: #ffcdc9; color: #000', error);
       }
-      return of({ reason: 'console' })
+      return of({ reason: 'console' });
     }
     return EMPTY;
   }
 
   public showDialog(type: ModalType, error?: Error) {
     if (!this.options.production) {
-      console.info("%c Error service: ShowDialog", 'background: #ffcdc9; color: #000', error)
+      console.info("%c Error service: ShowDialog", 'background: #ffcdc9; color: #000', error);
     }
     return this.dialogService.openModal<string, void>(
       this.options?.environment?.errorDialogName || 'error-modal-component',
@@ -60,7 +60,7 @@ export class ErrorManagementService {
 
   public showToast(type: ModalType, error?: any) {
     if (!this.options.production) {
-      console.info("%c Error service: ShowToast", 'background: #ffcdc9; color: #000', error)
+      console.info("%c Error service: ShowToast", 'background: #ffcdc9; color: #000', error);
     }
     return this.toastService.openToast(
       this.options?.environment?.errorToastContainer || 'error-toast-container',
