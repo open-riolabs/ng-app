@@ -9,7 +9,7 @@
     "@angular/service-worker": "^19.0.0",
     "@ngx-translate/core": "^16.0.0",
     "@ngx-translate/http-loader": "^16.0.0",
-    "@sicilyaction/lib-ng-bootstrap": "^2.0.0",
+    "@sicilyaction/lib-ng-bootstrap": ">=2.2.19",
     "angular-auth-oidc-client": "^19.0.0",
     "ngx-cookie-service-ssr": "^19.0.0"
   },
