@@ -11,7 +11,8 @@
     "@ngx-translate/http-loader": "^16.0.0",
     "@sicilyaction/lib-ng-bootstrap": ">=2.2.19",
     "angular-auth-oidc-client": "^19.0.0",
-    "ngx-cookie-service-ssr": "^19.0.0"
+    "ngx-cookie-service-ssr": "^19.0.0",
+    "@open-rlb/date-tz": ">=1.0.2"
   },
   "dependencies": {
     "tslib": "^2.8.1"
