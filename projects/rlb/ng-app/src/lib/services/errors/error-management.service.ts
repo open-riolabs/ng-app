@@ -83,6 +83,9 @@ export class ErrorManagementService {
     return (source: Observable<T>) => {
       return source.pipe(
         catchError((error, k) => {
+          if (error.name && error.name === 'HttpErrorResponse' && error.error) { 
+            error.message = `${error.error.status}: ${error.error.message}`;
+          }
           this.showError(type, out, error);
           return EMPTY;
         }),
