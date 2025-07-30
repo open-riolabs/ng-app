@@ -63,7 +63,7 @@ export class AppsService {
         }))
       .subscribe((data) => {
         let route = this.activatedRoute;
-        while (route.firstChild) {
+        while (route.firstChild && route.firstChild.snapshot.url.length) {
           route = route.firstChild;
         }
         if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
