@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { RlbAppModule } from "@sicilyaction/lib-ng-app";
+import { RlbAppModule } from "@lbdsh/lib-ng-app";
 
 @Component({
   imports: [CommonModule, RlbAppModule],

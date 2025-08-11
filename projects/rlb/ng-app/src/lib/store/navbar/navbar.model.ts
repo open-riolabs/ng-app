@@ -1,4 +1,4 @@
-import { NavigableItem } from "@sicilyaction/lib-ng-bootstrap";
+import { NavigableItem } from "@lbdsh/lib-ng-bootstrap";
 
 export const navbarsFeatureKey = 'navbar';
 

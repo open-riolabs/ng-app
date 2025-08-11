@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { NavigableItem } from '@sicilyaction/lib-ng-bootstrap'
+import { NavigableItem } from '@lbdsh/lib-ng-bootstrap'
 export const NavbarActionsInternal = createActionGroup({
   source: 'Navbar/Internal',
   events: {}

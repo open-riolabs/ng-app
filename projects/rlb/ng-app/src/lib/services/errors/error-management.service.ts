@@ -1,5 +1,5 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import { ModalService, ModalType, ToastService } from '@sicilyaction/lib-ng-bootstrap';
+import { ModalService, ModalType, ToastService } from '@lbdsh/lib-ng-bootstrap';
 import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
 import { LanguageService } from '..';

@@ -31,8 +31,8 @@
             ],
             "styles": [
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/@sicilyaction/lib-ng-bootstrap/assets/scss/app.scss",
-              "node_modules/@sicilyaction/lib-ng-bootstrap/assets/scss/icons.scss",
+              "node_modules/@lbdsh/lib-ng-bootstrap/assets/scss/app.scss",
+              "node_modules/@lbdsh/lib-ng-bootstrap/assets/scss/icons.scss",
               "src/styles.scss"
             ],
             "scripts": []
@@ -100,7 +100,7 @@
         }
       }
     },
-    "@sicilyaction/lib-ng-app": {
+    "@lbdsh/lib-ng-app": {
       "projectType": "library",
       "root": "projects/rlb/ng-app",
       "sourceRoot": "projects/rlb/ng-app/src",

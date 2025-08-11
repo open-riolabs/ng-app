@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
-import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@sicilyaction/lib-ng-bootstrap';
+import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@lbdsh/lib-ng-bootstrap';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration';
 import { ErrorModalComponent } from './lib/modals/error-modal.component';

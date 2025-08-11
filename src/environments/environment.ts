@@ -1,4 +1,4 @@
-import { ProjectConfiguration } from "@sicilyaction/lib-ng-app";
+import { ProjectConfiguration } from "@lbdsh/lib-ng-app";
 
 export const environment: ProjectConfiguration = {
   eventsEndpoint: 'wss://notify.addubby.com',

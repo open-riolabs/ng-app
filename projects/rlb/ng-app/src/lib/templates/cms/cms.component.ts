@@ -1,5 +1,5 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
-import { BreadcrumbItem } from '@sicilyaction/lib-ng-bootstrap';
+import { BreadcrumbItem } from '@lbdsh/lib-ng-bootstrap';
 import { EMPTY, Subscription, switchMap } from 'rxjs';
 import { LanguageService, Page, StrapiService, AbstractMdService } from '../../services';
 import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';

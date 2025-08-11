@@ -44,8 +44,8 @@ jobs:
             ${{ runner.os }}-node-modules-
       - name: Install dependencies
         run: |
-          npm config set "@sicilyaction:registry=https://npm.pkg.github.com/sicilyaction/"
-          npm config set "//npm.pkg.github.com/sicilyaction/:_authToken" "${{ secrets.DEPLOY_PAT }}"
+          npm config set "@lbdsh:registry=https://npm.pkg.github.com/lbdsh/"
+          npm config set "//npm.pkg.github.com/lbdsh/:_authToken" "${{ secrets.DEPLOY_PAT }}"
           npm install
       - name: Create node_modules TarGz
         run: tar -czf node_modules.tar.gz node_modules
@@ -112,7 +112,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://npm.pkg.github.com/"
-          scope: "@sicilyaction"
+          scope: "@lbdsh"
       - run: |
           cp ./package.json ./dist
           cd ./dist/rlb/ng-app
