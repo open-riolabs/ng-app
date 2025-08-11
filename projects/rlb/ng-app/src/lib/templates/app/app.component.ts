@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NavigableItem } from '@sicilyaction/lib-ng-bootstrap';
+import { NavigableItem } from '@lbdsh/lib-ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services';

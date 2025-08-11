@@ -1,5 +1,5 @@
 {
-  "name": "@sicilyaction/lib-ng-app",
+  "name": "@lbdsh/lib-ng-app",
   "version": "0.0.0",
   "peerDependencies": {
     "@angular/common": ">=20.0.0",
@@ -11,7 +11,7 @@
     "@ngrx/store": ">=20.0.0-beta.0",
     "@ngx-translate/core": ">=16.0.0",
     "@ngx-translate/http-loader": ">=16.0.0",
-    "@sicilyaction/lib-ng-bootstrap": ">=3.0.0",
+    "@lbdsh/lib-ng-bootstrap": ">=3.0.0",
     "angular-auth-oidc-client": ">=19.0.0",
     "ngx-cookie-service-ssr": ">=20.0.0",
     "ngx-cookie-service": ">=20.0.0"

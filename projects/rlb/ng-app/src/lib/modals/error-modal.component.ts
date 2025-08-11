@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module'
-import { IModal, ModalData, ModalDirective } from '@sicilyaction/lib-ng-bootstrap';
+import { IModal, ModalData, ModalDirective } from '@lbdsh/lib-ng-bootstrap';
 
 @Component({
     imports: [RlbAppModule, CommonModule],
