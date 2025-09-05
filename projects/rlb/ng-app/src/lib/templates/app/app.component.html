@@ -29,7 +29,7 @@
           <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
         </ng-container>
       </rlb-navbar-items>
-      <rlb-navbar-items class="ms-auto">
+      <rlb-navbar-items>
         <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
           <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
         </ng-container>
