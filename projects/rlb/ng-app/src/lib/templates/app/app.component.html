@@ -1,5 +1,41 @@
 <div class="rlb-app">
   <rlb-sidebar class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
+		<!--RESPONSIVE BEGIN-->
+		<rlb-sidebar-item responsiveClasses="d-lg-none">
+			<rlb-input-group class="my-1 mx-3" validate>
+				<rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
+									 (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
+					<button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
+						<i class="bi bi-search"></i>
+					</button>
+				</rlb-input>
+			</rlb-input-group>
+		</rlb-sidebar-item>
+		<rlb-sidebar-item responsiveClasses="d-lg-none" (click)="loginNav($event)" *ngIf="(navbarHasLogin$ | async) && !(isAuth$ | async)">
+			<span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
+            <i class=" bi bi-box-arrow-in-left"></i>
+          </span>
+			<span class="ms-1 d-lg-none">{{'core.account.login' | translate}}</span>
+		</rlb-sidebar-item>
+		<rlb-sidebar-item responsiveClasses="d-lg-none" *ngIf="(navbarHasLogin$ | async) && (isAuth$ | async)" link="/profile">
+			<span tooltip-placement="bottom" [tooltip]="('core.account.title') | translate">
+            <i class="bi bi-person"></i>
+          </span>
+			<span class="ms-1 d-lg-none">{{'core.account.title' | translate}}</span>
+		</rlb-sidebar-item>
+		<rlb-sidebar-item responsiveClasses="d-lg-none" *ngIf="navbarHasSettings$ | async" link="/setting">
+			 <span tooltip-placement="bottom" [tooltip]="('core.settings.title') | translate">
+            <i class="bi bi-gear"></i>
+          </span>
+			<span class="ms-1 d-lg-none">{{'core.settings.title' | translate}}</span>
+		</rlb-sidebar-item>
+		<rlb-sidebar-item responsiveClasses="d-lg-none" *ngIf="(navbarHasApps$ | async) && apps.length > 1" link="/apps">
+			<span tooltip-placement="bottom" [tooltip]="('core.apps.button') | translate">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+          </span>
+			<span class="ms-1 d-lg-none">{{'core.apps.button' | translate}}</span>
+		</rlb-sidebar-item>
+		<!--RESPONSIVE END-->
     <rlb-sidebar-item *ngFor="let item of  (sidebarItems$ | async)" [icon]="item.icon" [link]="item.url"
       [title]="item.title" [label]="item.label">{{item.label}}
       <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="sitem.icon" [link]="sitem.url"
@@ -9,10 +45,10 @@
   </rlb-sidebar>
   <ng-container *ngIf="navVisible$ | async">
     <rlb-navbar expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1 rlb-navbar">
-      <a *ngIf="sidebarVisible$ | async" class="navbar-toggler fs-2 d-lg-none" rlb-button href="#" toggle="sidebar"
-        toggle-target="sidebar" [outline]="true">
-        <span class="bi bi-three-dots"></span>
-      </a>
+<!--      <a *ngIf="sidebarVisible$ | async" class="navbar-toggler fs-2 d-lg-none" rlb-button href="#" toggle="sidebar"-->
+<!--        toggle-target="sidebar" [outline]="true">-->
+<!--        <span class="bi bi-three-dots"></span>-->
+<!--      </a>-->
       <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
       <rlb-navbar-form *ngIf="navSearchVisible$ | async">
         <rlb-input-group class="my-1 mx-3" validate>
