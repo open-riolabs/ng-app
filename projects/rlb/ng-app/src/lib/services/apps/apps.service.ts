@@ -20,11 +20,14 @@ export class AppsService {
   ) {
     console.log('AppsService initialized');
     if (confAuth?.providers && confAuth.providers.length === 1) {
-      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
+			console.log('Single auth provider detected:', confAuth.providers[0]);
+			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
     } else if (confAuth?.providers && confAuth.providers.length > 1) {
-      const auth = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
+			console.log('Multiple auth providers detected, checking by domain:', this.currentDomain);
+			const auth = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
       if (auth && auth.length === 1) {
-        store.dispatch(AuthActions.setCurrentProvider({ currentProvider: auth[0].configId }));
+				console.log('Auth provider matched by domain:', auth[0]);
+				store.dispatch(AuthActions.setCurrentProvider({ currentProvider: auth[0].configId }));
       } else if (auth && auth.length > 1) {
         console.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
       } else {
@@ -36,20 +39,32 @@ export class AppsService {
         type: app.type,
         routes: app.routes || [],
       }));
-    this.router.events
+		console.log('Initialized appRoutes:', appRoutes);
+		this.router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd),
+        filter(event => {
+					const isNavEnd = event instanceof NavigationEnd;
+					if (!isNavEnd) console.debug('Router event ignored:', event);
+					return isNavEnd;
+				}),
         map(() => {
           let route = this.activatedRoute;
           while (route.firstChild) {
             route = route.firstChild;
           }
-          return route;
+					console.log('Activated deepest child route:', route);
+					
+					return route;
         }),
         map(route => {
-          if (!route.routeConfig) return null;
+					if (!route.routeConfig) {
+						console.warn('Route without config detected:', route);
+						return null;
+					}
           const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
-          if (appRoute) {
+					console.log('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoute);
+					
+					if (appRoute) {
             const apps = this.apps?.filter(app => appRoute?.some(a => a.type === app.type));
             if (apps && apps.length > 0) {
               return { route, apps };
@@ -58,38 +73,54 @@ export class AppsService {
           return null;
         }),
         mergeMap(data => {
-          return this.store.select(state => state[appContextFeatureKey].apps)
-            .pipe(map(apps => data ? { route: data.route, appsConfig: data.apps, apps: apps } : null));
+					console.log('Before store select mergeMap. Data:', data);
+					return this.store.select(state => state[appContextFeatureKey].apps)
+					.pipe(map(apps => {
+						const result = data ? { route: data.route, appsConfig: data.apps, apps: apps } : null;
+						console.log('Store apps from state:', apps, 'Mapped result:', result);
+						return result;
+					}));
         }))
       .subscribe((data) => {
-        let route = this.activatedRoute;
+				console.log('Router subscription received data:', data);
+				let route = this.activatedRoute;
         while (route.firstChild) {
           route = route.firstChild;
         }
-        if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
-          this.selectApp(this.apps[0], 'app');
-        }
+				// Case: no data + single app available
+				if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
+					console.log('No data, single app detected. Auto-selecting app:', this.apps[0]);
+					this.selectApp(this.apps[0], 'app');
+				}
         if (!data) {
-          this.selectApp();
+					console.warn('No data resolved for current route, deselecting app.');
+					this.selectApp();
           return;
         }
-        if (!data.apps || data.apps.length === 0) {
-          this.selectApp();
-          return;
-        }
+				
+				if (!data.apps || data.apps.length === 0) {
+					console.warn('No apps matched for this route:', data.route.routeConfig?.path);
+					this.selectApp();
+					return;
+				}
+				
         if (data && data.apps.some(app => !app.id)) {
           console.warn(`Some apps are not finalized. Please finalize all apps before using the AppsService.`);
           return;
         }
         const qp = new URLSearchParams(data.route.snapshot.queryParams).toString();
         const url = data.route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
-        if (data.apps.length === 1) {
-          this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
+				console.log('Final resolved url:', url);
+				
+				if (data.apps.length === 1) {
+					console.log('Exactly one app resolved. Selecting app:', data.apps[0]);
+					this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
           return;
         }
         const app = data.apps.find(app => app.id === localStorage.getItem('c-app-id'));
         if (app) {
-          this.selectApp(app, data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
+					console.log('App resolved from localStorage c-app-id:', app);
+					this.selectApp(app, data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
           return;
         }
         else {
@@ -103,25 +134,32 @@ export class AppsService {
   get currentDomain() {
     return window.location.hostname;
   }
-
-  get apps() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-      .filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
-  }
-
-  get currentApp() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
-  }
+	
+	get apps() {
+		const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+		.filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
+		console.log('Filtered apps for currentDomain:', this.currentDomain, apps);
+		return apps;
+	}
+	
+	get currentApp() {
+		const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
+		console.log('Current app from store:', app);
+		return app;
+	}
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
     const currentApp = this.currentApp;
-    if (!app) {
-      this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
-      return;
-    }
-    if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
-      return;
-    }
-    this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
+		if (!app) {
+			console.warn('Deselecting app (null).');
+			this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
+			return;
+		}
+		if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
+			console.log('App already selected with same id and viewMode. Skipping dispatch.');
+			return;
+		}
+		console.log('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
+		this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 }
