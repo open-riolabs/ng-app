@@ -49,17 +49,14 @@ export class AppContextEffects {
     return this.actions$.pipe(
       ofType(AppContextActions.setCurrentApp),
       map(({ app, mode, url }) => {
-				this.logger.logWarning('setApp$', app);
 				return AppContextActionsInternal.setCurrentApp({ app, mode, url });
       }),
       tap(({ app }) => {
-				this.logger.logWarning('setApp$ tap', app);
         if (app) {
-					this.logger.logWarning('setApp$ tap set c-app-id', app.id!);
+					this.logger.logWarning('setApp$ set c-app-id', app.id!);
 					localStorage.setItem('c-app-id', app.id!);
         } else {
-					this.logger.logWarning('setApp$ tap remove c-app-id');
-					
+					this.logger.logWarning('setApp$ remove c-app-id');
 					localStorage.removeItem('c-app-id');
         }
       }),

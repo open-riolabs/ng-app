@@ -159,7 +159,7 @@ export class AppsService {
 			this.logger.logInfo('App already selected with same id and viewMode. Skipping dispatch.');
 			return;
 		}
-		this.logger.logInfo('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
+		this.logger.logWarning('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
 		this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 }
