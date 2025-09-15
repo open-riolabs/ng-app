@@ -9,6 +9,7 @@ import { AppInfo } from '../../services/apps/app';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
 import { RLB_APPS } from './app-context.model';
+import { RlbLoggerService } from "../../auth/services/rlb-logger.service";
 
 @Injectable()
 export class AppContextEffects {
@@ -48,13 +49,18 @@ export class AppContextEffects {
     return this.actions$.pipe(
       ofType(AppContextActions.setCurrentApp),
       map(({ app, mode, url }) => {
-        return AppContextActionsInternal.setCurrentApp({ app, mode, url });
+				this.logger.logWarning('setApp$', app);
+				return AppContextActionsInternal.setCurrentApp({ app, mode, url });
       }),
       tap(({ app }) => {
+				this.logger.logWarning('setApp$ tap', app);
         if (app) {
-          localStorage.setItem('c-app-id', app.id!);
+					this.logger.logWarning('setApp$ tap set c-app-id', app.id!);
+					localStorage.setItem('c-app-id', app.id!);
         } else {
-          localStorage.removeItem('c-app-id');
+					this.logger.logWarning('setApp$ tap remove c-app-id');
+					
+					localStorage.removeItem('c-app-id');
         }
       }),
     );
@@ -67,6 +73,7 @@ export class AppContextEffects {
     readonly storage: AppStorageService,
     readonly store: Store<BaseState>,
     private readonly router: Router,
+		private logger: RlbLoggerService,
     @Inject(RLB_APPS) @Optional() private apps: AppInfo[],
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
