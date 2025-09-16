@@ -27,105 +27,10 @@ export class AppsService {
 		private logger: RlbLoggerService,
     @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
-		this.logger.logInfo('AppsService initialized');
+		console.log('AppsService initialized');
 		
     this.initAuthProviders(store, confAuth);
 		this.initRouterListener()
-		
-    // const appRoutes: { type: string; routes: string[]; }[] | undefined = this.apps
-    //   ?.map(app => ({
-    //     type: app.type,
-    //     routes: app.routes || [],
-    //   }));
-		// this.logger.logInfo('Initialized appRoutes:', appRoutes);
-		// this.router.events
-    //   .pipe(
-    //     filter(event => {
-		// 			const isNavEnd = event instanceof NavigationEnd;
-		// 			if (!isNavEnd) console.debug('Router event ignored:', event);
-		// 			return isNavEnd;
-		// 		}),
-    //     map(() => {
-    //       let route = this.activatedRoute;
-    //       while (route.firstChild) {
-    //         route = route.firstChild;
-    //       }
-		// 			this.logger.logInfo('Activated deepest child route:', route);
-		//
-		// 			return route;
-    //     }),
-    //     map(route => {
-		// 			if (!route.routeConfig) {
-		// 				this.logger.logWarning('Route without config detected:', route);
-		// 				return null;
-		// 			}
-    //       const appRoute = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
-		// 			this.logger.logInfo('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoute);
-		//
-		// 			if (appRoute) {
-    //         const apps = this.apps?.filter(app => appRoute?.some(a => a.type === app.type));
-    //         if (apps && apps.length > 0) {
-    //           return { route, apps };
-    //         }
-    //       }
-    //       return null;
-    //     }),
-    //     mergeMap(data => {
-		// 			this.logger.logInfo('Before store select mergeMap. Data:', data);
-		// 			return this.store.select(state => state[appContextFeatureKey].apps)
-		// 			.pipe(map(apps => {
-		// 				const result = data ? { route: data.route, appsConfig: data.apps, apps: apps } : null;
-		// 				this.logger.logInfo('Store apps from state:', apps, 'Mapped result:', result);
-		// 				return result;
-		// 			}));
-    //     }))
-    //   .subscribe((data) => {
-		// 		this.logger.logInfo('Router subscription received data:', data);
-		// 		let route = this.activatedRoute;
-    //     while (route.firstChild) {
-    //       route = route.firstChild;
-    //     }
-		// 		// Case: no data + single app available
-		// 		if (!data && route.snapshot.url.join('/') === '' && !route.snapshot.queryParamMap.keys.length && this.apps.length === 1) {
-		// 			this.logger.logInfo('No data, single app detected. Auto-selecting app:', this.apps[0]);
-		// 			this.selectApp(this.apps[0], 'app');
-		// 		}
-    //     if (!data) {
-		// 			this.logger.logWarning('No data resolved for current route, deselecting app.');
-		// 			this.selectApp();
-    //       return;
-    //     }
-		//
-		// 		if (!data.apps || data.apps.length === 0) {
-		// 			this.logger.logWarning('No apps matched for this route:', data.route.routeConfig?.path);
-		// 			this.selectApp();
-		// 			return;
-		// 		}
-		//
-    //     if (data && data.apps.some(app => !app.id)) {
-    //       this.logger.logWarning(`Some apps are not finalized. Please finalize all apps before using the AppsService.`);
-    //       return;
-    //     }
-    //     const qp = new URLSearchParams(data.route.snapshot.queryParams).toString();
-    //     const url = data.route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
-		// 		this.logger.logInfo('Final resolved url:', url);
-		//
-		// 		if (data.apps.length === 1) {
-		// 			this.logger.logInfo('Exactly one app resolved. Selecting app:', data.apps[0]);
-		// 			this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
-    //       return;
-    //     }
-    //     const app = data.apps.find(app => app.id === localStorage.getItem('c-app-id'));
-    //     if (app) {
-		// 			this.logger.logInfo('App resolved from localStorage c-app-id:', app);
-		// 			this.selectApp(app, data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
-    //       return;
-    //     }
-    //     else {
-    //       console.error(`No unique app was found for the current route: ${data.route.routeConfig?.path}. Check app ids configuration`);
-    //       this.selectApp(data.apps[0], data.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
-    //     }
-    //   });
   }
 
   get currentDomain() {
