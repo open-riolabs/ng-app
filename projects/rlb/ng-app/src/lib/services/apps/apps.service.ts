@@ -130,6 +130,11 @@ export class AppsService {
 		const route = this.findDeepestChild(this.activatedRoute);
 		const storedId = this.getStoredAppId();
 		
+		if (data?.apps?.some(app => !app.id)) {
+			this.logger.logError('Some apps are not finalized. Please finalize apps before using AppsService.');
+			return;
+		}
+		
 		if (!data || !data.apps || data.apps.length === 0) {
 			this.logger.logWarning(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
 			// const globalDefaultApp = this.apps[0];
@@ -161,59 +166,6 @@ export class AppsService {
 		const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
 		
 		this.selectApp(appToSelect, viewMode, url);
-	}
-	
-	
-	//Backup old
-	private _handleResolvedApps(data: AppConfig | null) {
-		let route = this.findDeepestChild(this.activatedRoute);
-		
-		// no data + single app available
-		if (!data && route.snapshot.url.join('/') === ''
-			&& !route.snapshot.queryParamMap.keys.length
-			&& this.apps.length === 1) {
-			this.logger.logInfo('No data, single app detected. Auto-selecting:', this.apps[0]);
-			this.selectApp(this.apps[0], 'app');
-			return;
-		}
-		
-		if (!data) {
-			this.logger.logWarning('No app resolved for route. Deselecting.');
-			this.selectApp();
-			return;
-		}
-		
-		if (!data.apps || data.apps.length === 0) {
-			this.logger.logWarning('No apps matched for route:', data.route.routeConfig?.path);
-			this.selectApp();
-			return;
-		}
-		
-		if (data.apps.some(app => !app.id)) {
-			this.logger.logWarning('Some apps are not finalized. Please finalize apps before using AppsService.');
-			return;
-		}
-		
-		const qp = new URLSearchParams(data.route.snapshot.queryParams).toString();
-		const url = data.route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
-		this.logger.logInfo('Final resolved url:', url);
-		
-		if (data.apps.length === 1) {
-			this.logger.logInfo('Exactly one app resolved. Selecting app:', data.apps[0]);
-			this.selectApp(data.apps[0], data?.route.routeConfig?.path?.includes('settings') ? 'settings' : 'app', url);
-			return;
-		}
-		
-		const storedId = this.getStoredAppId();
-		const app = data.apps.find(a => a.id === storedId);
-		
-		if (app) {
-			this.logger.logInfo('App resolved from localStorage:', app);
-			this.selectApp(app, this.isSettingsRoute(data.route) ? 'settings' : 'app', url);
-		} else {
-			this.logger.logError(`No unique app found for route: ${data.route.routeConfig?.path}`);
-			this.selectApp(data.apps[0], this.isSettingsRoute(data.route) ? 'settings' : 'app', url);
-		}
 	}
 	
 	private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
