@@ -127,6 +127,45 @@ export class AppsService {
 	}
 	
 	private handleResolvedApps(data: AppConfig | null) {
+		const route = this.findDeepestChild(this.activatedRoute);
+		const storedId = this.getStoredAppId();
+		
+		if (!data || !data.apps || data.apps.length === 0) {
+			this.logger.logWarning(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
+			// const globalDefaultApp = this.apps[0];
+			// this.selectApp(globalDefaultApp, this.isSettingsRoute(route) ? 'settings' : 'app');
+			return;
+		}
+		
+		const matchedApps = data.apps.filter(app =>
+			app.routes?.includes(route.routeConfig?.path!) ||
+			app.core?.url === '/' + route.routeConfig?.path
+		);
+		
+		let appToSelect: AppInfo | undefined;
+		
+		if (matchedApps.length === 1) {
+			appToSelect = matchedApps[0];
+			this.logger.logInfo('Single app matched route:', appToSelect);
+		} else if (matchedApps.length > 1) {
+			appToSelect = matchedApps.find(a => a.id === storedId) || matchedApps[0];
+			this.logger.logInfo('Multiple apps matched route, selected:', appToSelect);
+		} else {
+			appToSelect = data.apps[0];
+			this.logger.logInfo('No app matched route. Falling back to default app:', appToSelect);
+		}
+		
+		const qp = new URLSearchParams(route.snapshot.queryParams).toString();
+		const url = route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
+		
+		const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
+		
+		this.selectApp(appToSelect, viewMode, url);
+	}
+	
+	
+	//Backup old
+	private _handleResolvedApps(data: AppConfig | null) {
 		let route = this.findDeepestChild(this.activatedRoute);
 		
 		// no data + single app available
