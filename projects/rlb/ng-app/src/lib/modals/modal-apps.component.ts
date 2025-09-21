@@ -1,12 +1,12 @@
-import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { IModal, ModalData, ModalDirective } from "@rlb-core/lib-ng-bootstrap";
-import { RlbAppModule } from "../rlb-app.module";
 import { AppInfo } from "../services/apps/app";
+import { RlbAppModule } from "../rlb-app.module";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  imports: [RlbAppModule, CommonModule],
-  template: `
+    imports: [RlbAppModule, CommonModule],
+    template: `
     <div class="modal-header">
       <h5 class="modal-title">{{ data.title }}</h5>
       <button type="button" class="btn-close" aria-label="Close" data-modal-reason="close"></button>
@@ -23,7 +23,7 @@ import { AppInfo } from "../services/apps/app";
         </li>
       </ul>
     </div>`,
-  hostDirectives: [{ directive: ModalDirective, inputs: ['id', 'data-instance', 'data-options'] }]
+    hostDirectives: [{ directive: ModalDirective, inputs: ['id', 'data-instance', 'data-options'] }]
 })
 export class ModalAppsComponent implements IModal<AppInfo[], AppInfo> {
   data!: ModalData<any>;

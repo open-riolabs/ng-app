@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { IToast, ToastData, ToastDirective } from '@rlb-core/lib-ng-bootstrap';
 import { RlbAppModule } from '../rlb-app.module';
+import { ToastData, ToastDirective, IToast } from '@rlb-core/lib-ng-bootstrap';
 
 @Component({
-  imports: [RlbAppModule, CommonModule],
-  template: `
+    imports: [RlbAppModule, CommonModule],
+    template: `
     <div class="toast-header">
       <strong class="me-auto">
         <svg
@@ -31,12 +31,12 @@ import { RlbAppModule } from '../rlb-app.module';
     </div>
     <div class="toast-body">{{ data.content }}</div>
   `,
-  hostDirectives: [
-    {
-      directive: ToastDirective,
-      inputs: ['id', 'data-instance', 'data-options'],
-    },
-  ]
+    hostDirectives: [
+        {
+            directive: ToastDirective,
+            inputs: ['id', 'data-instance', 'data-options'],
+        },
+    ]
 })
 export class ToastComponent implements IToast<string, void> {
   data!: ToastData<string>;

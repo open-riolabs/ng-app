@@ -14,7 +14,7 @@ export function provideRlbI18n(i18n?: InternationalizationConfiguration): (Envir
           useFactory: translateBrowserLoaderFactory,
           deps: [HttpClient, TransferState]
         },
-        defaultLanguage: i18n.defaultLanguage
+        fallbackLang: i18n.defaultLanguage
       })
     ]),
     { provide: RLB_CFG_I18N, useValue: i18n },

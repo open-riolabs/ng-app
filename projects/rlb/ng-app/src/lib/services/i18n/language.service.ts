@@ -25,7 +25,7 @@ export class LanguageService {
   }
 
   get language() {
-    return this.translateService.currentLang || this.i18nOptions.defaultLanguage
+    return this.translateService.getCurrentLang() || this.i18nOptions.defaultLanguage
   }
 
   set language(value: string | undefined) {
@@ -44,7 +44,7 @@ export class LanguageService {
     this.contentLanguageChanged$.emit(value)
   }
 
-  public get languages(): string[] {
+  public get languages(): readonly string[] {
     return this.translateService.getLangs()
   }
 
@@ -53,7 +53,7 @@ export class LanguageService {
   }
 
   public get defaultLanguage(): string {
-    return this.translateService.getDefaultLang()
+    return this.translateService.getFallbackLang() || 'en'
   }
 
   public get browserLanguage() {

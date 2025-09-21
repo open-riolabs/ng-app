@@ -1,11 +1,13 @@
 import { Observable } from 'rxjs';
 import { TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { StateKey, makeStateKey, TransferState } from '@angular/core';
 
 export class TranslateBrowserLoader implements TranslateLoader {
-  constructor(private http: HttpClient, private transferState: TransferState) {}
+  constructor(private http: HttpClient,
+    private transferState: TransferState,
+    private prefix: string = '/assets/i18n/',
+    private suffix: string = '.json') {}
 
   public getTranslation(lang: string): Observable<any> {
     const key: StateKey<number> = makeStateKey<number>(
@@ -14,14 +16,14 @@ export class TranslateBrowserLoader implements TranslateLoader {
     const data = this.transferState.get(key, null);
 
     // First we are looking for the translations in transfer-state, 
-	// if none found, http load as fallback
+	  // if none found, http load as fallback
     if (data) {
       return new Observable((observer) => {
         observer.next(data);
         observer.complete();
       });
     } else {
-      return new TranslateHttpLoader(this.http).getTranslation(lang);
+      return this.http.get(`${this.prefix}${lang}${this.suffix}`);
     }
   }
 }

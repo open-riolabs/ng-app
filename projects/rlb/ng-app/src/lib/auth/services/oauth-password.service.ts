@@ -19,7 +19,7 @@ export interface Token {
 @Injectable({
   providedIn: 'root'
 })
-export class OauthPasswordService implements HttpInterceptor, OnInit {
+export class OauthPasswordService implements HttpInterceptor {
 
   private timer: any = null;
   private _onUpdateToken: ((token: string | null) => void) | null = null;
@@ -28,9 +28,6 @@ export class OauthPasswordService implements HttpInterceptor, OnInit {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly authenticationService: AuthenticationService) {
-  }
-
-  ngOnInit() {
     this.initRefreshToken().catch(e => console.error("Error in refresh token", e));
   }
 
