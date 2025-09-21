@@ -44,8 +44,8 @@ jobs:
             ${{ runner.os }}-node-modules-
       - name: Install dependencies
         run: |
-          npm config set "@rlb-core:registry=https://npm.pkg.github.com/rlb-core/"
-          npm config set "//npm.pkg.github.com/rlb-core/:_authToken" "${{ secrets.DEPLOY_PAT }}"
+          npm config set "@rlb-core:registry=https://npm.pkg.github.com/lbdsh/"
+          npm config set "//npm.pkg.github.com/lbdsh/:_authToken" "${{ secrets.DEPLOY_PAT }}"
           npm install
       - name: Create node_modules TarGz
         run: tar -czf node_modules.tar.gz node_modules
@@ -59,7 +59,7 @@ jobs:
     needs: dependencies
     runs-on: ubuntu-latest
     container:
-      image: node:lts-buster
+      image: node:lts-bullseye
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

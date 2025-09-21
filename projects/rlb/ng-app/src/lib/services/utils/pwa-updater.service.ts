@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-import { ModalService } from '@rlb-core/lib-ng-bootstrap';
 import { filter, map, switchMap } from 'rxjs';
+import { ModalService } from '@rlb-core/lib-ng-bootstrap';
 import { LanguageService } from '../i18n/language.service';
 
 @Injectable({
@@ -51,7 +51,7 @@ export class PwaUpdaterService {
         ),
         filter((res) => res?.reason === 'ok'), //si ferma se l'evento non è una action
         map(() => this.updates.activateUpdate().then(() => location.reload()))
-      );
+      )
   }
 }
 

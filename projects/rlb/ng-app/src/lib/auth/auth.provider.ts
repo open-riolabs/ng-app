@@ -5,14 +5,14 @@ import { AuthConfiguration, RLB_CFG_AUTH } from "../configuration";
 import { TokenCookiesService } from "./providers/token-cookies.service";
 import { TokenSessionService } from "./providers/token-session.service";
 import { TokenStoreService } from "./providers/token-store.service";
-import { LoggerService } from "./services/logger.service";
+import { RlbLoggerService } from "./services/rlb-logger.service";
 import { TokenOauthInterceptor } from "./token-oauth-interceptor";
 
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
   const providers: (Provider | EnvironmentProviders)[] = [
     { provide: RLB_CFG_AUTH, useValue: auth },
-    { provide: AbstractLoggerService, useClass: LoggerService },
+    { provide: AbstractLoggerService, useClass: RlbLoggerService },
     AuthModule,
     provideAuth({
       config: auth.providers.map((_auth) => ({
