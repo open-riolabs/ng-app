@@ -138,7 +138,7 @@ export class AppsService {
 		if (!data || !data.apps || data.apps.length === 0) {
 			this.logger.logWarning(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
 			// const globalDefaultApp = this.apps[0];
-			// this.selectApp(globalDefaultApp, this.isSettingsRoute(route) ? 'settings' : 'app');
+			this.selectApp(undefined);
 			return;
 		}
 		
