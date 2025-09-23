@@ -36,19 +36,19 @@
           </span>
 					<span class="ms-1 d-lg-none">{{'core.account.login' | translate}}</span>
 				</rlb-navbar-item>
-        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" href="/profile">
+        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" [router-link]="'/profile'">
           <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
             <i class="bi bi-person"></i>
           </span>
 					<span class="ms-1 d-lg-none">{{'core.account.title' | translate}}</span>
 				</rlb-navbar-item>
-        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" href="/setting">
+        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" [router-link]="'/setting'">
           <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
             <i class="bi bi-gear"></i>
           </span>
 					<span class="ms-1 d-lg-none">{{'core.settings.title' | translate}}</span>
 				</rlb-navbar-item>
-        <rlb-navbar-item *ngIf="(navbarHasApps$ | async) && apps.length > 1" href="/apps">
+        <rlb-navbar-item *ngIf="(navbarHasApps$ | async) && apps.length > 1" [router-link]="'/apps'">
           <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
             <i class="bi bi-grid-3x3-gap-fill"></i>
           </span>
