@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AbstractLoggerService } from 'angular-auth-oidc-client';
+import { environment } from "~/environments/environment";
 
-export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'all';
+export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'log';
 
 export type LoggerContext = {
 	error: (...args: any[]) => void;
@@ -17,13 +18,20 @@ const LEVEL_PRIORITIES: Record<LogLevel, number> = {
 	warn: 2,
 	info: 3,
 	debug: 4,
-	all: 5,
+	log: 5,
 };
 
 @Injectable({ providedIn: 'root' })
 export class RlbLoggerService extends AbstractLoggerService {
-	private currentLevel: LogLevel = 'all';
+	private currentLevel: LogLevel = 'off';
 	private timestamps = true;
+	
+	constructor() {
+		super();
+		if (environment.production) {
+			this.setLogLevel('error');
+		}
+	}
 	
 	setLogLevel(level: LogLevel) {
 		if (!(level in LEVEL_PRIORITIES)) {
@@ -66,11 +74,22 @@ export class RlbLoggerService extends AbstractLoggerService {
 		this.print('info', contextOrMessage, args);
 	}
 	log(contextOrMessage: any, ...args: any[]): void {
-		this.print('all', contextOrMessage, args);
+		this.print('log', contextOrMessage, args);
 	}
 	
 	private print(level: LogLevel, contextOrMessage: any, args: any[]) {
-		if ((LEVEL_PRIORITIES[level] ?? 0) > (LEVEL_PRIORITIES[this.currentLevel] ?? 0)) return;
+		if (LEVEL_PRIORITIES[level] > LEVEL_PRIORITIES[this.currentLevel]) {
+			return;
+		}
+		
+		const colors: Record<LogLevel, string> = {
+			error: 'color:#e57373;',
+			warn: 'color:#ffb74d;',
+			info: 'color:#64b5f6;',
+			debug: 'color:#90a4ae;',
+			log: 'color:#757575;',
+			off: 'color:inherit;',
+		};
 		
 		let context = 'GLOBAL';
 		let messageArgs: any[] = [];
@@ -87,13 +106,19 @@ export class RlbLoggerService extends AbstractLoggerService {
 		
 		switch (level) {
 			case 'error':
-				console.error(`%c${prefix}`, 'color:red;', ...messageArgs);
+				console.error(`%c${prefix}`, colors.error, ...messageArgs);
 				break;
 			case 'warn':
-				console.warn(`%c${prefix}`, 'color:orange;', ...messageArgs);
+				console.warn(`%c${prefix}`, colors.warn, ...messageArgs);
+				break;
+			case 'info':
+				console.info(`%c${prefix}`, colors.info, ...messageArgs);
+				break;
+			case 'debug':
+				console.debug(`%c${prefix}`, colors.debug, ...messageArgs);
 				break;
 			default:
-				console.log(prefix, ...messageArgs);
+				console.log(`%c${prefix}`, colors.log, ...messageArgs);
 		}
 	}
 }
