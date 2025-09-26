@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { BreadcrumbItem } from "@lbdsh/lib-ng-bootstrap";
 import { BehaviorSubject, filter } from "rxjs";
-import { LoggerContext, RlbLoggerService } from "../../auth/services/rlb-logger.service";
+import { AppLoggerService, LoggerContext } from "./app-logger.service";
+import { LanguageService } from "../i18n/language.service";
 
 @Injectable({ providedIn: 'root' })
 export class AppBreadcrumbService {
@@ -13,7 +14,8 @@ export class AppBreadcrumbService {
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
-		private loggerService: RlbLoggerService
+		private loggerService: AppLoggerService,
+		private languageService: LanguageService,
 	) {
 		this.logger = this.loggerService.for(this.constructor.name);
 		
@@ -76,10 +78,11 @@ export class AppBreadcrumbService {
 				this.logger.debug('Child has empty url — accumulatedLink stays', accumulatedLink);
 			}
 			
-			const label = childToFollow.snapshot.data['breadcrumb'];
+			let label = childToFollow.snapshot.data['breadcrumb'];
 			this.logger.debug('Label for child', label);
 			
 			if (label) {
+				label = this.languageService.translate(label);
 				breadcrumbs.push({ label, link: accumulatedLink });
 				this.logger.info('Pushed breadcrumb', { label, link: accumulatedLink });
 			}

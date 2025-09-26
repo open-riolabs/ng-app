@@ -9,7 +9,7 @@ import { AppInfo } from '../../services/apps/app';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
 import { RLB_APPS } from './app-context.model';
-import { LoggerContext, RlbLoggerService } from "../../auth/services/rlb-logger.service";
+import { AppLoggerService, LoggerContext } from "../../services/apps/app-logger.service";
 
 @Injectable()
 export class AppContextEffects {
@@ -72,7 +72,7 @@ export class AppContextEffects {
     readonly storage: AppStorageService,
     readonly store: Store<BaseState>,
     private readonly router: Router,
-		private loggerService: RlbLoggerService,
+		private loggerService: AppLoggerService,
     @Inject(RLB_APPS) @Optional() private apps: AppInfo[],
   ) {
 		this.logger = this.loggerService.for(this.constructor.name);

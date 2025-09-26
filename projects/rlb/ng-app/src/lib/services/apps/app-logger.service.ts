@@ -21,7 +21,7 @@ const LEVEL_PRIORITIES: Record<LogLevel, number> = {
 };
 
 @Injectable({ providedIn: 'root' })
-export class RlbLoggerService extends AbstractLoggerService {
+export class AppLoggerService extends AbstractLoggerService {
 	private currentLevel: LogLevel = 'off';
 	private timestamps = true;
 	

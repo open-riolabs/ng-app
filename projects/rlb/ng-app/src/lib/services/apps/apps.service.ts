@@ -6,7 +6,7 @@ import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
-import { LoggerContext, RlbLoggerService } from "../../auth/services/rlb-logger.service";
+import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 interface AppConfig {
@@ -25,7 +25,7 @@ export class AppsService {
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-		private loggerService: RlbLoggerService,
+		private loggerService: AppLoggerService,
     @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
 		this.logger = this.loggerService.for(this.constructor.name);
