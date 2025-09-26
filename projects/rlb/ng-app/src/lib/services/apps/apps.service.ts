@@ -6,7 +6,7 @@ import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
-import { RlbLoggerService } from "../../auth/services/rlb-logger.service";
+import { LoggerContext, RlbLoggerService } from "../../auth/services/rlb-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 interface AppConfig {
@@ -19,15 +19,17 @@ interface AppConfig {
   providedIn: 'root'
 })
 export class AppsService {
-
+	private logger: LoggerContext;
+	
   constructor(
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-		private logger: RlbLoggerService,
+		private loggerService: RlbLoggerService,
     @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
   ) {
-		console.log('AppsService initialized');
+		this.logger = this.loggerService.for(this.constructor.name);
+		this.logger.log('AppsService initialized');
 		
     this.initAuthProviders(store, confAuth);
 		this.initRouterListener()
@@ -44,48 +46,48 @@ export class AppsService {
 	
 	get currentApp() {
 		const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
-		this.logger.logInfo('Current app from store:', app);
+		this.logger.log('Current app from store:', app);
 		return app;
 	}
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
     const currentApp = this.currentApp;
 		if (!app) {
-			this.logger.logWarning('Deselecting app (null).');
+			this.logger.warn('Deselecting app (null).');
 			this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
 			return;
 		}
 		if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
-			this.logger.logInfo('App already selected with same id and viewMode. Skipping dispatch.');
+			this.logger.info('App already selected with same id and viewMode. Skipping dispatch.');
 			return;
 		}
-		this.logger.logWarning('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
+		this.logger.warn('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
 		this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 	
 	private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
 		if (!confAuth?.providers?.length) {
-			this.logger.logWarning('No auth providers configured.');
+			this.logger.warn('No auth providers configured.');
 			return;
 		}
 		
 		if (confAuth?.providers && confAuth.providers.length === 1) {
-			this.logger.logInfo('Single auth provider detected:', confAuth.providers[0]);
+			this.logger.info('Single auth provider detected:', confAuth.providers[0]);
 			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
 			return
 		}
 		
-		this.logger.logInfo('Multiple auth providers detected, checking by domain:', this.currentDomain);
+		this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
 		
 		const authProvidersMatched = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
 		
 		if (authProvidersMatched && authProvidersMatched.length === 1) {
-			this.logger.logInfo('Auth provider matched by domain:', authProvidersMatched[0]);
+			this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
 			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }));
 		} else if (authProvidersMatched && authProvidersMatched.length > 1) {
-			this.logger.logWarning(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
+			this.logger.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
 		} else {
-			this.logger.logWarning(`No auth provider found for the current domain: ${this.currentDomain}.`);
+			this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
 		}
 	}
 	
@@ -105,7 +107,7 @@ export class AppsService {
 		const route = this.findDeepestChild(this.activatedRoute);
 		
 		if (!route.routeConfig) {
-			this.logger.logWarning('Route without config detected:', route);
+			this.logger.warn('Route without config detected:', route);
 			return of(null);
 		}
 		
@@ -117,7 +119,7 @@ export class AppsService {
 		
 		const appRoutesMatched = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
 		
-		this.logger.logInfo('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoutesMatched);
+		this.logger.info('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoutesMatched);
 		
 		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
 			map(apps => appRoutesMatched.length
@@ -131,12 +133,12 @@ export class AppsService {
 		const storedId = this.getStoredAppId();
 		
 		if (data?.apps?.some(app => !app.id)) {
-			this.logger.logError('Some apps are not finalized. Please finalize apps before using AppsService.');
+			this.logger.error('Some apps are not finalized. Please finalize apps before using AppsService.');
 			return;
 		}
 		
 		if (!data || !data.apps || data.apps.length === 0) {
-			this.logger.logWarning(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
+			this.logger.warn(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
 			// const globalDefaultApp = this.apps[0];
 			this.selectApp(undefined);
 			return;
@@ -151,13 +153,13 @@ export class AppsService {
 		
 		if (matchedApps.length === 1) {
 			appToSelect = matchedApps[0];
-			this.logger.logInfo('Single app matched route:', appToSelect);
+			this.logger.info('Single app matched route:', appToSelect);
 		} else if (matchedApps.length > 1) {
 			appToSelect = matchedApps.find(a => a.id === storedId) || matchedApps[0];
-			this.logger.logInfo('Multiple apps matched route, selected:', appToSelect);
+			this.logger.info('Multiple apps matched route, selected:', appToSelect);
 		} else {
 			appToSelect = data.apps[0];
-			this.logger.logInfo('No app matched route. Falling back to default app:', appToSelect);
+			this.logger.info('No app matched route. Falling back to default app:', appToSelect);
 		}
 		
 		const qp = new URLSearchParams(route.snapshot.queryParams).toString();
@@ -170,7 +172,7 @@ export class AppsService {
 	
 	private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
 		while (route.firstChild) route = route.firstChild;
-		this.logger.logInfo('Activated deepest child route:', route);
+		this.logger.info('Activated deepest child route:', route);
 		return route;
 	}
 	
@@ -178,7 +180,7 @@ export class AppsService {
 		try {
 			return localStorage.getItem('c-app-id');
 		} catch (e) {
-			this.logger.logWarning('LocalStorage not available:', e);
+			this.logger.warn('LocalStorage not available:', e);
 			return null;
 		}
 	}
