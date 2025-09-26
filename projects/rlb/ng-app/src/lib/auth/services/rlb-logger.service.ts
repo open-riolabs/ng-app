@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AbstractLoggerService } from 'angular-auth-oidc-client';
-import { environment } from "~/environments/environment";
 
 export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'log';
 
@@ -28,9 +27,6 @@ export class RlbLoggerService extends AbstractLoggerService {
 	
 	constructor() {
 		super();
-		if (environment.production) {
-			this.setLogLevel('error');
-		}
 	}
 	
 	setLogLevel(level: LogLevel) {
