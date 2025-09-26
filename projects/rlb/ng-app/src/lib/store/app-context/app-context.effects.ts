@@ -9,12 +9,14 @@ import { AppInfo } from '../../services/apps/app';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { AppContextActions, AppContextActionsInternal } from './app-context.actions';
 import { RLB_APPS } from './app-context.model';
-import { RlbLoggerService } from "../../auth/services/rlb-logger.service";
+import { LoggerContext, RlbLoggerService } from "../../auth/services/rlb-logger.service";
 
 @Injectable()
 export class AppContextEffects {
   private renderer: Renderer2;
-  setLanguage$ = createEffect(() => {
+	private logger: LoggerContext;
+	
+	setLanguage$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AppContextActions.setLanguage),
       tap(({ language }) => this.languageService.language = language),
@@ -53,10 +55,10 @@ export class AppContextEffects {
       }),
       tap(({ app }) => {
         if (app) {
-					this.logger.logWarning('setApp$ set c-app-id', app.id!);
+					this.logger.warn('setApp$ set c-app-id', app.id!);
 					localStorage.setItem('c-app-id', app.id!);
         } else {
-					this.logger.logWarning('setApp$ remove c-app-id');
+					this.logger.warn('setApp$ remove c-app-id');
 					localStorage.removeItem('c-app-id');
         }
       }),
@@ -70,9 +72,10 @@ export class AppContextEffects {
     readonly storage: AppStorageService,
     readonly store: Store<BaseState>,
     private readonly router: Router,
-		private logger: RlbLoggerService,
+		private loggerService: RlbLoggerService,
     @Inject(RLB_APPS) @Optional() private apps: AppInfo[],
   ) {
+		this.logger = this.loggerService.for(this.constructor.name);
     this.renderer = rendererFactory.createRenderer(null, null);
     if (this.apps && this.apps.length > 0) {
       for (const app of this.apps) {
