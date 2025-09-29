@@ -1,12 +1,19 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { EnvironmentProviders, Provider, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { EnvironmentProviders, isDevMode, Provider } from '@angular/core';
+import { provideRouter, withDebugTracing } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
-import { ModalRegistryOptions, ToastRegistryOptions, provideRlbBootstrap } from '@lbdsh/lib-ng-bootstrap';
+import { ModalRegistryOptions, provideRlbBootstrap, ToastRegistryOptions } from '@lbdsh/lib-ng-bootstrap';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
-import { ProjectConfiguration, RLB_CFG, RLB_CFG_CMS, RLB_CFG_ENV, RLB_CFG_I18N, RLB_CFG_PAGES } from './lib/configuration';
+import {
+	ProjectConfiguration,
+	RLB_CFG,
+	RLB_CFG_CMS,
+	RLB_CFG_ENV,
+	RLB_CFG_I18N,
+	RLB_CFG_PAGES
+} from './lib/configuration';
 import { ErrorModalComponent } from './lib/modals/error-modal.component';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component';
 import { getDefaultRoutes } from './lib/pages/shared.routes';
@@ -86,8 +93,9 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
       routes: app.routes?.map(route => route.path).filter(o => !!o) || [],
     }, multi: true
   },];
+	console.log("provide App app: ", JSON.stringify(app));
   if (app.routes) {
-    providers.push(provideRouter(app.routes));
+    providers.push(provideRouter(app.routes, withDebugTracing()));
   }
   if (app.providers) {
     providers.push(...app.providers);
