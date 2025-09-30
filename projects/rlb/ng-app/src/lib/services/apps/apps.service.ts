@@ -117,7 +117,10 @@ export class AppsService {
 				routes: app.routes || [],
 			}));
 		
-		const appRoutesMatched = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
+		const appRoutesMatched = appRoutes?.filter(app =>
+			app.routes?.some(r => route.routeConfig?.path?.includes(r))
+		);		
+		
 		// const currentPath = '/' + route.snapshot.url.map(segment => segment.path).join('/');
 		//
 		// const appRoutesMatched = this.apps.filter(app =>

@@ -108,7 +108,7 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
 
 function flattenRoutes(routes: Route[], parentPath = ''): string[] {
 	return routes.flatMap(route => {
-		const fullPath = route.path ? `${parentPath}${parentPath && '/'}/${route.path}` : parentPath;
+		const fullPath = route.path ? `${parentPath}${parentPath && '/'}${route.path}` : parentPath;
 		const childPaths = route.children ? flattenRoutes(route.children, fullPath) : [];
 		return route.path ? [fullPath, ...childPaths] : childPaths;
 	});
