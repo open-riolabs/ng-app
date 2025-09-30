@@ -117,13 +117,13 @@ export class AppsService {
 				routes: app.routes || [],
 			}));
 		
-		// const appRoutesMatched = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
-		const currentPath = '/' + route.snapshot.url.map(segment => segment.path).join('/');
-		
-		const appRoutesMatched = this.apps.filter(app =>
-			currentPath.startsWith(app.core.url) ||
-			app.routes?.some(r => currentPath.endsWith(r))
-		);
+		const appRoutesMatched = appRoutes?.filter(app => app.routes?.includes(route.routeConfig?.path!));
+		// const currentPath = '/' + route.snapshot.url.map(segment => segment.path).join('/');
+		//
+		// const appRoutesMatched = this.apps.filter(app =>
+		// 	currentPath.startsWith(app.core.url) ||
+		// 	app.routes?.some(r => currentPath.endsWith(r))
+		// );
 		
 		this.logger.info('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoutesMatched);
 		

@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { EnvironmentProviders, isDevMode, Provider } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
@@ -87,13 +87,16 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
 }
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
-  const providers: (EnvironmentProviders | Provider)[] = [{
+	const routesPaths = app.routes ? flattenRoutes(app.routes) : [];
+	
+	const providers: (EnvironmentProviders | Provider)[] = [{
     provide: RLB_APPS, useValue: {
       ...app.info,
-      routes: app.routes?.map(route => route.path).filter(o => !!o) || [],
+      routes: routesPaths,
     }, multi: true
   },];
 	console.log("provide App app: ", JSON.stringify(app));
+	console.log("provide App routesPaths: ", JSON.stringify(routesPaths));
   if (app.routes) {
     providers.push(provideRouter(app.routes));
   }
@@ -103,3 +106,10 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
   return providers;
 }
 
+function flattenRoutes(routes: Route[], parentPath = ''): string[] {
+	return routes.flatMap(route => {
+		const fullPath = route.path ? `${parentPath}${parentPath && '/'}/${route.path}` : parentPath;
+		const childPaths = route.children ? flattenRoutes(route.children, fullPath) : [];
+		return route.path ? [fullPath, ...childPaths] : childPaths;
+	});
+}

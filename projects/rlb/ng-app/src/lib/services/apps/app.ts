@@ -9,7 +9,7 @@ export interface AppInfo<T extends AppInfoData = any> {
   id?: string;
   type: string;
   enabled: boolean;
-  core: AppDetails;
+  core?: AppDetails;
   settings?: AppDetails;
   viewMode?: AppViewMode;
   routes?: string[];
