@@ -15,6 +15,11 @@ interface AppConfig {
 	apps: AppInfo<any>[]
 }
 
+interface AppMatched {
+	type: string
+	routes: string[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -117,18 +122,15 @@ export class AppsService {
 				routes: app.routes || [],
 			}));
 		
-		const appRoutesMatched = appRoutes?.filter(app =>
-			app.routes?.some(r => route.routeConfig?.path?.includes(r))
-		);		
+		const path = route.routeConfig?.path;
+		let appRoutesMatched: AppMatched[] = []
+		if (path) {
+			appRoutesMatched = appRoutes?.filter(app =>
+				app.routes?.some(r =>r.includes(path))
+			);
+		}
 		
-		// const currentPath = '/' + route.snapshot.url.map(segment => segment.path).join('/');
-		//
-		// const appRoutesMatched = this.apps.filter(app =>
-		// 	currentPath.startsWith(app.core.url) ||
-		// 	app.routes?.some(r => currentPath.endsWith(r))
-		// );
-		
-		this.logger.info('Route config path:', route.routeConfig?.path, 'Matched appRoute:', appRoutesMatched);
+		this.logger.info('Route config path:', path, 'Matched appRoute:', appRoutesMatched);
 		
 		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
 			map(apps => appRoutesMatched.length
