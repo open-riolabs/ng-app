@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { EnvironmentProviders, isDevMode, Provider } from '@angular/core';
-import { provideRouter, withDebugTracing } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
@@ -95,7 +95,7 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
   },];
 	console.log("provide App app: ", JSON.stringify(app));
   if (app.routes) {
-    providers.push(provideRouter(app.routes, withDebugTracing()));
+    providers.push(provideRouter(app.routes));
   }
   if (app.providers) {
     providers.push(...app.providers);
