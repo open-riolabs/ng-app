@@ -5,7 +5,7 @@ import { filter, map, Observable, of, switchMap } from 'rxjs';
 import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
-import { AppInfo } from './app';
+import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -17,7 +17,8 @@ interface AppConfig {
 
 interface AppMatched {
 	type: string
-	routes: string[]
+	routes: string[],
+	viewMode: AppViewMode | undefined
 }
 
 @Injectable({
@@ -116,10 +117,11 @@ export class AppsService {
 			return of(null);
 		}
 		
-		const appRoutes: { type: string; routes: string[]; }[] | undefined = this.apps
+		const appRoutes: AppMatched[] | undefined = this.apps
 			?.map(app => ({
 				type: app.type,
 				routes: app.routes || [],
+				viewMode: app.viewMode,
 			}));
 		
 		const path = route.routeConfig?.path;
@@ -156,7 +158,8 @@ export class AppsService {
 		}
 		
 		const matchedApps = data.apps.filter(app =>
-			app.routes?.includes(route.routeConfig?.path!) ||
+			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
+			// app.routes?.includes(route.routeConfig?.path!) ||
 			app.core?.url === '/' + route.routeConfig?.path
 		);
 		
