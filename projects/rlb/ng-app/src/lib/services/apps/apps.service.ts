@@ -8,6 +8,7 @@ import { appContextFeatureKey } from '../../store/app-context/app-context.model'
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { getDefaultRoutes } from "../../pages";
 
 interface AppConfig {
 	route: ActivatedRoute
@@ -126,7 +127,7 @@ export class AppsService {
 		
 		const path = route.routeConfig?.path;
 		let appRoutesMatched: AppMatched[] = []
-		if (path) {
+		if (path && !this.isDefaultRoute(path)) {
 			appRoutesMatched = appRoutes?.filter(app =>
 				app.routes?.some(r =>r.includes(path))
 			);
@@ -159,7 +160,6 @@ export class AppsService {
 		
 		const matchedApps = data.apps.filter(app =>
 			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
-			// app.routes?.includes(route.routeConfig?.path!) ||
 			app.core?.url === '/' + route.routeConfig?.path
 		);
 		
@@ -201,5 +201,10 @@ export class AppsService {
 	
 	private isSettingsRoute(route: ActivatedRoute): boolean {
 		return route.routeConfig?.path?.includes('settings') ?? false;
+	}
+	
+	private isDefaultRoute(route: string): boolean {
+		const defaultRoutes = getDefaultRoutes().map(route => route.path);
+		return defaultRoutes.some(defaultRoute => defaultRoute?.includes(route))
 	}
 }
