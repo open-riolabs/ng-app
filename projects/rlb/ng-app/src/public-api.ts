@@ -95,8 +95,6 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
       routes: routesPaths,
     }, multi: true
   },];
-	console.log("provide App app: ", JSON.stringify(app));
-	console.log("provide App routesPaths: ", JSON.stringify(routesPaths));
   if (app.routes) {
     providers.push(provideRouter(app.routes));
   }
