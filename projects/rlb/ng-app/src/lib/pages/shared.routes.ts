@@ -1,35 +1,37 @@
 import { Routes } from '@angular/router';
-import { CmsContentComponent, CookiesComponent, NotFoundComponent, PrivacyComponent, SupportComponent, TermsAndConditionsComponent } from '.';
+import {
+	CmsContentComponent,
+	CookiesComponent,
+	NotFoundComponent,
+	PrivacyComponent,
+	SupportComponent,
+	TermsAndConditionsComponent
+} from '.';
 import { PagesConfiguration } from '../configuration';
 import { AppSelectorComponent } from './apps/app-selector/app-selector.component';
 import { UserAccountComponent } from './apps/user-account/user-account.component';
 import { SettingsCoreComponent } from './settings/settings-core/settings-core.component';
 import { SettingsListComponent } from './settings/settings-list/settings-list.component';
+import { DEFAULT_ROUTES_CONFIG } from "./default-routes.config";
 
 export function getDefaultRoutes(config?: PagesConfiguration): Routes {
-  const defaultRoutes: Routes = [
-    { path: 'setting', component: SettingsListComponent, data: { title: 'Settings' } },
-    { path: 'setting/general', component: SettingsCoreComponent, },
-    { path: 'apps', component: AppSelectorComponent },
-    { path: 'profile', component: UserAccountComponent }
-  ];
-  if (config?.['content']?.path) {
-    defaultRoutes.push({ path: config?.['content'].path, component: CmsContentComponent });
-  }
-  if (config?.['cookies']?.path) {
-    defaultRoutes.push({ path: config?.['cookies'].path, component: CookiesComponent });
-  }
-  if (config?.['notFound']?.path) {
-    defaultRoutes.push({ path: config?.['notFound'].path, component: NotFoundComponent });
-  }
-  if (config?.['privacy']?.path) {
-    defaultRoutes.push({ path: config?.['privacy'].path, component: PrivacyComponent });
-  }
-  if (config?.['support']?.path) {
-    defaultRoutes.push({ path: config?.['support'].path, component: SupportComponent });
-  }
-  if (config?.['terms']?.path) {
-    defaultRoutes.push({ path: config?.['terms'].path, component: TermsAndConditionsComponent });
-  }
-  return defaultRoutes;
+	const defaultRoutes =  DEFAULT_ROUTES_CONFIG
+		.filter(defaultRouteConfig => !defaultRouteConfig.configKey || (config && config[defaultRouteConfig.configKey]))
+		.map(route => {
+			switch (route.path) {
+				case 'setting': return { path: 'setting', component: SettingsListComponent };
+				case 'setting/general': return { path: 'setting/general', component: SettingsCoreComponent };
+				case 'apps': return { path: 'apps', component: AppSelectorComponent };
+				case 'profile': return { path: 'profile', component: UserAccountComponent };
+				case 'content': return { path: 'content', component: CmsContentComponent };
+				case 'cookies': return { path: 'cookies', component: CookiesComponent };
+				case 'notFound': return { path: 'notFound', component: NotFoundComponent };
+				case 'privacy': return { path: 'privacy', component: PrivacyComponent };
+				case 'support': return { path: 'support', component: SupportComponent };
+				case 'terms': return { path: 'terms', component: TermsAndConditionsComponent };
+				default: throw new Error(`No component mapped for route ${route.path}`);
+			}
+		});
+	return defaultRoutes;
 }
+

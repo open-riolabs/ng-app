@@ -8,7 +8,7 @@ import { appContextFeatureKey } from '../../store/app-context/app-context.model'
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { getDefaultRoutes } from "../../pages";
+import { DEFAULT_ROUTES_CONFIG } from "../../pages/default-routes.config";
 
 interface AppConfig {
 	route: ActivatedRoute
@@ -127,6 +127,7 @@ export class AppsService {
 		
 		const path = route.routeConfig?.path;
 		let appRoutesMatched: AppMatched[] = []
+		this.logger.info("isDefault route: ", this.isDefaultRoute(path!))
 		if (path && !this.isDefaultRoute(path)) {
 			appRoutesMatched = appRoutes?.filter(app =>
 				app.routes?.some(r =>r.includes(path))
@@ -204,7 +205,7 @@ export class AppsService {
 	}
 	
 	private isDefaultRoute(route: string): boolean {
-		const defaultRoutes = getDefaultRoutes().map(route => route.path);
-		return defaultRoutes.some(defaultRoute => defaultRoute?.includes(route))
+		return DEFAULT_ROUTES_CONFIG
+			.some(r => r.path.includes(route));
 	}
 }
