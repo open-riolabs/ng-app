@@ -28,19 +28,16 @@ export class AppBreadcrumbService {
 			});
 	}
 	
-
 	private buildBreadcrumbFromRoot(route: ActivatedRoute): BreadcrumbItem[] {
 		const breadcrumbs: BreadcrumbItem[] = [];
 		let accumulatedLink = '';
+		let currentRoute: ActivatedRoute | null = route.root;
 		
-		route.pathFromRoot.forEach(r => {
-			const routeConfig = r.snapshot.routeConfig;
-			if (!routeConfig) return;
+		while (currentRoute) {
+			const urlPart = currentRoute.snapshot.url.map(s => s.path).join('/');
+			if (urlPart) accumulatedLink += `/${urlPart}`;
 			
-			const routeURL = r.snapshot.url.map(segment => segment.path).join('/');
-			if (routeURL) accumulatedLink += `/${routeURL}`;
-			
-			const label = routeConfig.data?.['breadcrumb'];
+			const label = currentRoute.snapshot.data['breadcrumb'];
 			if (label) {
 				breadcrumbs.push({
 					label: this.languageService.translate(label),
@@ -48,7 +45,10 @@ export class AppBreadcrumbService {
 				});
 				this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
 			}
-		});
+			
+			if (!currentRoute.firstChild) break;
+			currentRoute = currentRoute.firstChild;
+		}
 		
 		return breadcrumbs;
 	}
