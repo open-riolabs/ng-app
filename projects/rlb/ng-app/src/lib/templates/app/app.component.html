@@ -1,5 +1,5 @@
 <div class="rlb-app">
-  <rlb-sidebar class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
+  <rlb-sidebar id="sidebar" class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
     <rlb-sidebar-item *ngFor="let item of  (sidebarItems$ | async)" [icon]="item.icon" [link]="item.url"
       [title]="item.title" [label]="item.label">{{item.label}}
       <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="sitem.icon" [link]="sitem.url"
@@ -8,7 +8,7 @@
     </rlb-sidebar-item>
   </rlb-sidebar>
   <ng-container *ngIf="navVisible$ | async">
-    <rlb-navbar [enable-sidebar-toggler]="(sidebarVisible$ | async)" expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1 rlb-navbar">
+    <rlb-navbar expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1 rlb-navbar">
       <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
       <rlb-navbar-form *ngIf="navSearchVisible$ | async">
         <rlb-input-group class="my-1 mx-3" validate>
