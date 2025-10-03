@@ -15,87 +15,40 @@ export class AppBreadcrumbService {
 		private router: Router,
 		private route: ActivatedRoute,
 		private loggerService: AppLoggerService,
-		private languageService: LanguageService,
+		private languageService: LanguageService
 	) {
 		this.logger = this.loggerService.for(this.constructor.name);
 		
 		this.router.events
 			.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-			.subscribe((ev) => {
-				this.logger.info('NavigationEnd', ev);
-				const crumbs = this.buildBreadcrumb(this.route.root);
-				this.logger.info('Final crumbs after build', crumbs);
+			.subscribe(() => {
+				const crumbs = this.buildBreadcrumbFromRoot(this.route);
 				this._breadcrumbs$.next(crumbs);
+				this.logger.info('Breadcrumbs updated', crumbs);
 			});
 	}
 	
-	private buildBreadcrumb(route: ActivatedRoute): BreadcrumbItem[] {
-		this.logger.debug('buildBreadcrumb START');
-		
+
+	private buildBreadcrumbFromRoot(route: ActivatedRoute): BreadcrumbItem[] {
 		const breadcrumbs: BreadcrumbItem[] = [];
-		let currentRoute: ActivatedRoute | null = route;
 		let accumulatedLink = '';
 		
-		while (currentRoute) {
-			const children: ActivatedRoute[] = currentRoute.children || [];
-			this.logger.debug('Visiting route', {
-				routeConfigPath: currentRoute.snapshot.routeConfig?.path ?? '(root)',
-				childrenCount: children.length,
-			});
+		route.pathFromRoot.forEach(r => {
+			const routeConfig = r.snapshot.routeConfig;
+			if (!routeConfig) return;
 			
-			if (children.length === 0) {
-				this.logger.debug('No children — stop traversal');
-				break;
-			}
+			const routeURL = r.snapshot.url.map(segment => segment.path).join('/');
+			if (routeURL) accumulatedLink += `/${routeURL}`;
 			
-			let childToFollow: ActivatedRoute | null = null;
-			for (let i = 0; i < children.length; i++) {
-				const ch = children[i];
-				const seg = ch.snapshot.url.map(s => s.path).join('/');
-				this.logger.debug(`child[${i}]`, {
-					routeConfigPath: ch.snapshot.routeConfig?.path,
-					urlSegments: seg,
-					breadcrumbData: ch.snapshot.data['breadcrumb'],
-				});
-				
-				if (seg.length) {
-					childToFollow = ch;
-					break;
-				}
-				if (!childToFollow) childToFollow = ch; // fallback
-			}
-			
-			if (!childToFollow) {
-				this.logger.warn('No child to follow found — stop traversal');
-				break;
-			}
-			
-			const routeURL = childToFollow.snapshot.url.map(s => s.path).join('/');
-			if (routeURL) {
-				accumulatedLink += `/${routeURL}`;
-				this.logger.info('Computed next link', accumulatedLink);
-			} else {
-				this.logger.debug('Child has empty url — accumulatedLink stays', accumulatedLink);
-			}
-			
-			let label = childToFollow.snapshot.data['breadcrumb'];
-			this.logger.debug('Label for child', label);
-			
+			const label = routeConfig.data?.['breadcrumb'];
 			if (label) {
-				label = this.languageService.translate(label);
-				breadcrumbs.push({ label, link: accumulatedLink });
-				this.logger.info('Pushed breadcrumb', { label, link: accumulatedLink });
+				breadcrumbs.push({
+					label: this.languageService.translate(label),
+					link: accumulatedLink
+				});
+				this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
 			}
-			
-			if (childToFollow === currentRoute) {
-				this.logger.warn('childToFollow equals currentRoute — breaking to avoid loop');
-				break;
-			}
-			currentRoute = childToFollow;
-		}
-		
-		this.logger.debug('Final breadcrumbs array', breadcrumbs);
-		this.logger.debug('buildBreadcrumb END');
+		});
 		
 		return breadcrumbs;
 	}
