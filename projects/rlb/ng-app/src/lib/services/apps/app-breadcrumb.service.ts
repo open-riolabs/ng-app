@@ -18,6 +18,7 @@ export class AppBreadcrumbService {
 		private languageService: LanguageService
 	) {
 		this.logger = this.loggerService.for(this.constructor.name);
+		this.logger.info('Service initialized');
 		
 		this.router.events
 			.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
