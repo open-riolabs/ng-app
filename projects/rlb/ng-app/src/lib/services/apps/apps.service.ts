@@ -113,34 +113,35 @@ export class AppsService {
 	private resolveRouteAndApps(): Observable<AppConfig | null> {
 		const route = this.findDeepestChild(this.activatedRoute);
 		
-		if (!route.routeConfig) {
-			this.logger.warn('Route without config detected:', route);
+		const fullPath = this.getFullPath(route);
+		this.logger.info('Full path for route resolution:', fullPath);
+		
+		if (!fullPath) {
+			this.logger.warn('No valid path found, treating as default route:', route);
 			return of(null);
 		}
 		
-		const appRoutes: AppMatched[] | undefined = this.apps
-			?.map(app => ({
-				type: app.type,
-				routes: app.routes || [],
-				viewMode: app.viewMode,
-			}));
+		const appRoutes: AppMatched[] | undefined = this.apps?.map(app => ({
+			type: app.type,
+			routes: app.routes || [],
+			viewMode: app.viewMode,
+		}));
 		
-		const path = route.routeConfig?.path;
-		let appRoutesMatched: AppMatched[] = []
-		this.logger.info("isDefault route: ", this.isDefaultRoute(path!))
-		if (path && !this.isDefaultRoute(path)) {
+		let appRoutesMatched: AppMatched[] = [];
+		if (!this.isDefaultRoute(fullPath)) {
 			appRoutesMatched = appRoutes?.filter(app =>
-				app.routes?.some(r =>r.includes(path))
-			);
+				app.routes?.some(r => r.includes(fullPath))
+			) ?? [];
 		}
 		
-		this.logger.info('Route config path:', path, 'Matched appRoute:', appRoutesMatched);
+		this.logger.info('Route fullPath:', fullPath, 'Matched appRoute:', appRoutesMatched);
 		
 		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
 			map(apps => appRoutesMatched.length
 				? { route, appsConfig: appRoutesMatched, apps } as AppConfig
 				: null
-			))
+			)
+		);
 	}
 	
 	private handleResolvedApps(data: AppConfig | null) {
@@ -207,5 +208,18 @@ export class AppsService {
 	private isDefaultRoute(route: string): boolean {
 		return DEFAULT_ROUTES_CONFIG
 			.some(r => r.path.includes(route));
+	}
+	
+	private getFullPath(route: ActivatedRoute): string {
+		const segments: string[] = [];
+		let current: ActivatedRoute | null = route.root;
+		
+		while (current) {
+			const path = current.routeConfig?.path;
+			if (path && path !== '') segments.push(path);
+			current = current.firstChild ?? null;
+		}
+		
+		return segments.join('/');
 	}
 }
