@@ -44,10 +44,10 @@ export class AppBreadcrumbService {
 			if (urlPart) accumulatedLink += `/${urlPart}`;
 			
 			const label = currentRoute.snapshot.data['breadcrumb'];
-			if (label) {
+			if (label && (urlPart || breadcrumbs.length === 0)) {
 				breadcrumbs.push({
 					label: this.languageService.translate(label),
-					link: accumulatedLink
+					link: accumulatedLink || '/'
 				});
 				this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
 			}
