@@ -52,22 +52,28 @@ export class AppContainerComponent implements OnInit, OnDestroy {
 				
 				if (!currentApp) return;
 				
-				const targetUrl = currentApp.navigationUrl
-					|| (currentApp.viewMode === 'app' ? currentApp.core?.url : currentApp.settings?.url);
-				this.logger.info('targetUrl:', targetUrl);
+				const targetUrl = currentApp.navigationUrl ||
+					(currentApp.viewMode === 'app'
+						? currentApp.core?.url
+						: currentApp.settings?.url);
 				
 				if (!targetUrl) return;
 				
-				const absoluteUrl = targetUrl.startsWith('/') ? targetUrl : `/${targetUrl}`;
+				const currentUrl = this.router.url;
+				this.logger.info('currentUrl:', currentUrl);
+				this.logger.info('targetUrl:', targetUrl);
 				
-				const normalizedCurrentUrl = this.router.url.split('?')[0];
+				const normalize = (url: string) => url.replace(/\/+$/, '');
+				const current = normalize(currentUrl);
+				const target = normalize(targetUrl);
 				
-				if (normalizedCurrentUrl === absoluteUrl || normalizedCurrentUrl.startsWith(`${absoluteUrl}/`)) {
-					this.logger.info('Already at target URL or child route, skipping navigation:', normalizedCurrentUrl);
+				if (current === target || current.startsWith(`${target}/`)) {
+					this.logger.info('Already within target route, skipping navigation.');
 				} else {
-					this.logger.info('Navigating to absolute URL:', absoluteUrl);
-					await this.router.navigate([absoluteUrl]);
+					this.logger.info('Navigating to app base URL:', target);
+					await this.router.navigateByUrl(target);
 				}
+				
 				
 				const isAuth = this.store.selectSignal(state => state[authsFeatureKey].isAuth)();
 				if ((currentApp.viewMode === 'app' && currentApp.core?.auth) ||
