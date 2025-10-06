@@ -22,11 +22,16 @@ export class AppBreadcrumbService {
 		
 		this.router.events
 			.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-			.subscribe(() => {
-				const crumbs = this.buildBreadcrumbFromRoot(this.route);
-				this._breadcrumbs$.next(crumbs);
-				this.logger.info('Breadcrumbs updated', crumbs);
-			});
+			.subscribe(() => this.updateBreadcrumbs());
+		
+		// init construct
+		this.updateBreadcrumbs();
+	}
+	
+	private updateBreadcrumbs() {
+		const crumbs = this.buildBreadcrumbFromRoot(this.route);
+		this._breadcrumbs$.next(crumbs);
+		this.logger.info('Breadcrumbs updated', crumbs);
 	}
 	
 	private buildBreadcrumbFromRoot(route: ActivatedRoute): BreadcrumbItem[] {
