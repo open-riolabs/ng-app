@@ -58,14 +58,15 @@ export class AppContainerComponent implements OnInit, OnDestroy {
 				
 				if (!targetUrl) return;
 				
-				const currentUrl = this.router.url;
-				this.logger.info('currentUrl:', currentUrl);
+				const absoluteUrl = targetUrl.startsWith('/') ? targetUrl : `/${targetUrl}`;
 				
-				if (currentUrl.startsWith(targetUrl)) {
-					this.logger.info('Already at target URL or child route, skipping navigation:', currentUrl);
+				const normalizedCurrentUrl = this.router.url.split('?')[0];
+				
+				if (normalizedCurrentUrl === absoluteUrl || normalizedCurrentUrl.startsWith(`${absoluteUrl}/`)) {
+					this.logger.info('Already at target URL or child route, skipping navigation:', normalizedCurrentUrl);
 				} else {
-					this.logger.info('Navigating to app target URL:', targetUrl);
-					await this.router.navigate([targetUrl]);
+					this.logger.info('Navigating to absolute URL:', absoluteUrl);
+					await this.router.navigate([absoluteUrl]);
 				}
 				
 				const isAuth = this.store.selectSignal(state => state[authsFeatureKey].isAuth)();
