@@ -24,6 +24,9 @@ export class AppBreadcrumbService {
 			.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
 			.subscribe(() => this.updateBreadcrumbs());
 		
+		this.languageService.languageChanged$
+			.subscribe(() => this.updateBreadcrumbs());
+		
 		// init construct
 		this.updateBreadcrumbs();
 	}
