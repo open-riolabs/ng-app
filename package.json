@@ -34,7 +34,7 @@
     "@angular/platform-browser-dynamic": "^20.1.0",
     "@angular/router": "^20.1.0",
     "@angular/service-worker": "^20.1.0",
-    "@rlb-core/lib-ng-bootstrap": ">=2.2.13",
+    "@rlb-core/lib-ng-bootstrap": ">=2.2.14",
     "@ngrx/effects": "^20.0.0-beta.0",
     "@ngrx/store": "^20.0.0-beta.0",
     "@ngx-translate/core": "^17.0.0",

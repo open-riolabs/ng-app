@@ -1,18 +1,25 @@
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
-import { EnvironmentProviders, Provider, makeEnvironmentProviders } from "@angular/core";
-import { AbstractLoggerService, AbstractSecurityStorage, AuthInterceptor, AuthModule, LogLevel, provideAuth } from "angular-auth-oidc-client";
+import { EnvironmentProviders, makeEnvironmentProviders, Provider } from "@angular/core";
+import {
+	AbstractLoggerService,
+	AbstractSecurityStorage,
+	AuthInterceptor,
+	AuthModule,
+	LogLevel,
+	provideAuth
+} from "angular-auth-oidc-client";
 import { AuthConfiguration, RLB_CFG_AUTH } from "../configuration";
 import { TokenCookiesService } from "./providers/token-cookies.service";
 import { TokenSessionService } from "./providers/token-session.service";
 import { TokenStoreService } from "./providers/token-store.service";
-import { RlbLoggerService } from "./services/rlb-logger.service";
+import { AppLoggerService } from "../services/apps/app-logger.service";
 import { TokenOauthInterceptor } from "./token-oauth-interceptor";
 
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
   const providers: (Provider | EnvironmentProviders)[] = [
     { provide: RLB_CFG_AUTH, useValue: auth },
-    { provide: AbstractLoggerService, useClass: RlbLoggerService },
+    { provide: AbstractLoggerService, useClass: AppLoggerService },
     AuthModule,
     provideAuth({
       config: auth.providers.map((_auth) => ({

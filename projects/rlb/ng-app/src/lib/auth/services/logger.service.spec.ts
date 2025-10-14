@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RlbLoggerService } from './rlb-logger.service';
+import { AppLoggerService } from '../../services/apps/app-logger.service';
 
 describe('LoggerService', () => {
-  let service: RlbLoggerService;
+  let service: AppLoggerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RlbLoggerService);
+    service = TestBed.inject(AppLoggerService);
   });
 
   it('should be created', () => {
