@@ -121,13 +121,14 @@ export class AppsService {
 			return of(null);
 		}
 		
-		const appRoutes: AppMatched[] | undefined = this.apps?.map(app => ({
+		const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
 			type: app.type,
 			routes: app.routes || [],
 			viewMode: app.viewMode,
+			enabled: app.enabled,
 		}));
 		
-		let appRoutesMatched: AppMatched[] = [];
+		let appRoutesMatched: AppInfo[] = [];
 		if (!this.isDefaultRoute(fullPath)) {
 			appRoutesMatched = appRoutes?.filter(app =>
 				app.routes?.some(r => r.includes(fullPath))
@@ -160,7 +161,7 @@ export class AppsService {
 			return;
 		}
 		
-		const matchedApps = data.appsConfig.filter(app =>
+		const matchedApps: AppInfo[] = data.apps.filter(app =>
 			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
 			app.core?.url === '/' + route.routeConfig?.path
 		);
