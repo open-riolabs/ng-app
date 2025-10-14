@@ -82,22 +82,6 @@ export class AppContainerComponent implements OnInit, OnDestroy {
 						this.store.dispatch(AuthActions.login());
 					}
 				}
-				
-				// BACKUP
-				// if (currentApp && currentApp.viewMode === 'app' && currentApp.core) {
-        //   await this.router.navigate([currentApp.navigationUrl || currentApp.core.url]);
-        //   this.logger.info(`AppContainerComponent: Navigating to app `, this.store.selectSignal((state) => state[authsFeatureKey].isAuth)());
-        //   if (currentApp.core.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
-        //     this.store.dispatch(AuthActions.login());
-        //   }
-        // }
-        // if (currentApp && currentApp.viewMode === 'settings' && currentApp.settings) {
-        //   await this.router.navigate([currentApp.navigationUrl || currentApp.settings.url]);
-				// 	this.logger.info(`AppContainerComponent: Navigating to app `, this.store.selectSignal((state) => state[authsFeatureKey].isAuth)());
-				// 	if (currentApp.settings.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
-        //     this.store.dispatch(AuthActions.login());
-        //   }
-        // }
       });
 
     this.router.events

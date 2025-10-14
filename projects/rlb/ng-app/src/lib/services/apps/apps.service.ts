@@ -160,7 +160,7 @@ export class AppsService {
 			return;
 		}
 		
-		const matchedApps = data.apps.filter(app =>
+		const matchedApps = data.appsConfig.filter(app =>
 			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
 			app.core?.url === '/' + route.routeConfig?.path
 		);
