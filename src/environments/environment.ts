@@ -36,12 +36,12 @@ export const environment: ProjectConfiguration = {
     allowedUrls: ['https://api.riolabs.net', 'http://localhost:8000'],
     providers: [{
       configId: 'riolabs',
-      issuer: 'https://login.riolabs.net/realms/customers',
-      redirectUrlLogin: 'http://localhost:4202',
-      redirectUrlLogout: 'http://localhost:4202',
+      authority: 'https://login.riolabs.net/realms/customers',
+      redirectUrl: 'http://localhost:4202',
+      postLogoutRedirectUri: 'http://localhost:4202',
       clientId: 'chatbot',
       scope: 'openid profile offline_access',
-      debug: false,
+      logLevel: 2,
     }]
   },
   pages: {
