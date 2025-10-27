@@ -11,7 +11,8 @@ export class AuthEffects {
   login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.login),
-      tap(() => this.auth.login())
+      tap(() => this.auth.login()),
+      map(() => AuthActionsInternal.setLoading({ loading: true })),
     );
   });
 
@@ -19,7 +20,7 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.logout),
       switchMap(() => this.auth.logout$()),
-      map(() => AuthActions.logout()));
+      map(() => AuthActionsInternal.reset()));
   });
 
   setCurrentProvider$ = createEffect(() => {
