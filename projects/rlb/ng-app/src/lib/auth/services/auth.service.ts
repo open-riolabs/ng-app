@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
+import { LoginResponse, OidcSecurityService , OpenIdConfiguration} from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 import { CookiesService } from '../../services';
@@ -39,7 +39,7 @@ export class AuthenticationService {
     return this.authConfig?.providers.find((provider) => provider.configId === currentProvider);
   }
 
-  public authorize(url?: string | undefined): Observable<LoginResponse[]> {
+  public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
     // if (Capacitor.isNativePlatform()) {
     //   console.log('Capacitor is native platform')
     //   App.addListener('appUrlOpen', async ({ url }: { url: string }) => {

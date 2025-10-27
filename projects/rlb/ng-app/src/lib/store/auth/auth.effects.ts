@@ -41,7 +41,7 @@ export class AuthEffects {
     store: Store,
     @Inject(RLB_CFG_AUTH) @Optional() authConfig: AuthConfiguration) {
     if (authConfig) {
-      auth.authorize()
+      auth.checkAuthMultiple()
         .pipe(
           tap(data => {
             const auth = data.find(o => o.isAuthenticated);

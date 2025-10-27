@@ -135,7 +135,7 @@ export class OauthPasswordService implements HttpInterceptor {
     body.set('scope', 'addubby-order');
     body.set('username', username);
     body.set('password', password);
-    return await lastValueFrom(this.httpClient.post<Token>(`${this.authenticationService.currentProvider.issuer}/${TOKEN_URL}`, body.toString(), {
+    return await lastValueFrom(this.httpClient.post<Token>(`${this.authenticationService.currentProvider.authority}/${TOKEN_URL}`, body.toString(), {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
     }));
   }
@@ -144,10 +144,10 @@ export class OauthPasswordService implements HttpInterceptor {
     if (!this.authenticationService.currentProvider) throw new Error("No authentication provider configured");
     let body = new URLSearchParams();
     body.set('grant_type', 'refresh_token');
-    body.set('client_id', this.authenticationService.currentProvider.clientId);
+    body.set('client_id', this.authenticationService.currentProvider.clientId!);
     if (token)
       body.set('refresh_token', token);
-    return await lastValueFrom(this.httpClient.post<Token>(`${this.authenticationService.currentProvider.issuer}/${TOKEN_URL}`, body.toString(), {
+    return await lastValueFrom(this.httpClient.post<Token>(`${this.authenticationService.currentProvider.authority}/${TOKEN_URL}`, body.toString(), {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
     }));
   }
