@@ -30,20 +30,44 @@ export class KeycloakProfileService {
     private readonly oidcSecurityService: OidcSecurityService) { }
 
   getUserProfile(): Observable<KeycloakUser> {
+    if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+      return EMPTY;
+    }
+    const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
     const url = `${this.baseUrl}`;
-    return this.http.get<any>(url)
+    return this.http.get<any>(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 
   updateUserProfile(data: KeycloakUser): Observable<void> {
+    if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+      return EMPTY;
+    }
+    const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
     const url = `${this.baseUrl}`;
-    return this.http.post<any>(url, data)
+    return this.http.post<any>(url, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 
   getDevices(): Observable<KeycloakSession[]> {
+    if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+      return EMPTY;
+    }
+    const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
     const url = `${this.baseUrl}/sessions/devices`;
-    return this.http.get<KeycloakDevice[]>(url).pipe(
+    return this.http.get<KeycloakDevice[]>(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).pipe(
       map((devices) => devices.map((device) => device.sessions.map((session) => {
         session.os = device.os;
         session.osVersion = device.osVersion;
@@ -70,8 +94,16 @@ export class KeycloakProfileService {
   }
 
   removeCredential(id: string): Observable<void> {
+    if (!this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
+      return EMPTY;
+    }
+    const token = this.store.selectSignal((state) => state[authsFeatureKey].accessToken)();
     const url = `${this.baseUrl}/credentials/${id}`;
-    return this.http.delete<void>(url)
+    return this.http.delete<void>(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .pipe(this.errorManagementService.manageUI('error', 'dialog'));
   }
 
