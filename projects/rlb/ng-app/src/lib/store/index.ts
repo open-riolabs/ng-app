@@ -1,4 +1,3 @@
-import { JwtUser } from '../auth';
 import { AppState } from './app-context/app-context.model';
 import { AuthState } from './auth/auth.model';
 import { NavbarState } from './navbar/navbar.model';
@@ -15,4 +14,4 @@ export * from './sidebar/sidebar.actions';
 export * from './sidebar/sidebar.model';
 
 
-export interface BaseState<User = JwtUser> extends AuthState<User>, SidebarState, NavbarState, AppState { }
+export interface BaseState extends AuthState, SidebarState, NavbarState, AppState { }

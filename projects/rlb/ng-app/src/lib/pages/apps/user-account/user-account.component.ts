@@ -3,12 +3,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@lbdsh/lib-ng-bootstrap';
-import { EMPTY, lastValueFrom, Subscription, switchMap, tap } from 'rxjs';
+import { EMPTY, filter, lastValueFrom, Subscription, switchMap, tap } from 'rxjs';
 import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { LanguageService } from '../../../services/i18n/language.service';
-import { authsFeatureKey, BaseState } from '../../../store';
+import { BaseState } from '../../../store';
 import { AuthActions } from '../../../store/auth/auth.actions';
+import { AuthenticationService } from '../../../auth/services/auth.service';
+
 
 @Component({
   selector: 'rlb-user-account',
@@ -23,12 +25,13 @@ export class UserAccountComponent implements OnInit, OnDestroy {
     private keycloakProfileService: KeycloakProfileService,
     private modalService: ModalService,
     private languageService: LanguageService,
+    private readonly authService: AuthenticationService,
     private router: Router
   ) {
-    const isAuth = this.store.selectSignal((state) => state[authsFeatureKey].isAuth)();
-    if (!isAuth) {
-      this.router.navigate(['/']);
-    }
+    this.authService.isAuthenticated$.pipe(
+      filter(isAuth => !isAuth),
+      switchMap(() => this.router.navigate(['/']))
+    ).subscribe();
   }
 
 

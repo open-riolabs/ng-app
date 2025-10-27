@@ -4,9 +4,10 @@ import { NavigableItem } from '@lbdsh/lib-ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services';
-import { appContextFeatureKey, AuthActions, authsFeatureKey, BaseState, NavbarActions, SidebarActions } from '../../store';
+import { appContextFeatureKey, AuthActions, BaseState, NavbarActions, SidebarActions } from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
+import { AuthenticationService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'rlb-app-template',
@@ -31,6 +32,7 @@ export class AppTemplateComponent implements OnDestroy {
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
     public appsService: AppsService,
+    private readonly authService: AuthenticationService
   ) { }
 
   ngOnDestroy(): void {
@@ -84,11 +86,11 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get isAuth$() {
-    return this.store.select(state => state[authsFeatureKey].isAuth);
+    return this.authService.isAuthenticated$;
   }
 
   get user$() {
-    return this.store.select(state => state[authsFeatureKey].user);
+    return this.authService.userInfo$;
   }
 
   get navLeftItems$() {

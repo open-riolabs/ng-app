@@ -5,7 +5,7 @@ import { RlbAppModule } from '../../../rlb-app.module';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
 import { BaseState } from '../../../store';
-import { authsFeatureKey } from '../../../store/auth/auth.model';
+import { AuthenticationService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'rlb-app-selector',
@@ -18,7 +18,7 @@ export class AppSelectorComponent {
   constructor(
     private readonly _location: Location,
     private readonly appsService: AppsService,
-    private readonly store: Store<BaseState>
+    private readonly authService: AuthenticationService,
 
   ) { }
 
@@ -35,6 +35,6 @@ export class AppSelectorComponent {
   }
 
   get auth$() {
-    return this.store.select(state => state[authsFeatureKey]?.isAuth || false);
+    return this.authService.isAuthenticated$;
   }
 }

@@ -23,12 +23,7 @@ export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined):
     AuthModule,
     provideAuth({
       config: auth.providers.map((_auth) => ({
-        configId: _auth.configId,
-        authority: _auth.issuer,
-        redirectUrl: _auth.redirectUrlLogin,
-        postLogoutRedirectUri: _auth.redirectUrlLogout,
-        clientId: _auth.clientId,
-        scope: _auth.scope,
+        ..._auth,
         secureRoutes: auth.allowedUrls,
         responseType: 'code',
         silentRenew: true,
@@ -37,7 +32,6 @@ export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined):
         renewUserInfoAfterTokenRenew: true,
         ignoreNonceAfterRefresh: true,
         renewTimeBeforeTokenExpiresInSeconds: 30,
-        logLevel: _auth.debug ? LogLevel.Debug : LogLevel.Error,
       }))
     }),
   ];
