@@ -32,7 +32,7 @@
           </rlb-input>
         </rlb-input-group>
       </rlb-navbar-form>
-      <rlb-navbar-items>
+      <rlb-navbar-items class="ms-auto">
         <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
           <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
         </ng-container>
