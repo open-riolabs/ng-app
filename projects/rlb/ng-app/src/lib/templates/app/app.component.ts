@@ -121,6 +121,10 @@ export class AppTemplateComponent implements OnDestroy {
     return this.appsService.apps;
   }
 
+  get separatorVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].separatorVisible);
+  }
+
   loginNav(event: MouseEvent) {
     event?.preventDefault();
     event?.stopPropagation();

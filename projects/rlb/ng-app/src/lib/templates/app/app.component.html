@@ -41,7 +41,7 @@
         <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
           <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
         </ng-container>
-        <rlb-navbar-separator />
+        <rlb-navbar-separator *ngIf="(separatorVisible$ | async)" />
         <rlb-navbar-item *ngIf="(navbarHasLogin$ | async) && !(isAuth$ | async)" (click)="loginNav($event)">
           <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
             <i class=" bi bi-box-arrow-in-left"></i>

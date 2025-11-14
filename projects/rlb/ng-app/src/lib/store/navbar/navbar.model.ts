@@ -1,5 +1,3 @@
-import { NavigableItem } from "@lbdsh/lib-ng-bootstrap";
-
 export const navbarsFeatureKey = 'navbar';
 
 export interface Navbar {
@@ -12,6 +10,7 @@ export interface Navbar {
   loginVisible: boolean,
   settingsVisible: boolean,
   appsVisible: boolean,
+  separatorVisible: boolean,
 }
 
 export const initialNavbarState: Navbar = {
@@ -24,6 +23,7 @@ export const initialNavbarState: Navbar = {
   loginVisible: false,
   settingsVisible: false,
   appsVisible: false,
+  separatorVisible: true,
 }
 
 export interface NavbarState { [navbarsFeatureKey]: Navbar }
