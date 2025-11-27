@@ -1,17 +1,13 @@
 import { join } from 'path';
 import { Observable } from 'rxjs';
 import { TranslateLoader } from '@ngx-translate/core';
-import {
-  makeStateKey,
-  StateKey,
-  TransferState
-} from '@angular/core';
+import { makeStateKey, StateKey, TransferState } from '@angular/core';
 import * as fs from 'fs';
 
 export class TranslateServerLoader implements TranslateLoader {
   constructor(
     private transferState: TransferState,
-    private prefix: string = 'i18n',
+    private prefix: string = './assets/i18n/',
     private suffix: string = '.json'
   ) { }
 
