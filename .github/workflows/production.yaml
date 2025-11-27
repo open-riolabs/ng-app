@@ -46,7 +46,7 @@ jobs:
         run: |
           npm config set "@lbdsh:registry=https://npm.pkg.github.com/lbdsh/"
           npm config set "//npm.pkg.github.com/lbdsh/:_authToken" "${{ secrets.DEPLOY_PAT }}"
-          npm ci
+          npm install
       - name: Create node_modules TarGz
         run: tar -czf node_modules.tar.gz node_modules
       - name: Upload TarGz Artifact
@@ -114,6 +114,7 @@ jobs:
           registry-url: "https://npm.pkg.github.com/"
           scope: "@lbdsh"
       - run: |
+          cp ./package.json ./dist
           cd ./dist/rlb/ng-app
           npm version ${{ needs.versioning.outputs.GitVersion_SemVer }} --git-tag-version false
           npm publish --access restricted
