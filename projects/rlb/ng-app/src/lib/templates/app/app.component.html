@@ -5,7 +5,8 @@
 			[icon]="item.icon" [link]="item.url"
       [title]="item.title" [label]="item.label"
 			[badgeCounter]="item.badgeCounter"
-		>
+      (click)="onSideBarItemClick(item)"
+    >
 			{{item.label}}
       <rlb-sidebar-item
 				*ngFor="let sitem of item.items || []"

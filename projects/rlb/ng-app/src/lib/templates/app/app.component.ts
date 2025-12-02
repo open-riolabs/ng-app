@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NavigableItem } from '@lbdsh/lib-ng-bootstrap';
+import { NavigableItem, SidebarNavigableItem } from '@lbdsh/lib-ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services';
@@ -133,6 +133,12 @@ export class AppTemplateComponent implements OnDestroy {
 
   login(): void {
     this.store.dispatch(AuthActions.login());
+  }
+
+  onSideBarItemClick(item: SidebarNavigableItem) {
+    if (item.externalUrl) {
+      window.open(item.externalUrl, '_blank')?.focus();
+    }
   }
 }
 
