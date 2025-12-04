@@ -33,7 +33,7 @@ export class AppContainerComponent implements OnInit, OnDestroy {
   ) {
 		this.logger = this.loggerService.for(this.constructor.name);
 
-		const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
+		const theme: AppTheme = (this.storage.readLocal('theme') || 'dark') as AppTheme;
     this.store.dispatch(AppContextActions.setTheme({ theme }));
     this.store.dispatch(AppContextActions.setLanguage({ language: this.storage.readLocal('locale') || 'en' }));
     this.store

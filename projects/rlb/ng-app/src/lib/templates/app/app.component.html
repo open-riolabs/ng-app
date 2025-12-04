@@ -9,14 +9,15 @@
     >
 			{{item.label}}
       <rlb-sidebar-item
-				*ngFor="let sitem of item.items || []"
-				[icon]="sitem.icon"
-				[link]="sitem.url"
-        [title]="sitem.title"
-				[label]="sitem.label"
-				[badgeCounter]="sitem.badgeCounter"
+				*ngFor="let subitem of item.items || []"
+				[icon]="subitem.icon"
+				[link]="subitem.url"
+        [title]="subitem.title"
+				[label]="subitem.label"
+				[badgeCounter]="subitem.badgeCounter"
+        (click)="onSideBarItemClick(subitem)"
 			>
-				{{sitem.label}}
+				{{subitem.label}}
       </rlb-sidebar-item>
     </rlb-sidebar-item>
   </rlb-sidebar>
