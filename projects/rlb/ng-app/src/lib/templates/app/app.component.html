@@ -1,9 +1,23 @@
 <div class="rlb-app">
   <rlb-sidebar id="sidebar" class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
-    <rlb-sidebar-item *ngFor="let item of  (sidebarItems$ | async)" [icon]="item.icon" [link]="item.url"
-      [title]="item.title" [label]="item.label">{{item.label}}
-      <rlb-sidebar-item *ngFor="let sitem of item.items || []" [icon]="sitem.icon" [link]="sitem.url"
-        [title]="sitem.title" [label]="sitem.label">{{sitem.label}}
+    <rlb-sidebar-item
+			*ngFor="let item of  (sidebarItems$ | async)"
+			[icon]="item.icon" [link]="item.url"
+      [title]="item.title" [label]="item.label"
+			[badgeCounter]="item.badgeCounter"
+      (click)="onSideBarItemClick(item)"
+    >
+			{{item.label}}
+      <rlb-sidebar-item
+				*ngFor="let subitem of item.items || []"
+				[icon]="subitem.icon"
+				[link]="subitem.url"
+        [title]="subitem.title"
+				[label]="subitem.label"
+				[badgeCounter]="subitem.badgeCounter"
+        (click)="onSideBarItemClick(subitem)"
+			>
+				{{subitem.label}}
       </rlb-sidebar-item>
     </rlb-sidebar-item>
   </rlb-sidebar>
@@ -20,7 +34,7 @@
           </rlb-input>
         </rlb-input-group>
       </rlb-navbar-form>
-      <rlb-navbar-items>
+      <rlb-navbar-items class="ms-lg-auto">
         <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
           <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
         </ng-container>
@@ -29,7 +43,7 @@
         <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
           <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
         </ng-container>
-        <rlb-navbar-separator />
+        <rlb-navbar-separator *ngIf="(separatorVisible$ | async)" />
         <rlb-navbar-item *ngIf="(navbarHasLogin$ | async) && !(isAuth$ | async)" (click)="loginNav($event)">
           <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
             <i class=" bi bi-box-arrow-in-left"></i>

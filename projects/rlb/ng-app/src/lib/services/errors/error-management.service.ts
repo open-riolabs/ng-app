@@ -1,5 +1,5 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import { ModalService, ModalType, ToastService } from '@rlb-core/lib-ng-bootstrap';
+import { ModalService, ModalType, ToastService } from '@open-rlb/ng-bootstrap';
 import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
 import { LanguageService } from '..';
@@ -83,7 +83,7 @@ export class ErrorManagementService {
     return (source: Observable<T>) => {
       return source.pipe(
         catchError((error, k) => {
-          if (error.name && error.name === 'HttpErrorResponse' && error.error) { 
+          if (error.name && error.name === 'HttpErrorResponse' && error.error) {
             error.message = `${error.error.status}: ${error.error.message}`;
           }
           this.showError(type, out, error);

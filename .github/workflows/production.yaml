@@ -44,8 +44,6 @@ jobs:
             ${{ runner.os }}-node-modules-
       - name: Install dependencies
         run: |
-          npm config set "@rlb-core:registry=https://npm.pkg.github.com/lbdsh/"
-          npm config set "//npm.pkg.github.com/lbdsh/:_authToken" "${{ secrets.DEPLOY_PAT }}"
           npm install
       - name: Create node_modules TarGz
         run: tar -czf node_modules.tar.gz node_modules
@@ -55,7 +53,7 @@ jobs:
           name: node_modules-tar # Artifact name
           path: node_modules.tar.gz # Path to the created `.tar.gz`
 
-  build-lib:
+  build:
     needs: dependencies
     runs-on: ubuntu-latest
     container:
@@ -78,18 +76,18 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts-lib
+          name: build-artifacts
           path: |
             dist
 
-  deploy-lib:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
       deployments: write
     needs:
-      - build-lib
+      - build
       - versioning
     steps:
       - name: Checkout Code
@@ -104,22 +102,24 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts-lib
+          name: build-artifacts
           path: dist
 
       - name: Set Version and Publish
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
-          registry-url: "https://npm.pkg.github.com/"
-          scope: "@rlb-core"
+          node-version: "22.x"
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@open-rlb"
       - run: |
           cp ./package.json ./dist
+          cp ./package-lock.json ./dist
+          cp ./README.md ./dist
           cd ./dist/rlb/ng-app
           npm version ${{ needs.versioning.outputs.GitVersion_SemVer }} --git-tag-version false
-          npm publish --access restricted
+          npm publish --allow-same-version --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.DEPLOY_PAT }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_OPEN_RLB }}
 
       - name: Tag repo with new version
         uses: cardinalby/git-tag-action@master

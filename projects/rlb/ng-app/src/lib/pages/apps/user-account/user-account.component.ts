@@ -2,7 +2,7 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { ModalService } from '@rlb-core/lib-ng-bootstrap';
+import { ModalService } from '@open-rlb/ng-bootstrap';
 import { EMPTY, filter, lastValueFrom, Subscription, switchMap, tap } from 'rxjs';
 import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
 import { RlbAppModule } from '../../../rlb-app.module';

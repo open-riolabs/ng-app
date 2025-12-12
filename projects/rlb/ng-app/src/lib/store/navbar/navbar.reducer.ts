@@ -1,5 +1,5 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { navbarsFeatureKey, initialNavbarState } from './navbar.model';
+import { initialNavbarState, navbarsFeatureKey } from './navbar.model';
 import { NavbarActions } from './navbar.actions';
 
 export const navbarsFeature = createFeature({
@@ -14,7 +14,8 @@ export const navbarsFeature = createFeature({
     on(NavbarActions.setRightItems, (state, { items }) => ({ ...state, rightItems: items })),
     on(NavbarActions.setLoginVisible, (state, { visible }) => ({ ...state, loginVisible: visible })),
     on(NavbarActions.setSettingsVisible, (state, { visible }) => ({ ...state, settingsVisible: visible })),
-    on(NavbarActions.setAppsVisible, (state, { visible }) => ({ ...state, appsVisible: visible }))
+    on(NavbarActions.setAppsVisible, (state, { visible }) => ({ ...state, appsVisible: visible })),
+    on(NavbarActions.setSeparatorVisible, (state, { visible }) => ({ ...state, separatorVisible: visible }))
   )
 });
 

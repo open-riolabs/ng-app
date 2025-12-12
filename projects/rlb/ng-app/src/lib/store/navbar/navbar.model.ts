@@ -1,4 +1,4 @@
-import { NavigableItem } from "@rlb-core/lib-ng-bootstrap";
+import { NavigableItem } from "@open-rlb/ng-bootstrap";
 
 export const navbarsFeatureKey = 'navbar';
 
@@ -12,6 +12,7 @@ export interface Navbar {
   loginVisible: boolean,
   settingsVisible: boolean,
   appsVisible: boolean,
+  separatorVisible: boolean,
 }
 
 export const initialNavbarState: Navbar = {
@@ -24,6 +25,7 @@ export const initialNavbarState: Navbar = {
   loginVisible: false,
   settingsVisible: false,
   appsVisible: false,
+  separatorVisible: true,
 }
 
 export interface NavbarState { [navbarsFeatureKey]: Navbar }

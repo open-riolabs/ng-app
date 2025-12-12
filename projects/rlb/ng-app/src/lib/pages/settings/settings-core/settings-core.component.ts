@@ -1,7 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ToastService } from '@rlb-core/lib-ng-bootstrap';
+import { ToastService } from '@open-rlb/ng-bootstrap';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { LanguageService } from '../../../services/i18n/language.service';
 import { AppContextActions, BaseState, appContextFeatureKey } from '../../../store';

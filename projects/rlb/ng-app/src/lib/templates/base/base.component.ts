@@ -1,7 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { isPlatformServer } from '@angular/common';
 import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
-import { BreadcrumbItem } from '@rlb-core/lib-ng-bootstrap';
+import { BreadcrumbItem } from '@open-rlb/ng-bootstrap';
 import { map, Observable, of, shareReplay } from 'rxjs';
 
 @Component({

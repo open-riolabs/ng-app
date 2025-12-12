@@ -27,7 +27,7 @@ interface AppMatched {
 })
 export class AppsService {
 	private logger: LoggerContext;
-	
+
   constructor(
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
@@ -37,7 +37,7 @@ export class AppsService {
   ) {
 		this.logger = this.loggerService.for(this.constructor.name);
 		this.logger.log('AppsService initialized');
-		
+
     this.initAuthProviders(store, confAuth);
 		this.initRouterListener()
   }
@@ -45,12 +45,12 @@ export class AppsService {
   get currentDomain() {
     return window.location.hostname;
   }
-	
+
 	get apps() {
 		return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
 			.filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
 	}
-	
+
 	get currentApp() {
 		const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
 		this.logger.log('Current app from store:', app);
@@ -71,23 +71,23 @@ export class AppsService {
 		this.logger.warn('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
 		this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
-	
+
 	private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
 		if (!confAuth?.providers?.length) {
 			this.logger.warn('No auth providers configured.');
 			return;
 		}
-		
+
 		if (confAuth?.providers && confAuth.providers.length === 1) {
 			this.logger.info('Single auth provider detected:', confAuth.providers[0]);
 			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
 			return
 		}
-		
+
 		this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
-		
+
 		const authProvidersMatched = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
-		
+
 		if (authProvidersMatched && authProvidersMatched.length === 1) {
 			this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
 			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }));
@@ -97,7 +97,7 @@ export class AppsService {
 			this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
 		}
 	}
-	
+
 	private initRouterListener() {
 		this.router.events
 			.pipe(
@@ -107,35 +107,36 @@ export class AppsService {
 			)
 			.subscribe(data => this.handleResolvedApps(data));
 	}
-	
+
 	// Core logic
-	
+
 	private resolveRouteAndApps(): Observable<AppConfig | null> {
 		const route = this.findDeepestChild(this.activatedRoute);
-		
+
 		const fullPath = this.getFullPath(route);
 		this.logger.info('Full path for route resolution:', fullPath);
-		
+
 		if (!fullPath) {
 			this.logger.warn('No valid path found, treating as default route:', route);
 			return of(null);
 		}
-		
-		const appRoutes: AppMatched[] | undefined = this.apps?.map(app => ({
+
+		const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
 			type: app.type,
 			routes: app.routes || [],
 			viewMode: app.viewMode,
+			enabled: app.enabled,
 		}));
-		
-		let appRoutesMatched: AppMatched[] = [];
+
+		let appRoutesMatched: AppInfo[] = [];
 		if (!this.isDefaultRoute(fullPath)) {
 			appRoutesMatched = appRoutes?.filter(app =>
 				app.routes?.some(r => r.includes(fullPath))
 			) ?? [];
 		}
-		
+
 		this.logger.info('Route fullPath:', fullPath, 'Matched appRoute:', appRoutesMatched);
-		
+
 		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
 			map(apps => appRoutesMatched.length
 				? { route, appsConfig: appRoutesMatched, apps } as AppConfig
@@ -143,30 +144,33 @@ export class AppsService {
 			)
 		);
 	}
-	
+
 	private handleResolvedApps(data: AppConfig | null) {
 		const route = this.findDeepestChild(this.activatedRoute);
 		const storedId = this.getStoredAppId();
-		
+
 		if (data?.apps?.some(app => !app.id)) {
 			this.logger.error('Some apps are not finalized. Please finalize apps before using AppsService.');
 			return;
 		}
-		
+
 		if (!data || !data.apps || data.apps.length === 0) {
 			this.logger.warn(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
 			// const globalDefaultApp = this.apps[0];
 			this.selectApp(undefined);
 			return;
 		}
-		
-		const matchedApps = data.apps.filter(app =>
+
+		const matchedApps: AppInfo[] = data.apps
+			// domain filter in case apps have similar routes path
+			.filter(app => app.domains?.some((domain) => domain.includes(this.currentDomain)))
+			.filter(app =>
 			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
 			app.core?.url === '/' + route.routeConfig?.path
 		);
-		
+
 		let appToSelect: AppInfo | undefined;
-		
+
 		if (matchedApps.length === 1) {
 			appToSelect = matchedApps[0];
 			this.logger.info('Single app matched route:', appToSelect);
@@ -177,21 +181,21 @@ export class AppsService {
 			appToSelect = data.apps[0];
 			this.logger.info('No app matched route. Falling back to default app:', appToSelect);
 		}
-		
+
 		const qp = new URLSearchParams(route.snapshot.queryParams).toString();
 		const url = route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
-		
+
 		const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
-		
+
 		this.selectApp(appToSelect, viewMode, url);
 	}
-	
+
 	private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
 		while (route.firstChild) route = route.firstChild;
 		this.logger.info('Activated deepest child route:', route);
 		return route;
 	}
-	
+
 	private getStoredAppId(): string | null {
 		try {
 			return localStorage.getItem('c-app-id');
@@ -200,26 +204,26 @@ export class AppsService {
 			return null;
 		}
 	}
-	
+
 	private isSettingsRoute(route: ActivatedRoute): boolean {
 		return route.routeConfig?.path?.includes('settings') ?? false;
 	}
-	
+
 	private isDefaultRoute(route: string): boolean {
 		return DEFAULT_ROUTES_CONFIG
 			.some(r => r.path.includes(route));
 	}
-	
+
 	private getFullPath(route: ActivatedRoute): string {
 		const segments: string[] = [];
 		let current: ActivatedRoute | null = route.root;
-		
+
 		while (current) {
 			const path = current.routeConfig?.path;
 			if (path && path !== '') segments.push(path);
 			current = current.firstChild ?? null;
 		}
-		
+
 		return segments.join('/');
 	}
 }

@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NavigableItem } from '@rlb-core/lib-ng-bootstrap';
+import { NavigableItem, SidebarNavigableItem } from '@open-rlb/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services';
@@ -121,6 +121,10 @@ export class AppTemplateComponent implements OnDestroy {
     return this.appsService.apps;
   }
 
+  get separatorVisible$() {
+    return this.store.select(state => state[navbarsFeatureKey].separatorVisible);
+  }
+
   loginNav(event: MouseEvent) {
     event?.preventDefault();
     event?.stopPropagation();
@@ -130,5 +134,10 @@ export class AppTemplateComponent implements OnDestroy {
   login(): void {
     this.store.dispatch(AuthActions.login());
   }
-}
 
+  onSideBarItemClick(item: SidebarNavigableItem) {
+    if (item.externalUrl) {
+      window.open(item.externalUrl, '_blank')?.focus();
+    }
+  }
+}

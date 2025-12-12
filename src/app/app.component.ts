@@ -33,9 +33,13 @@ export class AppComponent {
     this.store.dispatch(SidebarActions.setItems({
       items: [
         { title: 'Home' },
-        { label: 'Home', url: '/', icon: 'bi bi-house' },
+        { label: 'Home', url: '/', icon: 'bi bi-house', badgeCounter: 1234 },
         { label: 'Profile', icon: 'bi bi-person', url: '/profile' },
         { label: 'Contact', url: '/contact', icon: 'bi bi-person' },
+        { label:'test-external-link-container', icon: 'bi bi-link', items: [
+            { label: 'external-link', externalUrl: 'https://partner-help.transfeero.com/en' }
+          ]
+        },
       ]
     }));
   }
