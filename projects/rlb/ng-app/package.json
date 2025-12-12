@@ -1,5 +1,5 @@
 {
-  "name": "@rlb-core/lib-ng-app",
+  "name": "@open-rlb/ng-app",
   "version": "0.0.0",
   "peerDependencies": {
     "@angular/common": "^20.0.0",

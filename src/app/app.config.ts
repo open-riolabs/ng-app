@@ -1,5 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideApp, provideRlbConfig } from '@rlb-core/lib-ng-app';
+import { provideApp, provideRlbConfig } from '@open-rlb/ng-app';
 import { environment } from '~/environments/environment';
 import { appDescriber } from './app.describer';
 

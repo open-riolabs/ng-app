@@ -100,7 +100,7 @@
         }
       }
     },
-    "@rlb-core/lib-ng-app": {
+    "@open-rlb/ng-app": {
       "projectType": "library",
       "root": "projects/rlb/ng-app",
       "sourceRoot": "projects/rlb/ng-app/src",

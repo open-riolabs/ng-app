@@ -7,11 +7,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lib:build": "ng build @rlb-core/lib-ng-app",
-    "lib:test": "ng test @rlb-core/lib-ng-app",
-    "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @rlb-core/lib-ng-app",
-    "lib:lint": "ng lint @rlb-core/lib-ng-app",
-    "lib:pack": "ng build @rlb-core/lib-ng-app && npm pack ./dist/rlb/ng-app/core"
+    "lib:build": "ng build @open-rlb/ng-app",
+    "lib:test": "ng test @open-rlb/ng-app",
+    "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @open-rlb/ng-app",
+    "lib:lint": "ng lint @open-rlb/ng-app",
+    "lib:pack": "ng build @open-rlb/ng-app && npm pack ./dist/rlb/ng-app/core"
   },
   "private": true,
   "author": {

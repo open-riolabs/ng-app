@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActions } from '@rlb-core/lib-ng-app';
+import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActions } from '@open-rlb/ng-app';
 
 
 @Component({

@@ -3,7 +3,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@rlb-core/lib-ng-app": [
+      "@open-rlb/ng-app": [
         "./projects/rlb/ng-app/src/public-api.ts"
       ],
       "@shared/*": [

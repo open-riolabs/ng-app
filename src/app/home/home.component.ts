@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { appContextFeatureKey, BaseState } from '@rlb-core/lib-ng-app';
+import { appContextFeatureKey, BaseState } from '@open-rlb/ng-app';
 import { AppInfo } from '../../../projects/rlb/ng-app/src/lib/services/apps/app';
 
 @Component({
