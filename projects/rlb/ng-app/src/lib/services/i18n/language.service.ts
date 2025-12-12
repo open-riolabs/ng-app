@@ -17,7 +17,7 @@ export class LanguageService {
   ) {
     if (this.i18nOptions) {
       translateService.addLangs(this.i18nOptions.availableLangs)
-      const languageUI = this.cookiesService.getCookie('ui-locale') || this.browserLanguage || this.defaultLanguage
+      const languageUI = this.cookiesService.getCookie('ui-locale') || this.defaultLanguage || this.browserLanguage
       const languageContent = this.cookiesService.getCookie('content-locale') || this.defaultLanguage
       translateService.use(languageUI)
       this.contentLanguage = languageContent
@@ -57,7 +57,7 @@ export class LanguageService {
   }
 
   public get browserLanguage() {
-    return this.translateService.getBrowserLang()
+    return this.translateService.getBrowserLang() || 'en'
   }
 
   public translate(key: string | Array<string>, interpolateParams?: Object) {

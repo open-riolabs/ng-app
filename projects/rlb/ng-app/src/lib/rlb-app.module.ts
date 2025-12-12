@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { RlbBootstrapModule } from '@rlb-core/lib-ng-bootstrap';
+import { RlbBootstrapModule } from '@open-rlb/ng-bootstrap';
 import { CmsContentComponent } from './pages/cms-content/cms-content.component';
 import { CookiesComponent } from './pages/cookies/cookies.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';

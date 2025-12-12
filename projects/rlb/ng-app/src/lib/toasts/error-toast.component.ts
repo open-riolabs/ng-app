@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
-import { ToastData, ToastDirective, IToast } from '@rlb-core/lib-ng-bootstrap';
+import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
 
 @Component({
     imports: [RlbAppModule, CommonModule],

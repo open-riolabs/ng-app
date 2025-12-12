@@ -26,8 +26,8 @@ export class AppContainerComponent implements OnInit, OnDestroy {
   @Input('modal-container-id') modalContainerId!: string;
   @Input('toast-container-ids') toastContainerIds!: string | string[];
 	private logger: LoggerContext;
-	
-	
+
+
 	constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
@@ -38,8 +38,8 @@ export class AppContainerComponent implements OnInit, OnDestroy {
 		private readonly loggerService: AppLoggerService,
   ) {
 		this.logger = this.loggerService.for(this.constructor.name);
-		
-		const theme: AppTheme = (this.storage.readLocal('theme') || 'light') as AppTheme;
+
+		const theme: AppTheme = (this.storage.readLocal('theme') || 'dark') as AppTheme;
     this.store.dispatch(AppContextActions.setTheme({ theme }));
     this.store.dispatch(AppContextActions.setLanguage({ language: this.storage.readLocal('locale') || 'en' }));
     this.store
@@ -47,55 +47,30 @@ export class AppContainerComponent implements OnInit, OnDestroy {
 			.pipe(distinctUntilChanged())
       .subscribe(async (currentApp) => {
 				this.logger.info('currentApp:', currentApp);
-				
+
 				if (!currentApp) return;
-				
+
 				const targetUrl = currentApp.navigationUrl ||
 					(currentApp.viewMode === 'app'
 						? currentApp.core?.url
 						: currentApp.settings?.url);
-				
+
 				if (!targetUrl) return;
-				
+
 				const currentUrl = this.router.url;
 				this.logger.info('currentUrl:', currentUrl);
 				this.logger.info('targetUrl:', targetUrl);
-				
+
 				const normalize = (url: string) => url.replace(/\/+$/, '');
 				const current = normalize(currentUrl);
 				const target = normalize(targetUrl);
-				
+
 				if (current === target || current.startsWith(`${target}/`)) {
 					this.logger.info('Already within target route, skipping navigation.');
 				} else {
 					this.logger.info('Navigating to app base URL:', target);
 					await this.router.navigateByUrl(target);
 				}
-				
-				
-				// const isAuth = this.store.selectSignal(state => state[authsFeatureKey].isAuth)();
-				// if ((currentApp.viewMode === 'app' && currentApp.core?.auth) ||
-				// 	(currentApp.viewMode === 'settings' && currentApp.settings?.auth)) {
-				// 	if (!isAuth) {
-				// 		this.store.dispatch(AuthActions.login());
-				// 	}
-				// }
-				
-				// BACKUP
-				// if (currentApp && currentApp.viewMode === 'app' && currentApp.core) {
-        //   await this.router.navigate([currentApp.navigationUrl || currentApp.core.url]);
-        //   this.logger.info(`AppContainerComponent: Navigating to app `, this.store.selectSignal((state) => state[authsFeatureKey].isAuth)());
-        //   if (currentApp.core.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
-        //     this.store.dispatch(AuthActions.login());
-        //   }
-        // }
-        // if (currentApp && currentApp.viewMode === 'settings' && currentApp.settings) {
-        //   await this.router.navigate([currentApp.navigationUrl || currentApp.settings.url]);
-				// 	this.logger.info(`AppContainerComponent: Navigating to app `, this.store.selectSignal((state) => state[authsFeatureKey].isAuth)());
-				// 	if (currentApp.settings.auth && !this.store.selectSignal((state) => state[authsFeatureKey].isAuth)()) {
-        //     this.store.dispatch(AuthActions.login());
-        //   }
-        // }
       });
 
     this.router.events

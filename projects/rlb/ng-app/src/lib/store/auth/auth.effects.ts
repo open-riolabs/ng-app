@@ -19,7 +19,7 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.logout),
       switchMap(() => this.auth.logout$()),
-      map(() => AuthActions.logout()));
+      map(() => AuthActionsInternal.reset()));
   });
 
   setCurrentProvider$ = createEffect(() => {

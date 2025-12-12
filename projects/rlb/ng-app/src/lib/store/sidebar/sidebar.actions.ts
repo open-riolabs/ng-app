@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { SidebarNavigableItem } from '@rlb-core/lib-ng-bootstrap';
+import { SidebarNavigableItem } from '@open-rlb/ng-bootstrap';
 
 export const SidebarActionsInternal = createActionGroup({
   source: 'Sidebar/Internal',

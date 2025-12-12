@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter, map, switchMap } from 'rxjs';
-import { ModalService } from '@rlb-core/lib-ng-bootstrap';
+import { ModalService } from '@open-rlb/ng-bootstrap';
 import { LanguageService } from '../i18n/language.service';
 
 @Injectable({

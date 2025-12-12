@@ -4,7 +4,7 @@ import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
-import { ModalRegistryOptions, provideRlbBootstrap, ToastRegistryOptions } from '@rlb-core/lib-ng-bootstrap';
+import { ModalRegistryOptions, provideRlbBootstrap, ToastRegistryOptions } from '@open-rlb/ng-bootstrap';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import {
 	ProjectConfiguration,
@@ -88,7 +88,7 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
 	const routesPaths = app.routes ? flattenRoutes(app.routes) : [];
-	
+
 	const providers: (EnvironmentProviders | Provider)[] = [{
     provide: RLB_APPS, useValue: {
       ...app.info,

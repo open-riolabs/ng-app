@@ -4,7 +4,8 @@ export const AuthActionsInternal = createActionGroup({
   source: 'Auth/Internal',
   events: {
     'SetCurrentProvider': props<{ currentProvider: string; }>(),
-    'Logout': emptyProps(),
+    'SetLoading': props<{ loading: boolean; }>(),
+    'Reset': emptyProps(),
   }
 });
 

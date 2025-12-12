@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { IModal, ModalData, ModalDirective } from "@rlb-core/lib-ng-bootstrap";
+import { IModal, ModalData, ModalDirective } from "@open-rlb/ng-bootstrap";
 import { AppInfo } from "../services/apps/app";
 import { RlbAppModule } from "../rlb-app.module";
 import { CommonModule } from "@angular/common";
