@@ -163,7 +163,7 @@ export class AppsService {
 
 		const matchedApps: AppInfo[] = data.apps
 			// domain filter in case apps have similar routes path
-			.filter(app => app.domains?.some((domain) => domain.includes(this.currentDomain)))
+			.filter(app => !app.domains || app.domains?.some((domain) => domain.includes(this.currentDomain)))
 			.filter(app =>
 			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
 			app.core?.url === '/' + route.routeConfig?.path
