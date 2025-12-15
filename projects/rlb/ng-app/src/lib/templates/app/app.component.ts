@@ -128,12 +128,6 @@ export class AppTemplateComponent implements OnDestroy {
   loginNav(event: MouseEvent) {
     event?.preventDefault();
     event?.stopPropagation();
-    console.log("AppTemplateComponent -> loginNav() called, dispatch login call")
-    this.store.dispatch(AuthActions.login());
-  }
-
-  private login(): void {
-    console.log("AppTemplateComponent -> login() called, dispatch login call")
     this.store.dispatch(AuthActions.login());
   }
 

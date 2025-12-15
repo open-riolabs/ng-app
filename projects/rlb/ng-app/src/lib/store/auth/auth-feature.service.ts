@@ -11,7 +11,6 @@ export class AuthFeatureService {
   constructor(private store: Store) { }
 
   public login() {
-    console.log("AuthFeatureService, dispatch login call")
     this.store.dispatch(AuthActions.login());
   }
 
