@@ -16,7 +16,7 @@ import {
 import { AppLoggerService, LoggerContext } from "../../services";
 
 @Component({
-  selector: 'rlb-app',
+  selector: 'rlb-app-container',
   templateUrl: './app-container.component.html',
   standalone: false,
 })

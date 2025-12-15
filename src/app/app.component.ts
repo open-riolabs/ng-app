@@ -7,7 +7,7 @@ import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActio
 @Component({
   selector: 'app-root',
   imports: [CommonModule, RlbAppModule],
-  template: `<rlb-app modal-container-id="modal-c-1" toast-container-ids="toast-c-1" />`,
+  template: `<rlb-app-container modal-container-id="modal-c-1" toast-container-ids="toast-c-1" />`,
 })
 export class AppComponent {
 
@@ -37,7 +37,7 @@ export class AppComponent {
         { label: 'Profile', icon: 'bi bi-person', url: '/profile' },
         { label: 'Contact', url: '/contact', icon: 'bi bi-person' },
         { label:'test-external-link-container', icon: 'bi bi-link', items: [
-            { label: 'external-link', externalUrl: 'https://partner-help.transfeero.com/en' }
+            { label: 'external-link', icon: 'bi bi-github', externalUrl: 'https://github.com/open-riolabs/ng-app' }
           ]
         },
       ]

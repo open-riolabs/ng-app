@@ -11,7 +11,7 @@
     "lib:test": "ng test @open-rlb/ng-app",
     "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @open-rlb/ng-app",
     "lib:lint": "ng lint @open-rlb/ng-app",
-    "lib:pack": "ng build @open-rlb/ng-app && npm pack ./dist/rlb/ng-app/core"
+    "lib:pack": "ng build @open-rlb/ng-app && npm pack ./dist/rlb/ng-app/"
   },
   "private": true,
   "author": {
