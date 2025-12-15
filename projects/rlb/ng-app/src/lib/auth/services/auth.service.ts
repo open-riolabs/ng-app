@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService , OpenIdConfiguration} from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
-import { CookiesService } from '../../services';
+import { AppLoggerService, CookiesService, LoggerContext } from '../../services';
 import { authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 
@@ -13,6 +13,7 @@ import { ParseJwtService } from './parse-jwt.service';
 })
 export class AuthenticationService {
   modal!: Window | null;
+  private logger: LoggerContext;
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -20,10 +21,12 @@ export class AuthenticationService {
     private router: Router,
     private readonly parseJwtService: ParseJwtService,
     private readonly store: Store<BaseState>,
+    private readonly log: AppLoggerService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
   ) {
-
+    this.logger = this.log.for(this.constructor.name);
+    this.logger.log('AuthenticationService initialized');
   }
 
   public get oidc(): OidcSecurityService {
@@ -64,6 +67,7 @@ export class AuthenticationService {
 
   public login() {
     this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1);
+    this.logger.log(`call login method, loginRedirectUrl: ${this.router.url || '/'}`);
     // electron
     if (typeof (process) !== 'undefined' &&
       typeof (process?.version) !== 'undefined' &&

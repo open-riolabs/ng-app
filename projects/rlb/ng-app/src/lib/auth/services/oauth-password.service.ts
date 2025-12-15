@@ -2,6 +2,7 @@ import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from
 import { Injectable, OnInit } from '@angular/core';
 import { lastValueFrom, Observable } from 'rxjs';
 import { AuthenticationService } from './auth.service';
+import { AppLoggerService, LoggerContext } from "../../services";
 
 const SESSION_RT = 'RT';
 const SESSION_AT = 'AT';
@@ -24,10 +25,14 @@ export class OauthPasswordService implements HttpInterceptor {
   private timer: any = null;
   private _onUpdateToken: ((token: string | null) => void) | null = null;
   //private _user: User | null = null
+  private logger: LoggerContext;
 
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly authenticationService: AuthenticationService) {
+    private readonly authenticationService: AuthenticationService,
+    private readonly log: AppLoggerService,
+  ) {
+    this.logger = this.log.for(this.constructor.name);
     this.initRefreshToken().catch(e => console.error("Error in refresh token", e));
   }
 
@@ -135,6 +140,7 @@ export class OauthPasswordService implements HttpInterceptor {
     body.set('scope', 'addubby-order');
     body.set('username', username);
     body.set('password', password);
+    this.logger.log(`password service call _login()`)
     return await lastValueFrom(this.httpClient.post<Token>(`${this.authenticationService.currentProvider.authority}/${TOKEN_URL}`, body.toString(), {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
     }));
