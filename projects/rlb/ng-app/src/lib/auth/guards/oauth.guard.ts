@@ -6,13 +6,12 @@ import { RlbLoggerService } from "../services/rlb-logger.service";
 
 export const oauthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthenticationService);
-  const logger = inject(RlbLoggerService);
 
   return authService.isAuthenticated$.pipe(
     take(1),
     map((isAuthenticated) => {
       if (!isAuthenticated) {
-        logger.log('oauthGuard, not authenticated, call authService.login()');
+        console.warn("Attention! Guard navigates to login!!!")
 				authService.login()
         return false;
       }
