@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, of, switchMap } from 'rxjs';
 import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
-import { AppContextActions, AuthActions, BaseState } from '../../store';
+import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
@@ -14,12 +14,6 @@ interface AppConfig {
 	route: ActivatedRoute
 	appsConfig: AppInfo<any>[]
 	apps: AppInfo<any>[]
-}
-
-interface AppMatched {
-	type: string
-	routes: string[],
-	viewMode: AppViewMode | undefined
 }
 
 @Injectable({
@@ -73,6 +67,13 @@ export class AppsService {
   }
 
 	private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
+    const currentProviderInStore = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
+
+    if (currentProviderInStore) {
+      this.logger.info(`Auth provider already set to '${currentProviderInStore}' by Initializer. AppsService initAuthProviders skipping init.`);
+      return;
+    }
+
 		if (!confAuth?.providers?.length) {
 			this.logger.warn('No auth providers configured.');
 			return;
