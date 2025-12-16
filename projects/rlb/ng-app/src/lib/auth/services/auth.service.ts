@@ -5,7 +5,7 @@ import { LoginResponse, OidcSecurityService , OpenIdConfiguration} from 'angular
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 import { AppLoggerService, CookiesService, LoggerContext } from '../../services';
-import { authsFeatureKey, BaseState } from '../../store';
+import { AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 
 @Injectable({
@@ -55,13 +55,39 @@ export class AuthenticationService {
     return this.oidc.checkAuthMultiple(url)
       .pipe(tap(data => {
         this.logger.warn(`oidc checkAuthMultiple check, response: ${JSON.stringify(data)}; looking for at least one isAuthenticated`);
-        if (data.some(o => o.isAuthenticated)) {
+        const authenticatedConfig = data.find(o => o.isAuthenticated);
+        if (authenticatedConfig && authenticatedConfig.configId) {
+          this.logger.info(`User is authenticated with provider: ${authenticatedConfig.configId}. Updating Store.`);
+
+          // first dispatch to prevent recalculate in apps service
+          this.store.dispatch(AuthActions.setCurrentProvider({
+            currentProvider: authenticatedConfig.configId
+          }));
+
+          // Redirect logic -> clean query params
           const redirect = this.cookiesService.getCookie('loginRedirectUrl');
+          this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
           if (redirect) {
             this.cookiesService.deleteCookie('loginRedirectUrl');
-            this.router.navigate([redirect]);
+            this.router.navigate([redirect], { queryParams: {} });
+          } else {
+            this.router.navigate([], {
+              queryParams: {},
+              replaceUrl: true,
+              relativeTo: this.router.routerState.root
+            });
           }
+        } else {
+          this.logger.warn(`No authenticatedConfig found for ${url}`);
         }
+
+        // if (data.some(o => o.isAuthenticated)) {
+        //   const redirect = this.cookiesService.getCookie('loginRedirectUrl');
+        //   if (redirect) {
+        //     this.cookiesService.deleteCookie('loginRedirectUrl');
+        //     this.router.navigate([redirect]);
+        //   }
+        // }
       }));
     //}
   }
