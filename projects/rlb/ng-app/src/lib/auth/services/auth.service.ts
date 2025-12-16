@@ -69,7 +69,7 @@ export class AuthenticationService {
           this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
           if (redirect) {
             this.cookiesService.deleteCookie('loginRedirectUrl');
-            this.router.navigate([redirect], { queryParams: {} });
+            this.router.navigateByUrl(redirect, { replaceUrl: true });
           } else {
             this.router.navigate([], {
               queryParams: {},
@@ -92,9 +92,10 @@ export class AuthenticationService {
     //}
   }
 
-  public login() {
-    this.cookiesService.setCookie('loginRedirectUrl', this.router.url || '/', 1);
-    this.logger.log(`call login method, loginRedirectUrl: ${this.router.url || '/'}`);
+  public login(targetUrl?: string) {
+    const returnUrl = targetUrl || this.router.url || '/';
+    this.cookiesService.setCookie('loginRedirectUrl', returnUrl, 1);
+    this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
     // electron
     if (typeof (process) !== 'undefined' &&
       typeof (process?.version) !== 'undefined' &&

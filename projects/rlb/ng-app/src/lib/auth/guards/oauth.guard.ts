@@ -10,7 +10,7 @@ export const oauthGuard: CanActivateFn = (route, state) => {
     take(1),
     map((isAuthenticated) => {
       if (!isAuthenticated) {
-				authService.login()
+				authService.login(state.url)
         return false;
       }
       return true;
