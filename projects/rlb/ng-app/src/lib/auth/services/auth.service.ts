@@ -137,7 +137,7 @@ export class AuthenticationService {
 
   public get isAuthenticated$(): Observable<boolean> {
     return this.oidc.isAuthenticated$.pipe(map((isAuthenticated) => {
-      this.logger.log(`oidc isAuthenticated$ check, response: ${JSON.stringify(isAuthenticated)}; looking for isAuthenticated of ${this.currentProvider?.configId} configId`);
+      // this.logger.log(`oidc isAuthenticated$ check, response: ${JSON.stringify(isAuthenticated)}; looking for isAuthenticated of ${this.currentProvider?.configId} configId`);
       return isAuthenticated.allConfigsAuthenticated.find(o => o.configId === this.currentProvider?.configId)?.isAuthenticated || false;
     }));
   }
