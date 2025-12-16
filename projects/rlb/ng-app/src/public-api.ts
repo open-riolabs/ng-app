@@ -1,5 +1,5 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { EnvironmentProviders, isDevMode, Provider } from '@angular/core';
+import { APP_INITIALIZER, EnvironmentProviders, isDevMode, Provider } from '@angular/core';
 import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
@@ -28,6 +28,8 @@ import { authsFeature } from './lib/store/auth/auth.reducer';
 import { navbarsFeature } from './lib/store/navbar/navbar.reducer';
 import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer';
 import { ToastComponent } from './lib/toasts/error-toast.component';
+import { authInitializer } from "./lib/auth/auth-init";
+import { AuthenticationService } from "./lib/auth";
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -82,6 +84,12 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
         },
       },
       multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: authInitializer,
+      deps: [AuthenticationService],
+      multi: true
     },
   ];
 }

@@ -40,9 +40,9 @@ export class AuthEffects {
     private loggerService: AppLoggerService,
     @Inject(RLB_CFG_AUTH) @Optional() authConfig: AuthConfiguration) {
     this.logger = this.loggerService.for(this.constructor.name);
-    this.logger.log('Initialized AuthEffects');
-    if (authConfig) {
-      auth.checkAuthMultiple().subscribe();
-    }
+    this.logger.log(`Initialized AuthEffects, auth config: ${authConfig}`);
+    // if (authConfig) {
+    //   auth.checkAuthMultiple().subscribe();
+    // }
   }
 }
