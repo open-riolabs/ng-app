@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AbstractLoggerService } from 'angular-auth-oidc-client';
 
 export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'log';
 
@@ -21,29 +20,28 @@ const LEVEL_PRIORITIES: Record<LogLevel, number> = {
 };
 
 @Injectable({ providedIn: 'root' })
-export class AppLoggerService extends AbstractLoggerService {
-	private currentLevel: LogLevel = 'off';
+export class AppLoggerService {
+	private currentLevel: LogLevel = 'log';
 	private timestamps = true;
-	
+
 	constructor() {
-		super();
 	}
-	
+
 	setLogLevel(level: LogLevel) {
 		if (!(level in LEVEL_PRIORITIES)) {
 			throw new Error(`Unknown log level: ${level}`);
 		}
 		this.currentLevel = level;
 	}
-	
+
 	getLogLevel(): LogLevel {
 		return this.currentLevel;
 	}
-	
+
 	enableTimestamps(enabled: boolean) {
 		this.timestamps = enabled;
 	}
-	
+
 	/**
 	 * returns logger with context / class name
 	 */
@@ -56,7 +54,7 @@ export class AppLoggerService extends AbstractLoggerService {
 			log: (...args: any[]) => this.log(context, ...args),
 		};
 	}
-	
+
 	logError(contextOrMessage: any, ...args: any[]): void {
 		this.print('error', contextOrMessage, args);
 	}
@@ -72,12 +70,12 @@ export class AppLoggerService extends AbstractLoggerService {
 	log(contextOrMessage: any, ...args: any[]): void {
 		this.print('log', contextOrMessage, args);
 	}
-	
+
 	private print(level: LogLevel, contextOrMessage: any, args: any[]) {
 		if (LEVEL_PRIORITIES[level] > LEVEL_PRIORITIES[this.currentLevel]) {
 			return;
 		}
-		
+
 		const colors: Record<LogLevel, string> = {
 			error: 'color:#e57373;',
 			warn: 'color:#ffb74d;',
@@ -86,20 +84,20 @@ export class AppLoggerService extends AbstractLoggerService {
 			log: 'color:#757575;',
 			off: 'color:inherit;',
 		};
-		
+
 		let context = 'GLOBAL';
 		let messageArgs: any[] = [];
-		
+
 		if (args.length > 0) {
 			context = contextOrMessage;
 			messageArgs = args;
 		} else {
 			messageArgs = [contextOrMessage];
 		}
-		
+
 		const timePrefix = this.timestamps ? `[${new Date().toISOString()}]` : '';
 		const prefix = `[${level.toUpperCase()}][${context}]${timePrefix} -`;
-		
+
 		switch (level) {
 			case 'error':
 				console.error(`%c${prefix}`, colors.error, ...messageArgs);
