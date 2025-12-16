@@ -54,6 +54,7 @@ export class AuthenticationService {
     // } else {
     return this.oidc.checkAuthMultiple(url)
       .pipe(tap(data => {
+        this.logger.warn(`oidc checkAuthMultiple check, response: ${JSON.stringify(data)}; looking for at least one isAuthenticated`);
         if (data.some(o => o.isAuthenticated)) {
           const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           if (redirect) {
