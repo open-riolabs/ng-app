@@ -14,6 +14,7 @@ export const environment: ProjectConfiguration = {
     errorToastName: 'error-toast',
     errorToastContainer: 'error-toast-container',
     pwaUpdateEnabled: true,
+    logLevel: 'off'
   },
   i18n: {
     availableLangs: ['it'],

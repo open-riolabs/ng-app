@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { EnvironmentConfiguration, RLB_CFG_ENV } from "../../configuration";
 
 export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'log';
 
@@ -21,10 +22,11 @@ const LEVEL_PRIORITIES: Record<LogLevel, number> = {
 
 @Injectable({ providedIn: 'root' })
 export class AppLoggerService {
-	private currentLevel: LogLevel = 'log';
+	private currentLevel: LogLevel = 'off';
 	private timestamps = true;
 
-	constructor() {
+	constructor(@Inject(RLB_CFG_ENV) environment?: EnvironmentConfiguration) {
+    this.currentLevel = environment?.logLevel || 'off';
 	}
 
 	setLogLevel(level: LogLevel) {

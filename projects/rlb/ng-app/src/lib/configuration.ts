@@ -1,5 +1,7 @@
 import { InjectionToken, Type } from "@angular/core";
 import { OpenIdConfiguration } from "angular-auth-oidc-client";
+import { LogLevel } from "./services";
+
 export const RLB_CFG = 'rlb.options';
 export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
 export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
@@ -68,6 +70,7 @@ export interface EnvironmentConfiguration {
   errorToastName?: string;
   errorToastContainer?: string;
   pwaUpdateEnabled?: boolean;
+  logLevel?: LogLevel;
 }
 
 export interface Endpoint {
