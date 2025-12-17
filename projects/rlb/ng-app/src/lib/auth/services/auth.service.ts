@@ -65,12 +65,20 @@ export class AuthenticationService {
           }));
 
           // Redirect logic -> clean query params
-          const redirect = this.cookiesService.getCookie('loginRedirectUrl');
+          const redirect = localStorage.getItem('loginRedirectUrl');
+          //const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
           if (redirect) {
-            this.cookiesService.deleteCookie('loginRedirectUrl');
-            this.router.navigateByUrl(redirect, { replaceUrl: true });
+            localStorage.removeItem('loginRedirectUrl');
+            // this.cookiesService.deleteCookie('loginRedirectUrl');
+
+            // setTimeout to prevent NavigationCancel
+            // this allows current angular navigation cycle (handle URL with code/state)  to complete
+            setTimeout(() => {
+              this.router.navigateByUrl(redirect, { replaceUrl: true });
+            }, 0);
           } else {
+            this.logger.info(`Correct provider dispatched, redirectUrl doesn't exist, navigate to root route: ${redirect}`);
             this.router.navigate([], {
               queryParams: {},
               replaceUrl: true,
@@ -94,7 +102,8 @@ export class AuthenticationService {
 
   public login(targetUrl?: string) {
     const returnUrl = targetUrl || this.router.url || '/';
-    this.cookiesService.setCookie('loginRedirectUrl', returnUrl, 1);
+    // this.cookiesService.setCookie('loginRedirectUrl', returnUrl, 1);
+    localStorage.setItem('loginRedirectUrl', returnUrl);
     this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
     // electron
     if (typeof (process) !== 'undefined' &&
