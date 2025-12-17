@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService , OpenIdConfiguration} from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
-import { AppLoggerService, CookiesService, LoggerContext } from '../../services';
+import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
 import { AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 
@@ -22,6 +22,7 @@ export class AuthenticationService {
     private readonly parseJwtService: ParseJwtService,
     private readonly store: Store<BaseState>,
     private readonly log: AppLoggerService,
+    private readonly localStorage: AppStorageService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
   ) {
@@ -63,11 +64,12 @@ export class AuthenticationService {
             currentProvider: authenticatedConfig.configId
           }));
 
-          const redirect = localStorage.getItem('loginRedirectUrl');
+          const redirect = this.localStorage.readLocal('loginRedirectUrl');
+
           //const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
           if (redirect) {
-            localStorage.removeItem('loginRedirectUrl');
+            this.localStorage.removeLocal('loginRedirectUrl');
             // this.cookiesService.deleteCookie('loginRedirectUrl');
 
             // setTimeout to prevent NavigationCancel
@@ -101,7 +103,7 @@ export class AuthenticationService {
   public login(targetUrl?: string) {
     const returnUrl = targetUrl || this.router.url || '/';
     // this.cookiesService.setCookie('loginRedirectUrl', returnUrl, 1);
-    localStorage.setItem('loginRedirectUrl', returnUrl);
+    this.localStorage.writeLocal('loginRedirectUrl', returnUrl);
     this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
     // electron
     if (typeof (process) !== 'undefined' &&
