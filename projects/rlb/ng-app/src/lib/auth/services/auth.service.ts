@@ -54,7 +54,6 @@ export class AuthenticationService {
     // } else {
     return this.oidc.checkAuthMultiple(url)
       .pipe(tap(data => {
-        this.logger.warn(`oidc checkAuthMultiple check, response: ${JSON.stringify(data)}; looking for at least one isAuthenticated`);
         const authenticatedConfig = data.find(o => o.isAuthenticated);
         if (authenticatedConfig && authenticatedConfig.configId) {
           this.logger.info(`User is authenticated with provider: ${authenticatedConfig.configId}. Updating Store.`);
@@ -64,7 +63,6 @@ export class AuthenticationService {
             currentProvider: authenticatedConfig.configId
           }));
 
-          // Redirect logic -> clean query params
           const redirect = localStorage.getItem('loginRedirectUrl');
           //const redirect = this.cookiesService.getCookie('loginRedirectUrl');
           this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
@@ -78,12 +76,12 @@ export class AuthenticationService {
               this.router.navigateByUrl(redirect, { replaceUrl: true });
             }, 0);
           } else {
-            this.logger.info(`Correct provider dispatched, redirectUrl doesn't exist, navigate to root route: ${redirect}`);
-            this.router.navigate([], {
-              queryParams: {},
-              replaceUrl: true,
-              relativeTo: this.router.routerState.root
-            });
+            this.logger.info(`User authenticated, no redirectUrl found. Staying on current route.`);
+            // this.router.navigate([], {
+            //   queryParams: {},
+            //   replaceUrl: true,
+            //   relativeTo: this.router.routerState.root
+            // });
           }
         } else {
           this.logger.warn(`No authenticatedConfig found for ${url}`);
