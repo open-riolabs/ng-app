@@ -115,13 +115,13 @@ export class AppsService {
 	private resolveRouteAndApps(): Observable<AppConfig | null> {
 		const route = this.findDeepestChild(this.activatedRoute);
 
-		const fullPath = this.getFullPath(route);
-    this.logger.info(`Full path for route resolution: '${fullPath}'`);
+    // 1. Get abstract route template (LIKE ".../:id")
+    const configPath = this.getConfigPath(route);
 
-		// if (!fullPath) {
-		// 	this.logger.warn('No valid path found, treating as default route:', route);
-		// 	return of(null);
-		// }
+    // 2. Get REAL url path (LIKE ".../abc-123")
+    const actualPath = this.getActualPath(route);
+
+    this.logger.info(`Resolving. ConfigPath: '${configPath}', ActualPath: '${actualPath}'`);
 
 		const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
 			type: app.type,
@@ -133,13 +133,13 @@ export class AppsService {
 
 		let appRoutesMatched: AppInfo[] = [];
 
-		if (fullPath && !this.isDefaultRoute(fullPath)) {
+		if (configPath  && !this.isDefaultRoute(configPath)) {
 			appRoutesMatched = appRoutes?.filter(app =>
-				app.routes?.some(r => r.includes(fullPath))
+				app.routes?.some(r => r.includes(configPath))
 			) ?? [];
 		}
 
-		this.logger.info('Route fullPath:', fullPath, 'Matched appRoute:', appRoutesMatched);
+    this.logger.info('Matched appRoute:', appRoutesMatched);
 
     return this.store.select(state => state[appContextFeatureKey].apps).pipe(
       // waiting for all "finalizeApp" dispatches
@@ -151,10 +151,14 @@ export class AppsService {
         }
         return allFinalized;
       }),
-      // Return config in there are matched apps, or it's root route case
       map(apps => {
-        if (appRoutesMatched.length > 0 || fullPath === '') {
-          return { route, appsConfig: appRoutesMatched, apps, fullPath } as AppConfig;
+        if (appRoutesMatched.length > 0 || actualPath === '') {
+          return {
+            route,
+            appsConfig: appRoutesMatched,
+            apps,
+            fullPath: actualPath
+          } as AppConfig;
         }
         return null;
       })
@@ -166,7 +170,7 @@ export class AppsService {
     const storedId = this.getStoredAppId();
 
     // Check if route is root
-    const currentPath = data ? data.fullPath : this.getFullPath(route);
+    const currentPath = data ? data.fullPath : this.getActualPath(route);
     const isRoot = currentPath === '';
 
     //  Basic check
@@ -272,7 +276,7 @@ export class AppsService {
 			.some(r => r.path.includes(route));
 	}
 
-	private getFullPath(route: ActivatedRoute): string {
+	private getConfigPath(route: ActivatedRoute): string {
 		const segments: string[] = [];
 		let current: ActivatedRoute | null = route.root;
 
@@ -284,4 +288,17 @@ export class AppsService {
 
 		return segments.join('/');
 	}
+
+  private getActualPath(route: ActivatedRoute): string {
+    const segments: string[] = [];
+    let current: ActivatedRoute | null = route.root;
+
+    while (current) {
+      // map(s => s.path) extract params
+      const path = current.snapshot.url.map(s => s.path).join('/');
+      if (path && path !== '') segments.push(path);
+      current = current.firstChild ?? null;
+    }
+    return segments.join('/');
+  }
 }
