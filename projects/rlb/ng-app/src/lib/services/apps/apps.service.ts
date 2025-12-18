@@ -164,22 +164,22 @@ export class AppsService {
     const route = this.findDeepestChild(this.activatedRoute);
     const storedId = this.getStoredAppId();
 
-    // Check if it is a root route
+    // Check if route is root
     const currentPath = route.snapshot.url.map(s => s.path).join('/');
     const isRoot = currentPath === '';
 
+    //  Basic check
     if (data?.apps?.some(app => !app.id)) {
       this.logger.error('Some apps are not finalized...');
       return;
     }
-
     if (!data || !data.apps || data.apps.length === 0) {
-      this.logger.warn(`No apps found (or data is null). Path: '${currentPath}'`);
+      this.logger.warn(`No apps found. Path: '${currentPath}'`);
       this.selectApp(undefined);
       return;
     }
 
-    // domain filter
+    // Filter by domain
     const domainApps = data.apps.filter(app =>
       !app.domains || app.domains?.some((domain) => domain.includes(this.currentDomain))
     );
@@ -190,31 +190,40 @@ export class AppsService {
       return;
     }
 
-    // Auto-redirect logic
-    // if there is a root route and only 1 app matched -> auto redirect on app home page
+
+    // CASE 1: SINGLE APP REDIRECT (Partners)
+    // We are in root route and there is only one app available
+
     if (isRoot && domainApps.length === 1) {
       const singleApp = domainApps[0];
       const targetUrl = singleApp.core?.url;
 
       if (targetUrl && targetUrl !== '/' && targetUrl !== '') {
         this.logger.info(`[AutoRedirect] Single app detected at root. Redirecting to: ${targetUrl}`);
-
         this.router.navigate([targetUrl], {
           queryParams: route.snapshot.queryParams,
           replaceUrl: true
         });
-
-        // break flow, to prevent selectApp
         return;
       }
     }
 
-    const matchedApps: AppInfo[] = domainApps
-      .filter(app =>
+    // CASE 2: MULTI APP HUB / CORE HOME PAGE
+    // We are in root route, and there are more than one app available
+    // ====================================================================
+    if (isRoot && domainApps.length > 1) {
+      this.logger.info(`Root detected with multiple apps (${domainApps.length}). Showing App Hub / Core home page.`);
+      this.selectApp(undefined); // Explicit reset chosen app
+      return;
+    }
+
+    // CASE 3: Standard logic to get app (Deep linking) ---
+    // Here we go only if route not empty  !="" and not root !="/"
+
+    const matchedApps = domainApps.filter(app =>
         app.routes?.some(r => r.includes(route.routeConfig?.path!)) ||
-        app.core?.url === '/' + route.routeConfig?.path ||
-        (isRoot && app.core?.url)
-      );
+        app.core?.url === '/' + route.routeConfig?.path
+    );
 
     let appToSelect: AppInfo | undefined;
 
@@ -222,16 +231,17 @@ export class AppsService {
       appToSelect = matchedApps[0];
       this.logger.info('Single app matched route:', appToSelect);
     } else if (matchedApps.length > 1) {
+      // Fallback in case of conflict routes
       appToSelect = matchedApps.find(a => a.id === storedId) || matchedApps[0];
       this.logger.info('Multiple apps matched route, selected:', appToSelect);
     } else {
-      appToSelect = domainApps[0];
-      this.logger.info('No specific route match. Falling back to domain default:', appToSelect);
+      // Fallback: Route path doesn't exist
+      appToSelect = undefined;
+      this.logger.warn('No app matched this specific route:', currentPath);
     }
 
     const qp = new URLSearchParams(route.snapshot.queryParams).toString();
     const url = currentPath + (qp ? `?${qp}` : '');
-
     const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
 
     this.selectApp(appToSelect, viewMode, url);
