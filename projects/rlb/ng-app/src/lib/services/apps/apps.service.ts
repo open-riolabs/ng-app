@@ -14,6 +14,7 @@ interface AppConfig {
 	route: ActivatedRoute
 	appsConfig: AppInfo<any>[]
 	apps: AppInfo<any>[]
+  fullPath: string;
 }
 
 @Injectable({
@@ -153,7 +154,7 @@ export class AppsService {
       // Return config in there are matched apps, or it's root route case
       map(apps => {
         if (appRoutesMatched.length > 0 || fullPath === '') {
-          return { route, appsConfig: appRoutesMatched, apps } as AppConfig;
+          return { route, appsConfig: appRoutesMatched, apps, fullPath } as AppConfig;
         }
         return null;
       })
@@ -165,7 +166,7 @@ export class AppsService {
     const storedId = this.getStoredAppId();
 
     // Check if route is root
-    const currentPath = route.snapshot.url.map(s => s.path).join('/');
+    const currentPath = data ? data.fullPath : this.getFullPath(route);
     const isRoot = currentPath === '';
 
     //  Basic check
