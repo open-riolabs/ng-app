@@ -115,22 +115,24 @@ export class AppsService {
 		const route = this.findDeepestChild(this.activatedRoute);
 
 		const fullPath = this.getFullPath(route);
-		this.logger.info('Full path for route resolution:', fullPath);
+    this.logger.info(`Full path for route resolution: '${fullPath}'`);
 
-		if (!fullPath) {
-			this.logger.warn('No valid path found, treating as default route:', route);
-			return of(null);
-		}
+		// if (!fullPath) {
+		// 	this.logger.warn('No valid path found, treating as default route:', route);
+		// 	return of(null);
+		// }
 
 		const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
 			type: app.type,
 			routes: app.routes || [],
 			viewMode: app.viewMode,
 			enabled: app.enabled,
-		}));
+      core: app.core
+    }));
 
 		let appRoutesMatched: AppInfo[] = [];
-		if (!this.isDefaultRoute(fullPath)) {
+
+		if (fullPath && !this.isDefaultRoute(fullPath)) {
 			appRoutesMatched = appRoutes?.filter(app =>
 				app.routes?.some(r => r.includes(fullPath))
 			) ?? [];
@@ -139,57 +141,93 @@ export class AppsService {
 		this.logger.info('Route fullPath:', fullPath, 'Matched appRoute:', appRoutesMatched);
 
 		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
-			map(apps => appRoutesMatched.length
-				? { route, appsConfig: appRoutesMatched, apps } as AppConfig
-				: null
-			)
+      map(apps => {
+        // handle root route case
+        if (appRoutesMatched.length > 0 || fullPath === '') {
+          return { route, appsConfig: appRoutesMatched, apps } as AppConfig;
+        }
+
+        return null;
+      })
 		);
 	}
 
-	private handleResolvedApps(data: AppConfig | null) {
-		const route = this.findDeepestChild(this.activatedRoute);
-		const storedId = this.getStoredAppId();
+  private handleResolvedApps(data: AppConfig | null) {
+    const route = this.findDeepestChild(this.activatedRoute);
+    const storedId = this.getStoredAppId();
 
-		if (data?.apps?.some(app => !app.id)) {
-			this.logger.error('Some apps are not finalized. Please finalize apps before using AppsService.');
-			return;
-		}
+    // Check if it is a root route
+    const currentPath = route.snapshot.url.map(s => s.path).join('/');
+    const isRoot = currentPath === '';
 
-		if (!data || !data.apps || data.apps.length === 0) {
-			this.logger.warn(`No unique app found for route: ${route.routeConfig?.path ? route.routeConfig?.path : "'/'"} - show core`);
-			// const globalDefaultApp = this.apps[0];
-			this.selectApp(undefined);
-			return;
-		}
+    if (data?.apps?.some(app => !app.id)) {
+      this.logger.error('Some apps are not finalized...');
+      return;
+    }
 
-		const matchedApps: AppInfo[] = data.apps
-			// domain filter in case apps have similar routes path
-			.filter(app => !app.domains || app.domains?.some((domain) => domain.includes(this.currentDomain)))
-			.filter(app =>
-			app.routes?.some(r =>r.includes(route.routeConfig?.path!)) ||
-			app.core?.url === '/' + route.routeConfig?.path
-		);
+    if (!data || !data.apps || data.apps.length === 0) {
+      this.logger.warn(`No apps found (or data is null). Path: '${currentPath}'`);
+      this.selectApp(undefined);
+      return;
+    }
 
-		let appToSelect: AppInfo | undefined;
+    // domain filter
+    const domainApps = data.apps.filter(app =>
+      !app.domains || app.domains?.some((domain) => domain.includes(this.currentDomain))
+    );
 
-		if (matchedApps.length === 1) {
-			appToSelect = matchedApps[0];
-			this.logger.info('Single app matched route:', appToSelect);
-		} else if (matchedApps.length > 1) {
-			appToSelect = matchedApps.find(a => a.id === storedId) || matchedApps[0];
-			this.logger.info('Multiple apps matched route, selected:', appToSelect);
-		} else {
-			appToSelect = data.apps[0];
-			this.logger.info('No app matched route. Falling back to default app:', appToSelect);
-		}
+    if (domainApps.length === 0) {
+      this.logger.warn(`No apps allowed for domain: ${this.currentDomain}`);
+      this.selectApp(undefined);
+      return;
+    }
 
-		const qp = new URLSearchParams(route.snapshot.queryParams).toString();
-		const url = route.snapshot.url.map(segment => segment.path).join('/') + (qp ? `?${qp}` : '');
+    // Auto-redirect logic
+    // if there is a root route and only 1 app matched -> auto redirect on app home page
+    if (isRoot && domainApps.length === 1) {
+      const singleApp = domainApps[0];
+      const targetUrl = singleApp.core?.url;
 
-		const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
+      if (targetUrl && targetUrl !== '/' && targetUrl !== '') {
+        this.logger.info(`[AutoRedirect] Single app detected at root. Redirecting to: ${targetUrl}`);
 
-		this.selectApp(appToSelect, viewMode, url);
-	}
+        this.router.navigate([targetUrl], {
+          queryParams: route.snapshot.queryParams,
+          replaceUrl: true
+        });
+
+        // break flow, to prevent selectApp
+        return;
+      }
+    }
+
+    const matchedApps: AppInfo[] = domainApps
+      .filter(app =>
+        app.routes?.some(r => r.includes(route.routeConfig?.path!)) ||
+        app.core?.url === '/' + route.routeConfig?.path ||
+        (isRoot && app.core?.url)
+      );
+
+    let appToSelect: AppInfo | undefined;
+
+    if (matchedApps.length === 1) {
+      appToSelect = matchedApps[0];
+      this.logger.info('Single app matched route:', appToSelect);
+    } else if (matchedApps.length > 1) {
+      appToSelect = matchedApps.find(a => a.id === storedId) || matchedApps[0];
+      this.logger.info('Multiple apps matched route, selected:', appToSelect);
+    } else {
+      appToSelect = domainApps[0];
+      this.logger.info('No specific route match. Falling back to domain default:', appToSelect);
+    }
+
+    const qp = new URLSearchParams(route.snapshot.queryParams).toString();
+    const url = currentPath + (qp ? `?${qp}` : '');
+
+    const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
+
+    this.selectApp(appToSelect, viewMode, url);
+  }
 
 	private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
 		while (route.firstChild) route = route.firstChild;
