@@ -1,5 +1,12 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { APP_INITIALIZER, EnvironmentProviders, isDevMode, Provider } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  EnvironmentProviders,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  Provider
+} from '@angular/core';
 import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
@@ -30,6 +37,7 @@ import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer';
 import { ToastComponent } from './lib/toasts/error-toast.component';
 import { authInitializer } from "./lib/auth/auth-init";
 import { AuthenticationService } from "./lib/auth";
+import { AppsService } from "./lib/services";
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -63,6 +71,13 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:15000',
     }),
+    provideAppInitializer(() => {
+      inject(AppsService);
+    }),
+    provideAppInitializer(() => {
+      const authService = inject(AuthenticationService);
+      return authService.checkAuthMultiple();
+    }),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },
     { provide: RLB_CFG_CMS, useValue: env.cms },
@@ -85,12 +100,18 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
       },
       multi: true,
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: authInitializer,
-      deps: [AuthenticationService],
-      multi: true
-    },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: authInitializer,
+    //   deps: [AuthenticationService],
+    //   multi: true
+    // },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: appsServiceInitializer,
+    //   deps: [AppsService],
+    //   multi: true
+    // },
   ];
 }
 
