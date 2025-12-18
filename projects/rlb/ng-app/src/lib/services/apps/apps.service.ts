@@ -158,17 +158,6 @@ export class AppsService {
         return null;
       })
     );
-
-		// return this.store.select(state => state[appContextFeatureKey].apps).pipe(
-    //   map(apps => {
-    //     // handle root route case
-    //     if (appRoutesMatched.length > 0 || fullPath === '') {
-    //       return { route, appsConfig: appRoutesMatched, apps } as AppConfig;
-    //     }
-    //
-    //     return null;
-    //   })
-		// );
 	}
 
   private handleResolvedApps(data: AppConfig | null) {

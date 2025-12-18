@@ -1,7 +1,7 @@
-import { Inject, Injectable, OnInit, Optional } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { LoginResponse, OidcSecurityService , OpenIdConfiguration} from 'angular-auth-oidc-client';
+import { LoginResponse, OidcSecurityService} from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
 import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
@@ -79,23 +79,10 @@ export class AuthenticationService {
             }, 0);
           } else {
             this.logger.info(`User authenticated, no redirectUrl found. Staying on current route.`);
-            // this.router.navigate([], {
-            //   queryParams: {},
-            //   replaceUrl: true,
-            //   relativeTo: this.router.routerState.root
-            // });
           }
         } else {
           this.logger.warn(`No authenticatedConfig found for ${url}`);
         }
-
-        // if (data.some(o => o.isAuthenticated)) {
-        //   const redirect = this.cookiesService.getCookie('loginRedirectUrl');
-        //   if (redirect) {
-        //     this.cookiesService.deleteCookie('loginRedirectUrl');
-        //     this.router.navigate([redirect]);
-        //   }
-        // }
       }));
     //}
   }
