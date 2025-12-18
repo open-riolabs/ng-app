@@ -140,16 +140,35 @@ export class AppsService {
 
 		this.logger.info('Route fullPath:', fullPath, 'Matched appRoute:', appRoutesMatched);
 
-		return this.store.select(state => state[appContextFeatureKey].apps).pipe(
+    return this.store.select(state => state[appContextFeatureKey].apps).pipe(
+      // waiting for all "finalizeApp" dispatches
+      filter(apps => {
+        if (!apps || apps.length === 0) return true;
+        const allFinalized = !apps.some(app => !app.id);
+        if (!allFinalized) {
+          this.logger.info('Waiting for apps initialization (finalizeApp)...');
+        }
+        return allFinalized;
+      }),
+      // Return config in there are matched apps, or it's root route case
       map(apps => {
-        // handle root route case
         if (appRoutesMatched.length > 0 || fullPath === '') {
           return { route, appsConfig: appRoutesMatched, apps } as AppConfig;
         }
-
         return null;
       })
-		);
+    );
+
+		// return this.store.select(state => state[appContextFeatureKey].apps).pipe(
+    //   map(apps => {
+    //     // handle root route case
+    //     if (appRoutesMatched.length > 0 || fullPath === '') {
+    //       return { route, appsConfig: appRoutesMatched, apps } as AppConfig;
+    //     }
+    //
+    //     return null;
+    //   })
+		// );
 	}
 
   private handleResolvedApps(data: AppConfig | null) {
