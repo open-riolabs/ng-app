@@ -110,11 +110,11 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get navbarHasSettings$() {
-    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+    return this.store.select(state => state[navbarsFeatureKey].settingsVisible);
   }
 
   get navbarHasApps$() {
-    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+    return this.store.select(state => state[navbarsFeatureKey].appsVisible);
   }
 
   get apps() {
