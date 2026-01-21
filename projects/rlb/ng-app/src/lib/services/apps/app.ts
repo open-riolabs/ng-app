@@ -16,6 +16,7 @@ export interface AppInfo<T extends AppInfoData = any> {
   domains?: string[];
   navigationUrl?: string;
   data?: T;
+  autoRedirectOnRootEnabled?: boolean;
 }
 
 export interface AppDetails {

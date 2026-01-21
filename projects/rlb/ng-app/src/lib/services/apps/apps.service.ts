@@ -196,7 +196,7 @@ export class AppsService {
     }
 
 
-    // CASE 1: SINGLE APP REDIRECT (Partners)
+    // CASE 1: SINGLE APP REDIRECT
     // We are in root route and there is only one app available
 
     if (isRoot && domainApps.length === 1) {
@@ -218,6 +218,22 @@ export class AppsService {
     // ====================================================================
     if (isRoot && domainApps.length > 1) {
       this.logger.info(`Root detected with multiple apps (${domainApps.length}). Showing App Hub / Core home page.`);
+      const redirectApps = domainApps.filter((app) => app.autoRedirectOnRootEnabled);
+
+      if (redirectApps?.length > 1) {
+        this.logger.warn('Multiple apps have autoRedirectOnRootEnabled: true. Picking the first one.', redirectApps);
+      }
+
+      if (redirectApps) {
+        const targetUrl = redirectApps[0].core?.url;
+        this.logger.info(`[AutoRedirect] Detected app with root redirect. Redirecting to: ${targetUrl}`);
+        this.router.navigate([targetUrl], {
+          queryParams: route.snapshot.queryParams,
+          replaceUrl: true
+        });
+        return;
+      }
+
       this.selectApp(undefined); // Explicit reset chosen app
       return;
     }
