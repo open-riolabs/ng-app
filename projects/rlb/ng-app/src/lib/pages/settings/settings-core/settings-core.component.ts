@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ToastService } from '@open-rlb/ng-bootstrap';
@@ -8,7 +8,7 @@ import { AppContextActions, BaseState, appContextFeatureKey } from '../../../sto
 
 @Component({
   selector: 'rlb-settings-core',
-  imports: [RlbAppModule, CommonModule],
+  imports: [RlbAppModule],
   templateUrl: './settings-core.component.html',
   styleUrl: './settings-core.component.scss'
 })

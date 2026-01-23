@@ -13,14 +13,16 @@ import { CommonModule } from "@angular/common";
     </div>
     <div class="modal-body">
       <ul class="row row-cols-4 list-unstyled list">
-        <li *ngFor="let app of data.content" class="col my-2" [tooltip]="app.description | translate">
-          <a class="d-block text-body-emphasis text-decoration-none" (click)="appSelected(app)" [class.disabled]="!app.enabled" data-modal-reason="ok">
-            <div class="px-3 py-4 mb-2 bg-body-secondary text-center rounded">
-              <i [ngClass]="app.icon"></i>
-            </div>
-            <div class="name text-muted text-decoration-none text-center pt-1">{{app.name | translate}}</div>
-          </a>
-        </li>
+        @for (app of data.content; track app) {
+          <li class="col my-2" [tooltip]="app.description | translate">
+            <a class="d-block text-body-emphasis text-decoration-none" (click)="appSelected(app)" [class.disabled]="!app.enabled" data-modal-reason="ok">
+              <div class="px-3 py-4 mb-2 bg-body-secondary text-center rounded">
+                <i [ngClass]="app.icon"></i>
+              </div>
+              <div class="name text-muted text-decoration-none text-center pt-1">{{app.name | translate}}</div>
+            </a>
+          </li>
+        }
       </ul>
     </div>`,
     hostDirectives: [{ directive: ModalDirective, inputs: ['id', 'data-instance', 'data-options'] }]

@@ -1,55 +1,63 @@
 <div class=" mb-3">
-    <div class="container-fluid" *ngIf="!(isHandset$ | async) else mobileMode">
+  @if (!(isHandset$ | async)) {
+    <div class="container-fluid">
       <div class="row mt-1">
         <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12 mx-auto">
           <div class="row">
             <div class="col-12 pb-0">
-              <rlb-breadcrumb *ngIf="breadcrumb" [items]="breadcrumb"></rlb-breadcrumb>
+              @if (breadcrumb) {
+                <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+              }
               <h1 class="pt-5 pb-0 text-center">
                 {{title}}
               </h1>
             </div>
           </div>
-          <div class="row" *ngIf="subtitle">
-            <div class="col-12 pb-12">
-              <span class="d-block text-h6 text-center">
-                {{subtitle}}
-              </span>
+          @if (subtitle) {
+            <div class="row">
+              <div class="col-12 pb-12">
+                <span class="d-block text-h6 text-center">
+                  {{subtitle}}
+                </span>
+              </div>
             </div>
-          </div>
+          }
           <ng-container [ngTemplateOutlet]="all"></ng-container>
           <ng-container [ngTemplateOutlet]="default"></ng-container>
         </div>
       </div>
     </div>
-    <ng-template class="container-fluid" #mobileMode>
-      <div class="row">
-        <div class="col-12 pb-0">
-          <h1 class="pt-5 pb-0 text-center">
-            {{title}}
-          </h1>
-        </div>
+  } @else {
+    <!--old ng-template #mobileMode-->
+    <div class="row">
+      <div class="col-12 pb-0">
+        <h1 class="pt-5 pb-0 text-center">
+          {{title}}
+        </h1>
       </div>
-      <div class="row" *ngIf="subtitle">
+    </div>
+    @if (subtitle) {
+      <div class="row">
         <div class="col-12 pb-7">
           <div class="d-block text-h6 text-center">
             {{subtitle}}
           </div>
         </div>
       </div>
-      <ng-container [ngTemplateOutlet]="all"></ng-container>
-      <ng-container [ngTemplateOutlet]="mobile"></ng-container>
-    </ng-template>
-  </div>
-  
-  <ng-template #all>
-    <ng-content select="[all]"></ng-content>
-  </ng-template>
-  
-  <ng-template #default>
-    <ng-content select="[default]"></ng-content>
-  </ng-template>
-  
-  <ng-template #mobile>
-    <ng-content select="[mobile]"></ng-content>
-  </ng-template>
+    }
+    <ng-container [ngTemplateOutlet]="all"></ng-container>
+    <ng-container [ngTemplateOutlet]="mobile"></ng-container>
+  }
+</div>
+
+<ng-template #all>
+  <ng-content select="[all]"></ng-content>
+</ng-template>
+
+<ng-template #default>
+  <ng-content select="[default]"></ng-content>
+</ng-template>
+
+<ng-template #mobile>
+  <ng-content select="[mobile]"></ng-content>
+</ng-template>

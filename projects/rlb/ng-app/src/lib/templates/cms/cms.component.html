@@ -1,104 +1,132 @@
 <div>
-  <div class="container" *ngIf="page">
-    <div class="row my-4" *ngIf="breadcrumb">
-      <div class="col-12">
-        <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+  @if (page) {
+    <div class="container">
+      @if (breadcrumb) {
+        <div class="row my-4">
+          <div class="col-12">
+            <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+          </div>
+        </div>
+      }
+      <div class="row my-4">
+        <div class="col-12">
+          <h1 class="text-center">{{page.Title}}</h1>
+        </div>
       </div>
-    </div>
-    <div class="row my-4">
-      <div class="col-12">
-        <h1 class="text-center">{{page.Title}}</h1>
-      </div>
-    </div>
-    <div class="row my-4" *ngIf="page.Content">
-      <div class="col-12">
-        <div [innerHTML]="page.Content "></div>
-      </div>
-    </div>
-    <div class="row my-4" *ngIf="page.page_tabs.length>0">
-      <div class="col-12">
-        <rlb-tabs>
-          <rlb-tab *ngFor="let tab of page.page_tabs; let i = index" [target]="'cms-tab-'+i">
-            {{tab.Title}}
-          </rlb-tab>
-        </rlb-tabs>
-        <rlb-tab-content>
-          <rlb-tab-pane *ngFor="let tab of page.page_tabs; let i = index" [id]="'cms-tab-'+i">
-            <div class="container-fluid">
-              <div class="row my-4" *ngIf="tab.Content">
-                <div class="col-12">
-                  <div [innerHTML]="tab.Content "></div>
-                </div>
-              </div>
-              <div class="row my-4 mx-auto card-steps" *ngFor="let step of tab.steps; let i = index"
-                style="max-width: 350px; border-bottom: 1px solid rgb(192, 198, 204);">
-                <div class="col-8">
-                  <div class="pb-2">
-                    <div style="height: 54px; min-width: 54px; width: 54px; border: 5px solid rgb(192, 198, 204);"
-                      class="round-counter">
-                      <span class="red">{{i+1}}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div [innerHTML]="step.Content "></div>
-                  </div>
-                </div>
-                <div class="col-4 pb-2">
-                  <img [src]="step.Picture.url|cms">
-                </div>
-              </div>
-              <div class="row my-4" *ngIf="tab.faqs.length>0">
-                <div class="col-12">
-                  <h2 class="py-3">{{tab.FaqTitle}}</h2>
-                </div>
-              </div>
-              <div class="row my-4" *ngIf="tab.faqs.length>0 && tab.FaqContent">
-                <div class="col-12">
-                  <div [innerHTML]="tab.FaqContent "></div>
-                </div>
-              </div>
-              <div class="row   my-4" *ngIf="tab.faqs.length>0">
-                <div class="col-12">
-                  <rlb-accordion>
-                    <div rlb-accordion-item [expanded]="true" *ngFor="let faq of tab.faqs">
-                      <rlb-accordion-header>
-                        {{faq.Title}}
-                      </rlb-accordion-header>
-                      <div rlb-accordion-body>
-                        <div [innerHTML]="faq.Content"> </div>
+      @if (page.Content) {
+        <div class="row my-4">
+          <div class="col-12">
+            <div [innerHTML]="page.Content "></div>
+          </div>
+        </div>
+      }
+      @if (page.page_tabs.length>0) {
+        <div class="row my-4">
+          <div class="col-12">
+            <rlb-tabs>
+              @for (tab of page.page_tabs; track tab.id; let i = $index) {
+                <rlb-tab [target]="'cms-tab-'+i">
+                  {{tab.Title}}
+                </rlb-tab>
+              }
+            </rlb-tabs>
+            <rlb-tab-content>
+              @for (tab of page.page_tabs; track tab.id; let i = $index) {
+                <rlb-tab-pane [id]="'cms-tab-'+i">
+                  <div class="container-fluid">
+                    @if (tab.Content) {
+                      <div class="row my-4">
+                        <div class="col-12">
+                          <div [innerHTML]="tab.Content "></div>
+                        </div>
+                      </div>
+                    }
+                    @for (step of tab.steps; track step.ContentId; let i = $index) {
+                      <div class="row my-4 mx-auto card-steps"
+                        style="max-width: 350px; border-bottom: 1px solid rgb(192, 198, 204);">
+                        <div class="col-8">
+                          <div class="pb-2">
+                            <div style="height: 54px; min-width: 54px; width: 54px; border: 5px solid rgb(192, 198, 204);"
+                              class="round-counter">
+                              <span class="red">{{i+1}}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <div [innerHTML]="step.Content "></div>
+                          </div>
+                        </div>
+                        <div class="col-4 pb-2">
+                          <img [src]="step.Picture.url|cms">
+                        </div>
+                      </div>
+                    }
+                    @if (tab.faqs.length>0) {
+                      <div class="row my-4">
+                        <div class="col-12">
+                          <h2 class="py-3">{{tab.FaqTitle}}</h2>
+                        </div>
+                      </div>
+                    }
+                    @if (tab.faqs.length>0 && tab.FaqContent) {
+                      <div class="row my-4">
+                        <div class="col-12">
+                          <div [innerHTML]="tab.FaqContent "></div>
+                        </div>
+                      </div>
+                    }
+                    @if (tab.faqs.length>0) {
+                      <div class="row   my-4">
+                        <div class="col-12">
+                          <rlb-accordion>
+                            @for (faq of tab.faqs; track faq) {
+                              <div rlb-accordion-item [expanded]="true">
+                                <rlb-accordion-header>
+                                  {{faq.Title}}
+                                </rlb-accordion-header>
+                                <div rlb-accordion-body>
+                                  <div [innerHTML]="faq.Content"> </div>
+                                </div>
+                              </div>
+                            }
+                          </rlb-accordion>
+                        </div>
+                      </div>
+                    }
+                    <div class="row   my-4">
+                      <div class="col-12">
+                        <span>
+                          <a routerLink="/support">
+                            <i class="bi bi-info-circle-fill" style="margin-bottom: -6px;margin-right: 6px;"></i>
+                            <span>{{'pages.support.infoPage' | translate}}</span>
+                          </a>
+                        </span>
                       </div>
                     </div>
-                  </rlb-accordion>
-                </div>
-              </div>
-              <div class="row   my-4">
-                <div class="col-12">
-                  <span>
-                    <a routerLink="/support">
-                      <i class="bi bi-info-circle-fill" style="margin-bottom: -6px;margin-right: 6px;"></i>
-                      <span>{{'pages.support.infoPage' | translate}}</span>
-                    </a>
-                  </span>
-                </div>
-              </div>
-              <div class="row my-4" *ngIf="page.topics.length>0" style="padding: 4px">
-                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12" *ngFor="let topic of page.topics">
-                  <a [routerLink]="'/informations/'+topic.page.ContentId" style="color: inherit;text-decoration: none;">
-                    <div class="card mb-4" style="min-height: 230px;">
-                      <img [src]="topic.Picture.url | cms" class="card-img-top"
-                        style="height: 91px; margin: 16px -16px;">
-                      <div class="card-body">
-                        <h5 class="card-title">{{topic.Title}}</h5>
-                        <div class="card-text" [innerHTML]="topic.Content "></div>
-                      </div>
+                    @if (page.topics.length>0) {
+                      <div class="row my-4" style="padding: 4px">
+                        @for (topic of page.topics; track topic.ContentId) {
+                          <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <a [routerLink]="'/informations/'+topic.page.ContentId" style="color: inherit;text-decoration: none;">
+                              <div class="card mb-4" style="min-height: 230px;">
+                                <img [src]="topic.Picture.url | cms" class="card-img-top"
+                                  style="height: 91px; margin: 16px -16px;">
+                                  <div class="card-body">
+                                    <h5 class="card-title">{{topic.Title}}</h5>
+                                    <div class="card-text" [innerHTML]="topic.Content "></div>
+                                  </div>
+                                </div>
+                              </a>
+                            </div>
+                          }
+                        </div>
+                      }
                     </div>
-                  </a>
-                </div>
-              </div>
+                  </rlb-tab-pane>
+                }
+              </rlb-tab-content>
             </div>
-          </rlb-tab-pane>
-        </rlb-tab-content>
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
-</div>

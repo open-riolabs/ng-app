@@ -2,45 +2,65 @@
   <div class="container text-center position-relative my-3">
     <h3>{{ 'core.settings.title' | translate}}</h3>
     <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y"
-      (click)="backClicked()" style="font-size: 25px;font-weight: 600;"></i>
+    (click)="backClicked()" style="font-size: 25px;font-weight: 600;"></i>
   </div>
   <rlb-list>
     <rlb-list-item-image icon="bi bi-gear" [avatar-size]="35" [line-1]=" 'core.settings.generalTitle' | translate"
       [routerLink]="'/setting/general'" [line-2]=" 'core.settings.generalDescription' | translate">
     </rlb-list-item-image>
-    <ng-container ngProjectAs="rlb-list-item-image" *ngFor="let app of apps">
-      <ng-container ngProjectAs="rlb-list-item-image" *ngIf="app.settings">
-        <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35"
-          [line-1]="(app.settings.title | translate) + (app.data?.appName ? ' - ' + app.data?.appName : '')"
-          [disabled]="!app.enabled && (app.settings.auth && !(auth$ | async))"
-          [line-2]="app.settings.description | translate" (click)="selectApp(app)">
-        </rlb-list-item-image>
+    @for (app of apps; track app.id) {
+      <ng-container ngProjectAs="rlb-list-item-image">
+        @if (app.settings) {
+          <ng-container ngProjectAs="rlb-list-item-image">
+            <rlb-list-item-image [icon]="app.settings.icon" [avatar-size]="35"
+              [line-1]="(app.settings.title | translate) + (app.data?.appName ? ' - ' + app.data?.appName : '')"
+              [disabled]="!app.enabled && (app.settings.auth && !(auth$ | async))"
+              [line-2]="app.settings.description | translate" (click)="selectApp(app)">
+            </rlb-list-item-image>
+          </ng-container>
+        }
       </ng-container>
-    </ng-container>
+    }
   </rlb-list>
 
-  <rlb-list class="mt-5" *ngIf="pages?.['status']?.path || pages?.['logger']?.path">
-    <rlb-list-item-image icon="bi bi-check2-circle" *ngIf="pages?.['status']?.path" [avatar-size]="18"
-      [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
-    </rlb-list-item-image>
-    <rlb-list-item-image icon="bi bi-file-text" *ngIf="pages?.['logger']?.path" [avatar-size]="18"
-      [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
-    </rlb-list-item-image>
-  </rlb-list>
+  @if (pages?.['status']?.path || pages?.['logger']?.path) {
+    <rlb-list class="mt-5">
+      @if (pages?.['status']?.path) {
+        <rlb-list-item-image icon="bi bi-check2-circle" [avatar-size]="18"
+          [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
+        </rlb-list-item-image>
+      }
+      @if (pages?.['logger']?.path) {
+        <rlb-list-item-image icon="bi bi-file-text" [avatar-size]="18"
+          [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
+        </rlb-list-item-image>
+      }
+    </rlb-list>
+  }
 
-  <rlb-list class="mt-4"
-    *ngIf="pages?.['privacy']?.path || pages?.['cookies']?.path || pages?.['terms']?.path || pages?.['support']?.path">
-    <rlb-list-item-image icon="bi bi-shield-check" *ngIf="pages?.['privacy']?.path" [avatar-size]="18"
-      [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">
-    </rlb-list-item-image>
-    <rlb-list-item-image icon="bi bi bi-cookie" *ngIf="pages?.['cookies']?.path" [avatar-size]="18"
-      [line-1]="'core.settings.cookies' | translate" [routerLink]="'/cookies'">
-    </rlb-list-item-image>
-    <rlb-list-item-image icon="bi bi-vector-pen" *ngIf="pages?.['terms']?.path" [avatar-size]="18"
-      [line-1]="'core.settings.legal' | translate" [routerLink]="'/terms'">
-    </rlb-list-item-image>
-    <rlb-list-item-image icon="bi bi-chat-quote" *ngIf="pages?.['support']?.path" [avatar-size]="18"
-      [line-1]=" 'core.settings.support' | translate" [routerLink]="'/support'">
-    </rlb-list-item-image>
-  </rlb-list>
+  @if (pages?.['privacy']?.path || pages?.['cookies']?.path || pages?.['terms']?.path || pages?.['support']?.path) {
+    <rlb-list class="mt-4"
+      >
+      @if (pages?.['privacy']?.path) {
+        <rlb-list-item-image icon="bi bi-shield-check" [avatar-size]="18"
+          [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">
+        </rlb-list-item-image>
+      }
+      @if (pages?.['cookies']?.path) {
+        <rlb-list-item-image icon="bi bi bi-cookie" [avatar-size]="18"
+          [line-1]="'core.settings.cookies' | translate" [routerLink]="'/cookies'">
+        </rlb-list-item-image>
+      }
+      @if (pages?.['terms']?.path) {
+        <rlb-list-item-image icon="bi bi-vector-pen" [avatar-size]="18"
+          [line-1]="'core.settings.legal' | translate" [routerLink]="'/terms'">
+        </rlb-list-item-image>
+      }
+      @if (pages?.['support']?.path) {
+        <rlb-list-item-image icon="bi bi-chat-quote" [avatar-size]="18"
+          [line-1]=" 'core.settings.support' | translate" [routerLink]="'/support'">
+        </rlb-list-item-image>
+      }
+    </rlb-list>
+  }
 </div>

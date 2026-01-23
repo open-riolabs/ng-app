@@ -224,7 +224,7 @@ export class AppsService {
         this.logger.warn('Multiple apps have autoRedirectOnRootEnabled: true. Picking the first one.', redirectApps);
       }
 
-      if (redirectApps) {
+      if (redirectApps.length) {
         const targetUrl = redirectApps[0].core?.url;
         this.logger.info(`[AutoRedirect] Detected app with root redirect. Redirecting to: ${targetUrl}`);
         this.router.navigate([targetUrl], {

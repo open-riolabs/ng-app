@@ -1,92 +1,117 @@
 <div class="rlb-app">
-  <ng-container *ngIf="navVisible$ | async">
-    <rlb-navbar expand="lg" *ngIf="navVisible$ | async" class="border-bottom py-1 rlb-navbar">
-      <a *ngIf="navHeader$ | async" rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
-      <rlb-navbar-form *ngIf="navSearchVisible$ | async">
-        <rlb-input-group class="my-1 mx-3" validate>
-          <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
-                     (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
-            <button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
-              <i class="bi bi-search"></i>
-            </button>
-          </rlb-input>
-        </rlb-input-group>
-      </rlb-navbar-form>
-      <rlb-navbar-items class="ms-lg-auto">
-        <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navLeftItems$ | async">
-          <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
-        </ng-container>
-      </rlb-navbar-items>
-      <rlb-navbar-items>
-        <ng-container ngProjectAs="rlb-navbar-item" *ngFor="let navComponent of navRightItems$ | async">
-          <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
-        </ng-container>
-        <rlb-navbar-separator *ngIf="(separatorVisible$ | async)" />
-        <rlb-navbar-item *ngIf="(navbarHasLogin$ | async) && !(isAuth$ | async)" (click)="loginNav($event)">
-          <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
-            <i class=" bi bi-box-arrow-in-left"></i>
-          </span>
-          <span class="ms-1 d-lg-none">{{'core.account.login' | translate}}</span>
-        </rlb-navbar-item>
-        <rlb-navbar-item *ngIf=" (navbarHasLogin$ | async) && (isAuth$ | async)" [router-link]="'/profile'">
-          <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
-            <i class="bi bi-person"></i>
-          </span>
-          <span class="ms-1 d-lg-none">{{'core.account.title' | translate}}</span>
-        </rlb-navbar-item>
-        <rlb-navbar-item *ngIf="navbarHasSettings$ | async" [router-link]="'/setting'">
-          <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
-            <i class="bi bi-gear"></i>
-          </span>
-          <span class="ms-1 d-lg-none">{{'core.settings.title' | translate}}</span>
-        </rlb-navbar-item>
-        <rlb-navbar-item *ngIf="(navbarHasApps$ | async) && apps.length > 1" [router-link]="'/apps'">
-          <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
-            <i class="bi bi-grid-3x3-gap-fill"></i>
-          </span>
-          <span class="ms-1 d-lg-none">{{'core.apps.button' | translate}}</span>
-        </rlb-navbar-item>
-      </rlb-navbar-items>
-    </rlb-navbar>
-  </ng-container>
+  @if (navVisible$ | async) {
+    @if (navVisible$ | async) {
+      <rlb-navbar expand="lg" class="border-bottom py-1 rlb-navbar">
+        @if (navHeader$ | async) {
+          <a rlb-navbar-brand href="#">{{ navHeader$ | async }}</a>
+        }
+        @if (navSearchVisible$ | async) {
+          <rlb-navbar-form>
+            <rlb-input-group class="my-1 mx-3" validate>
+              <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
+                (keyup.enter)="setNavbarSearchText(navSearchText)" name="search" size="small">
+                <button after rlb-button outline type="submit" (click)="setNavbarSearchText(navSearchText)" size="sm">
+                  <i class="bi bi-search"></i>
+                </button>
+              </rlb-input>
+            </rlb-input-group>
+          </rlb-navbar-form>
+        }
+        <rlb-navbar-items class="ms-lg-auto">
+          @for (navComponent of navLeftItems$ | async; track navComponent) {
+            <ng-container ngProjectAs="rlb-navbar-item">
+              <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
+            </ng-container>
+          }
+        </rlb-navbar-items>
+        <rlb-navbar-items>
+          @for (navComponent of navRightItems$ | async; track navComponent) {
+            <ng-container ngProjectAs="rlb-navbar-item">
+              <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
+            </ng-container>
+          }
+          @if ((separatorVisible$ | async)) {
+            <rlb-navbar-separator />
+          }
+          @if ((navbarHasLogin$ | async) && !(isAuth$ | async)) {
+            <rlb-navbar-item (click)="loginNav($event)">
+              <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
+                <i class=" bi bi-box-arrow-in-left"></i>
+              </span>
+              <span class="ms-1 d-lg-none">{{'core.account.login' | translate}}</span>
+            </rlb-navbar-item>
+          }
+          @if ( (navbarHasLogin$ | async) && (isAuth$ | async)) {
+            <rlb-navbar-item [router-link]="'/profile'">
+              <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
+                <i class="bi bi-person"></i>
+              </span>
+              <span class="ms-1 d-lg-none">{{'core.account.title' | translate}}</span>
+            </rlb-navbar-item>
+          }
+          @if (navbarHasSettings$ | async) {
+            <rlb-navbar-item [router-link]="'/setting'">
+              <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
+                <i class="bi bi-gear"></i>
+              </span>
+              <span class="ms-1 d-lg-none">{{'core.settings.title' | translate}}</span>
+            </rlb-navbar-item>
+          }
+          @if ((navbarHasApps$ | async) && apps.length > 1) {
+            <rlb-navbar-item [router-link]="'/apps'">
+              <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </span>
+              <span class="ms-1 d-lg-none">{{'core.apps.button' | translate}}</span>
+            </rlb-navbar-item>
+          }
+        </rlb-navbar-items>
+      </rlb-navbar>
+    }
+  }
   <div class="rlb-main-wrapper">
-    <rlb-sidebar id="sidebar" class="rlb-sidebar" *ngIf="(sidebarVisible$ | async)">
-      <rlb-sidebar-item
-        *ngFor="let item of  (sidebarItems$ | async)"
-        [icon]="item.icon" [link]="item.url"
-        [title]="item.title" [label]="item.label"
-        [badgeCounter]="item.badgeCounter"
-        (click)="onSideBarItemClick(item)"
-      >
-        {{item.label}}
-        <rlb-sidebar-item
-          *ngFor="let subitem of item.items || []"
-          [icon]="subitem.icon"
-          [link]="subitem.url"
-          [title]="subitem.title"
-          [label]="subitem.label"
-          [badgeCounter]="subitem.badgeCounter"
-          (click)="onSideBarItemClick(subitem)"
-        >
-          {{subitem.label}}
-        </rlb-sidebar-item>
-      </rlb-sidebar-item>
-    </rlb-sidebar>
+    @if ((sidebarVisible$ | async)) {
+      <rlb-sidebar id="sidebar" class="rlb-sidebar">
+        @for (item of  (sidebarItems$ | async); track item) {
+          <rlb-sidebar-item
+            [icon]="item.icon" [link]="item.url"
+            [title]="item.title" [label]="item.label"
+            [badgeCounter]="item.badgeCounter"
+            (click)="onSideBarItemClick(item)"
+            >
+            {{item.label}}
+            @for (subitem of item.items || []; track subitem) {
+              <rlb-sidebar-item
+                [icon]="subitem.icon"
+                [link]="subitem.url"
+                [title]="subitem.title"
+                [label]="subitem.label"
+                [badgeCounter]="subitem.badgeCounter"
+                (click)="onSideBarItemClick(subitem)"
+                >
+                {{subitem.label}}
+              </rlb-sidebar-item>
+            }
+          </rlb-sidebar-item>
+        }
+      </rlb-sidebar>
+    }
     <div class="rlb-content">
       <ng-content></ng-content>
     </div>
   </div>
 </div>
 
-<ng-container *ngIf="modalContainerId">
+@if (modalContainerId) {
   <rlb-modal-container [id]="modalContainerId" />
-</ng-container>
+}
 
-<ng-container *ngIf="toastContainerIds">
-  <ng-container *ngIf="toastContainerIds.constructor.name === 'Array'; else toastContainerIdsIsNotArray">
-    <rlb-toast-container *ngFor="let toastContainerId of toastContainerIds | asMulti" [id]="toastContainerId" />
-  </ng-container>
-  <ng-template #toastContainerIdsIsNotArray>
+@if (toastContainerIds) {
+  @if (toastContainerIds.constructor.name === 'Array') {
+    @for (toastContainerId of toastContainerIds | asMulti; track toastContainerId) {
+      <rlb-toast-container [id]="toastContainerId" />
+    }
+  } @else {
     <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds | asSingle" />
-  </ng-template>
-</ng-container>
+  }
+}

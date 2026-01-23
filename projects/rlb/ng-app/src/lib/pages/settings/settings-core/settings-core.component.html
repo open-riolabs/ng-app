@@ -2,7 +2,7 @@
   <div class="container text-center position-relative my-3">
     <h3>{{ 'core.settings.generalTitle' | translate}}</h3>
     <i role="button" class="bi bi-chevron-left position-absolute start-0 top-50 translate-middle-y"
-      (click)="backClicked()" style="font-size: 25px;font-weight: 600;"></i>
+    (click)="backClicked()" style="font-size: 25px;font-weight: 600;"></i>
   </div>
   <rlb-list class="settings">
     <rlb-list-item class="settings-item">
@@ -22,7 +22,9 @@
         </div>
         <div class="settings-control">
           <rlb-select size="small" [(ngModel)]="currentLanguage">
-            <rlb-option *ngFor="let l of languages" [value]="l.value">{{l.label}}</rlb-option>
+            @for (l of languages; track l.value) {
+              <rlb-option [value]="l.value">{{l.label}}</rlb-option>
+            }
           </rlb-select>
         </div>
       </div>

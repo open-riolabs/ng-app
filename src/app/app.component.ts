@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActions } from '@open-rlb/ng-app';
@@ -6,7 +6,7 @@ import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActio
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RlbAppModule],
+  imports: [RlbAppModule],
   template: `<rlb-app-container modal-container-id="modal-c-1" toast-container-ids="toast-c-1" />`,
 })
 export class AppComponent {

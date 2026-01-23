@@ -20,7 +20,7 @@ export class SettingsListComponent {
     private readonly _location: Location,
     private readonly appsService: AppsService,
     private readonly authService: AuthenticationService,
-    @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration) { }
+    @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration | undefined) { }
 
   get apps() {
     return this.appsService.apps;

@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module'
 import { IModal, ModalData, ModalDirective } from '@open-rlb/ng-bootstrap';
 
 @Component({
-    imports: [RlbAppModule, CommonModule],
+    imports: [RlbAppModule],
     template: ` <div class="modal-header">
       <h5 class="modal-title">{{ data.title }}</h5>
       <button

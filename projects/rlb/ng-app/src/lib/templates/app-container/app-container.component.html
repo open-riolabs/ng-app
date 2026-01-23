@@ -1,22 +1,23 @@
-<ng-container *ngIf="(template$ | async) === 'app'">
+@if ((template$ | async) === 'app') {
   <rlb-app-template>
     <router-outlet />
   </rlb-app-template>
-</ng-container>
-<ng-container *ngIf="(template$ | async) === 'basic'">
+}
+@if ((template$ | async) === 'basic') {
   <router-outlet />
-</ng-container>
+}
 
 
-<ng-container *ngIf="modalContainerId">
+@if (modalContainerId) {
   <rlb-modal-container [id]="modalContainerId" />
-</ng-container>
+}
 
-<ng-container *ngIf="toastContainerIds">
-  <ng-container *ngIf="toastContainerIds.constructor.name === 'Array'; else toastContainerIdsIsNotArray">
-    <rlb-toast-container *ngFor="let toastContainerId of toastContainerIds | asMulti" [id]="toastContainerId" />
-  </ng-container>
-  <ng-template #toastContainerIdsIsNotArray>
+@if (toastContainerIds) {
+  @if (toastContainerIds.constructor.name === 'Array') {
+    @for (toastContainerId of toastContainerIds | asMulti; track toastContainerId) {
+      <rlb-toast-container [id]="toastContainerId" />
+    }
+  } @else {
     <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds | asSingle" />
-  </ng-template>
-</ng-container>
+  }
+}

@@ -1,9 +1,9 @@
-import { CommonModule } from "@angular/common";
+
 import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
 import { RlbAppModule } from "@open-rlb/ng-app";
 
 @Component({
-  imports: [CommonModule, RlbAppModule],
+  imports: [RlbAppModule],
   template: `
     <ng-template #template>
       <rlb-navbar-item href="#">

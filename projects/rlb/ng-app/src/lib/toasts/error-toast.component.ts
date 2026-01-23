@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
 import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
 
 @Component({
-    imports: [RlbAppModule, CommonModule],
+    imports: [RlbAppModule],
     template: `
     <div class="toast-header">
       <strong class="me-auto">
@@ -16,12 +16,14 @@ import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
           aria-hidden="true"
           preserveAspectRatio="xMidYMid slice"
           focusable="false"
-        >
+          >
           <rect width="100%" height="100%" fill="#007aff"></rect>
         </svg>
         {{ data.title }}
       </strong>
-      <small *ngIf="data.subtitle"> {{ data.subtitle }}</small>
+      @if (data.subtitle) {
+        <small> {{ data.subtitle }}</small>
+      }
       <button
         type="button"
         class="btn-close"
@@ -30,7 +32,7 @@ import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
       ></button>
     </div>
     <div class="toast-body">{{ data.content }}</div>
-  `,
+    `,
     hostDirectives: [
         {
             directive: ToastDirective,
