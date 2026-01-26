@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { BreadcrumbItem } from "@open-rlb/ng-bootstrap";
+import { BreadcrumbItem, UniqueIdService } from "@open-rlb/ng-bootstrap";
 import { BehaviorSubject, filter } from "rxjs";
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { LanguageService } from "../i18n/language.service";
@@ -15,7 +15,8 @@ export class AppBreadcrumbService {
 		private router: Router,
 		private route: ActivatedRoute,
 		private loggerService: AppLoggerService,
-		private languageService: LanguageService
+		private languageService: LanguageService,
+    private idService: UniqueIdService
 	) {
 		this.logger = this.loggerService.for(this.constructor.name);
 		this.logger.info('Service initialized');
@@ -50,7 +51,8 @@ export class AppBreadcrumbService {
 			if (label && (urlPart || breadcrumbs.length === 0)) {
 				breadcrumbs.push({
 					label: this.languageService.translate(label),
-					link: accumulatedLink || '/'
+					link: accumulatedLink || '/',
+          id: `breadcrumb${this.idService.id}`
 				});
 				this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
 			}
