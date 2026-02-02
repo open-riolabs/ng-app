@@ -29,6 +29,11 @@
               "src/favicon.ico",
               "src/assets"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules"
+              ]
+            },
             "styles": [
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/@open-rlb/ng-bootstrap/assets/scss/app.scss",
