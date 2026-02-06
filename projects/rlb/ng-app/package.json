@@ -11,7 +11,7 @@
     "@ngrx/store": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@open-rlb/ng-bootstrap": "^2.3.0",
+    "@open-rlb/ng-bootstrap": "^3.0.1",
     "angular-auth-oidc-client": "^19.0.0",
     "ngx-cookie-service-ssr": "^21.1.0",
     "ngx-cookie-service": "^21.1.0"
