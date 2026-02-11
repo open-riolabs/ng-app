@@ -1,5 +1,6 @@
 export * from './directives/role.directive'
 export * from './guards/oauth.guard';
+export * from './guards/permisson.guard';
 export * from './guards/oauth-password.guard';
 export * from './services/parse-jwt.service';
 export * from './services/oauth-password.service';

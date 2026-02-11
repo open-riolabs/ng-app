@@ -55,6 +55,12 @@ export const environment: ProjectConfiguration = {
     logger: { path: 'logger', },
     status: { path: 'status', },
   },
-  endpoints: {}
+  acl: {
+    endpointKey: 'admin',
+    path: 'test-path'
+  },
+  endpoints: {
+    admin: { baseUrl: 'https://api.transfeero-staging.com', auth: true, healthPath: 'health', wss: false },
+  }
 }
 
