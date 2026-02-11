@@ -9,7 +9,12 @@ export const RLB_CFG_PAGES = new InjectionToken<PagesConfiguration>(`${RLB_CFG}:
 export const RLB_CFG_ENV = new InjectionToken<EnvironmentConfiguration>(`${RLB_CFG}:env`);
 export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:auth`);
 export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.navcomp`);
+export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`);
 
+export interface AclConfiguration {
+  endpointKey: string; // The key in the 'endpoints'
+  path: string;        // The path
+}
 
 export interface ProviderConfiguration extends OpenIdConfiguration {
   configId: string;
@@ -86,6 +91,7 @@ export interface IConfiguration {
   auth?: AuthConfiguration;
   i18n?: InternationalizationConfiguration;
   pages?: PagesConfiguration;
+  acl?: AclConfiguration;
   endpoints?: { [key: string]: Endpoint; };
 }
 

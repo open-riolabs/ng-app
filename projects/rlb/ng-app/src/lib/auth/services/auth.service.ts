@@ -2,11 +2,19 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService} from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, tap } from 'rxjs';
-import { AuthConfiguration, EnvironmentConfiguration, RLB_CFG_AUTH, RLB_CFG_ENV } from '../../configuration';
+import { lastValueFrom, map, Observable, tap, switchMap, catchError, of } from 'rxjs';
+import {
+  AuthConfiguration,
+  EnvironmentConfiguration,
+  IConfiguration,
+  RLB_CFG,
+  RLB_CFG_AUTH,
+  RLB_CFG_ENV
+} from '../../configuration';
 import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
-import { AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AclActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
+import { AdminApiService } from "../../services/acl/user-resources.service";
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +31,10 @@ export class AuthenticationService {
     private readonly store: Store<BaseState>,
     private readonly log: AppLoggerService,
     private readonly localStorage: AppStorageService,
+    private readonly adminApi: AdminApiService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
-    @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration
+    @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration,
+    @Optional() @Inject(RLB_CFG) private appconfig: IConfiguration
   ) {
     this.logger = this.log.for(this.constructor.name);
     this.logger.log('AuthenticationService initialized');
@@ -44,47 +54,36 @@ export class AuthenticationService {
   }
 
   public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
-    // if (Capacitor.isNativePlatform()) {
-    //   console.log('Capacitor is native platform')
-    //   App.addListener('appUrlOpen', async ({ url }: { url: string }) => {
-    //     await this.zone.run(async () => {
-    //       const _url = `${environment.baseUrl}/${url.slice(url.indexOf('?'))}`
-    //       this.authorize(_url).subscribe();
-    //     })
-    //   });
-    // } else {
-    return this.oidc.checkAuthMultiple(url)
-      .pipe(tap(data => {
-        const authenticatedConfig = data.find(o => o.isAuthenticated);
-        if (authenticatedConfig && authenticatedConfig.configId) {
-          this.logger.info(`User is authenticated with provider: ${authenticatedConfig.configId}. Updating Store.`);
+    return this.oidc.checkAuthMultiple(url).pipe(
+      switchMap((responses: LoginResponse[]) => {
+        const authenticatedConfig = responses.find(o => o.isAuthenticated);
 
-          // first dispatch to prevent recalculate in apps service
+        if (authenticatedConfig && authenticatedConfig.configId) {
+
           this.store.dispatch(AuthActions.setCurrentProvider({
             currentProvider: authenticatedConfig.configId
           }));
 
-          const redirect = this.localStorage.readLocal('loginRedirectUrl');
-
-          //const redirect = this.cookiesService.getCookie('loginRedirectUrl');
-          this.logger.info(`Correct provider dispatched, redirectUrl: ${redirect}`);
-          if (redirect) {
-            this.localStorage.removeLocal('loginRedirectUrl');
-            // this.cookiesService.deleteCookie('loginRedirectUrl');
-
-            // setTimeout to prevent NavigationCancel
-            // this allows current angular navigation cycle (handle URL with code/state)  to complete
-            setTimeout(() => {
-              this.router.navigateByUrl(redirect, { replaceUrl: true });
-            }, 0);
+          // Only fetch ACL if config is provided
+          if (this.appconfig.acl) {
+            this.store.dispatch(AclActions.loadACL());
+            return this.adminApi.resourcesByUser$().pipe(
+              tap(resources => {
+                this.store.dispatch(AclActions.loadACLSuccess({ resources }));
+                this.handleRedirect();
+              }),
+              map(() => responses),
+              catchError(() => of(responses))
+            );
           } else {
-            this.logger.info(`User authenticated, no redirectUrl found. Staying on current route.`);
+            this.handleRedirect();
+            return of(responses);
           }
-        } else {
-          this.logger.warn(`No authenticatedConfig found for ${url}`);
         }
-      }));
-    //}
+
+        return of(responses);
+      })
+    );
   }
 
   public login(targetUrl?: string) {
@@ -165,4 +164,13 @@ export class AuthenticationService {
     );
   }
 
+  private handleRedirect() {
+    const redirect = this.localStorage.readLocal('loginRedirectUrl');
+    if (redirect) {
+      this.localStorage.removeLocal('loginRedirectUrl');
+      setTimeout(() => {
+        this.router.navigateByUrl(redirect, { replaceUrl: true });
+      }, 0);
+    }
+  }
 }

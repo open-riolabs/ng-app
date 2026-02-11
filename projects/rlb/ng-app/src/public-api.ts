@@ -18,7 +18,8 @@ import {
 	RLB_CFG_CMS,
 	RLB_CFG_ENV,
 	RLB_CFG_I18N,
-	RLB_CFG_PAGES
+	RLB_CFG_PAGES,
+  RLB_CFG_ACL
 } from './lib/configuration';
 import { ErrorModalComponent } from './lib/modals/error-modal.component';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component';
@@ -26,7 +27,7 @@ import { getDefaultRoutes } from './lib/pages/shared.routes';
 import { RlbAppModule } from './lib/rlb-app.module';
 import { AppDescriber } from './lib/services/apps/app-describer';
 import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
-import { RLB_APPS } from './lib/store';
+import { aclFeatureKey, RLB_APPS } from './lib/store';
 import { AppContextEffects } from './lib/store/app-context/app-context.effects';
 import { appFeature } from './lib/store/app-context/app-context.reducer';
 import { AuthEffects } from './lib/store/auth/auth.effects';
@@ -36,6 +37,8 @@ import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer';
 import { ToastComponent } from './lib/toasts/error-toast.component';
 import { AuthenticationService } from "./lib/auth";
 import { AppsService } from "./lib/services";
+import { AclEffects } from "./lib/store/acl/acl.effects";
+import { aclFeature } from "./lib/store/acl/acl.reducer";
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -56,11 +59,12 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
     RlbAppModule,
     provideStore(),
     provideState(authsFeature),
-    provideEffects(AuthEffects),
+    provideEffects(AuthEffects, AppContextEffects, AclEffects),
     provideState(navbarsFeature),
     provideState(sidebarsFeature),
     provideState(appFeature),
-    provideEffects(AppContextEffects),
+    provideState(aclFeature),
+    // provideEffects(AppContextEffects),
     provideRouter(getDefaultRoutes(env.pages)),
     provideRlbCodeBrowserOAuth(env.auth),
     provideRlbI18n(env.i18n),
@@ -81,6 +85,7 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
     { provide: RLB_CFG_CMS, useValue: env.cms },
     { provide: RLB_CFG_PAGES, useValue: env.pages },
     { provide: RLB_CFG_I18N, useValue: env.i18n },
+    { provide: RLB_CFG_ACL, useValue: env.acl },
     {
       provide: ModalRegistryOptions, useValue: {
         modals: {
