@@ -66,22 +66,6 @@ export class AuthenticationService {
             currentProvider: authenticatedConfig.configId
           }));
 
-          // Only fetch ACL if config is provided
-          // if (this.appconfig.acl) {
-          //   this.store.dispatch(AclActions.loadACL());
-          //   return this.adminApi.resourcesByUser$().pipe(
-          //     tap(resources => {
-          //       this.store.dispatch(AclActions.loadACLSuccess({ resources }));
-          //       this.handleRedirect();
-          //     }),
-          //     map(() => responses),
-          //     catchError(() => of(responses))
-          //   );
-          // } else {
-          //   this.handleRedirect();
-          //   return of(responses);
-          // }
-
           if (this.appconfig.acl) {
             // SignalStore methods can trigger the API call
             return this.aclStore.loadACL().pipe(
