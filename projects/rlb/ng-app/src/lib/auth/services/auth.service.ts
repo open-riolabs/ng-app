@@ -1,8 +1,8 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { LoginResponse, OidcSecurityService} from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, tap, switchMap, catchError, of } from 'rxjs';
+import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
+import { lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   EnvironmentConfiguration,
@@ -12,9 +12,10 @@ import {
   RLB_CFG_ENV
 } from '../../configuration';
 import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
-import { AclActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 import { AdminApiService } from "../../services/acl/user-resources.service";
+import { AclStore } from "../../store/acl/acl.store";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ import { AdminApiService } from "../../services/acl/user-resources.service";
 export class AuthenticationService {
   modal!: Window | null;
   private logger: LoggerContext;
+  private readonly aclStore = inject(AclStore);
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -65,16 +67,26 @@ export class AuthenticationService {
           }));
 
           // Only fetch ACL if config is provided
+          // if (this.appconfig.acl) {
+          //   this.store.dispatch(AclActions.loadACL());
+          //   return this.adminApi.resourcesByUser$().pipe(
+          //     tap(resources => {
+          //       this.store.dispatch(AclActions.loadACLSuccess({ resources }));
+          //       this.handleRedirect();
+          //     }),
+          //     map(() => responses),
+          //     catchError(() => of(responses))
+          //   );
+          // } else {
+          //   this.handleRedirect();
+          //   return of(responses);
+          // }
+
           if (this.appconfig.acl) {
-            this.store.dispatch(AclActions.loadACL());
-            return this.adminApi.resourcesByUser$().pipe(
-              tap(resources => {
-                this.store.dispatch(AclActions.loadACLSuccess({ resources }));
-                this.handleRedirect();
-              }),
-              map(() => responses),
-              catchError(() => of(responses))
-            );
+            // SignalStore methods can trigger the API call
+            return this.aclStore.loadACL().pipe(
+              tap(() => this.handleRedirect()),
+              map(() => responses))
           } else {
             this.handleRedirect();
             return of(responses);
