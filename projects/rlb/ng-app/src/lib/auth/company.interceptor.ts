@@ -32,8 +32,8 @@ export class CompanyInterceptor implements HttpInterceptor {
       take(1),
       map((app: AppInfo<any> | null | undefined) => {
         // Get the correct keys from config
-        const companyKey = this.config["interceptorMapping"]?.companyIdKey ?? 'companyId';
-        const productKey = this.config["interceptorMapping"]?.productIdKey ?? 'productId';
+        const companyKey = this.config.acl?.interceptorMapping?.companyIdKey ?? 'companyId';
+        const productKey = this.config.acl?.interceptorMapping?.productIdKey ?? 'productId';
 
         const companyId = app?.data?.companyId;
         const productId = app?.data?.productId;
