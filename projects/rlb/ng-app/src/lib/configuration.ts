@@ -2,7 +2,8 @@ import { InjectionToken, Type } from "@angular/core";
 import { OpenIdConfiguration } from "angular-auth-oidc-client";
 import { LogLevel } from "./services";
 
-export const RLB_CFG = 'rlb.options';
+// export const RLB_CFG = 'rlb.options';
+export const RLB_CFG = new InjectionToken<ProjectConfiguration>('rlb.options');
 export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
 export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
 export const RLB_CFG_PAGES = new InjectionToken<PagesConfiguration>(`${RLB_CFG}:pages`);
@@ -11,9 +12,15 @@ export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:au
 export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.navcomp`);
 export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`);
 
+export interface InterceptorMapping {
+  companyIdKey?: string; // For instance, 'chatId'
+  productIdKey?: string; // For instance, 'appId'
+}
+
 export interface AclConfiguration {
   endpointKey: string; // The key in the 'endpoints'
   path: string;        // The path
+  interceptorMapping?: InterceptorMapping;
 }
 
 export interface ProviderConfiguration extends OpenIdConfiguration {
@@ -45,6 +52,7 @@ export interface AuthConfiguration {
   protocol: 'oauth';
   storage: 'cookies' | 'localStorage' | 'sessionStorage';
   interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
+  enableCompanyInterceptor?: boolean;
   allowedUrls: string[];
   providers: ProviderConfiguration[];
 }

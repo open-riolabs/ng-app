@@ -1,12 +1,11 @@
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EnvironmentProviders, makeEnvironmentProviders, Provider } from "@angular/core";
 import {
-	AbstractLoggerService,
-	AbstractSecurityStorage,
-	AuthInterceptor,
-	AuthModule,
-	LogLevel,
-	provideAuth
+  AbstractLoggerService,
+  AbstractSecurityStorage,
+  AuthInterceptor,
+  AuthModule,
+  provideAuth
 } from "angular-auth-oidc-client";
 import { AuthConfiguration, RLB_CFG_AUTH } from "../configuration";
 import { TokenCookiesService } from "./providers/token-cookies.service";
@@ -14,6 +13,7 @@ import { TokenSessionService } from "./providers/token-session.service";
 import { TokenStoreService } from "./providers/token-store.service";
 import { AppLoggerService } from "../services/apps/app-logger.service";
 import { TokenOauthInterceptor } from "./token-oauth-interceptor";
+import { CompanyInterceptor } from "./company.interceptor";
 
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
@@ -40,6 +40,9 @@ export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined):
   }
   if (auth.interceptor === 'oauth-code-ep') {
     providers.push({ provide: HTTP_INTERCEPTORS, useClass: TokenOauthInterceptor, multi: true });
+  }
+  if (auth.enableCompanyInterceptor) {
+    providers.push({ provide: HTTP_INTERCEPTORS, useClass: CompanyInterceptor, multi: true });
   }
   if (auth.storage === 'cookies') {
     providers.push({ provide: AbstractSecurityStorage, useClass: TokenCookiesService });
