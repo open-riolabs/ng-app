@@ -18,12 +18,10 @@ export const AclStore = signalStore(
       const resources = store.resources();
       if (!resources) return false;
 
-      return resources.some(product =>
-        product.resources.some(res => {
-          const matchName = res.resourceId === resourceName || res.resourceName === resourceName;
-          if (!action) return matchName;
-          return matchName && res.actions.includes(action);
-        })
+      return resources.some(company => company.resourceBusinessId === resourceName && company.resources.some(res => {
+        const matchName = res.resourceId === resourceName; if (!action) return matchName;
+        return matchName && res.actions.includes(action);
+      })
       );
     },
     // Replaces legacy ngrx action and the effect

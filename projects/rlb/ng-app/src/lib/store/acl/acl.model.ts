@@ -2,15 +2,14 @@ export const aclFeatureKey = 'acl';
 
 
 export interface UserResource {
-  productId: string;
+  resourceBusinessId: string;
   resources: Resource[];
 }
 
 export interface Resource {
   resourceId: string;
   actions: string[];
-  resourceName: string;
-  companyId: string;
+  friendlyName?: string;
 }
 
 export interface Acl {
