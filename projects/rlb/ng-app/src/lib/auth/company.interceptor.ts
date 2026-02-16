@@ -15,7 +15,7 @@ export class CompanyInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authConfig = this.config.auth;
     const isAllowed = authConfig?.allowedUrls?.some(url => req.url.includes(url));
-
+    console.log('CompanyInterceptor: isAllowed', isAllowed, 'enableCompanyInterceptor', authConfig?.enableCompanyInterceptor);
     if (!isAllowed || !authConfig?.enableCompanyInterceptor) {
       return next.handle(req);
     }
@@ -24,7 +24,7 @@ export class CompanyInterceptor implements HttpInterceptor {
 
     const mapping = this.config.acl?.interceptorMapping || {};
     const params = req.params;
-    const map = Object.keys(mapping).forEach((key) => {
+    Object.keys(mapping).forEach((key) => {
       const storeKey = mapping[key];
       const value = data?.[storeKey];
       if (!!value) {
