@@ -13,8 +13,9 @@ export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.nav
 export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`);
 
 export interface InterceptorMapping {
-  companyIdKey?: string; // For instance, 'chatId'
-  productIdKey?: string; // For instance, 'appId'
+  // Key: The name of the Query Parameter to add to the request
+  // Value: The property name to look for in Store data object
+  [httpParamName: string]: string;
 }
 
 export interface AclConfiguration {

@@ -15,13 +15,11 @@ interface Data {
 
 @Injectable()
 export class CompanyInterceptor implements HttpInterceptor {
-
   private store = inject(Store);
   private config = inject(RLB_CFG) as ProjectConfiguration;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authConfig = this.config.auth;
-
     const isAllowed = authConfig?.allowedUrls?.some(url => req.url.includes(url));
 
     if (!isAllowed || !authConfig?.enableCompanyInterceptor) {
@@ -31,23 +29,26 @@ export class CompanyInterceptor implements HttpInterceptor {
     return this.store.select(state => state[appContextFeatureKey].currentApp).pipe(
       take(1),
       map((app: AppInfo<any> | null | undefined) => {
-        // Get the correct keys from config
-        const companyKey = this.config.acl?.interceptorMapping?.companyIdKey ?? 'companyId';
-        const productKey = this.config.acl?.interceptorMapping?.productIdKey ?? 'productId';
+        const mapping = this.config.acl?.interceptorMapping;
 
-        const companyId = app?.data?.companyId;
-        const productId = app?.data?.productId;
-
-        if (companyId && productId) {
-          const params = req.params
-            .set(companyKey, companyId)
-            .set(productKey, productId);
-
-          return req.clone({ params });
+        // If no mapping is defined, just return the request
+        if (!mapping || !app?.data) {
+          return req;
         }
 
-        // If no companyId and productId presented call as is
-        return req;
+        let params = req.params;
+
+        // DYNAMIC LOOP:
+        // Iterate over all keys defined in the environment config
+        Object.entries(mapping).forEach(([httpParamName, storeDataKey]) => {
+          const value = app.data[storeDataKey];
+
+          if (value !== undefined && value !== null) {
+            params = params.set(httpParamName, value.toString());
+          }
+        });
+
+        return req.clone({ params });
       }),
       switchMap(clonedReq => next.handle(clonedReq))
     );
