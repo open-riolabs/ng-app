@@ -7,12 +7,6 @@ import { appContextFeatureKey, } from '../store/app-context/app-context.model';
 import { ProjectConfiguration, RLB_CFG } from '../configuration';
 import { AppInfo } from '../services/apps/app'
 
-interface Data {
-  companyId: string;
-  productId: string;
-  appName?: string;
-}
-
 @Injectable()
 export class CompanyInterceptor implements HttpInterceptor {
   private store = inject(Store);
@@ -25,32 +19,18 @@ export class CompanyInterceptor implements HttpInterceptor {
     if (!isAllowed || !authConfig?.enableCompanyInterceptor) {
       return next.handle(req);
     }
+    const currentApp = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
+    const data = currentApp?.data as { [key: string]: string } | undefined;
+    const mapping = this.config.acl?.interceptorMapping || {};
+    const map = Object.keys(mapping).forEach((key) => {
+      const storeKey = mapping[key];
+      const value = data?.[storeKey];
+      if(!!value) {
+        req.params.set(key, value);
+      }
+    });
 
-    return this.store.select(state => state[appContextFeatureKey].currentApp).pipe(
-      take(1),
-      map((app: AppInfo<any> | null | undefined) => {
-        const mapping = this.config.acl?.interceptorMapping;
-
-        // If no mapping is defined, just return the request
-        if (!mapping || !app?.data) {
-          return req;
-        }
-
-        let params = req.params;
-
-        // DYNAMIC LOOP:
-        // Iterate over all keys defined in the environment config
-        Object.entries(mapping).forEach(([httpParamName, storeDataKey]) => {
-          const value = app.data[storeDataKey];
-
-          if (value !== undefined && value !== null) {
-            params = params.set(httpParamName, value.toString());
-          }
-        });
-
-        return req.clone({ params });
-      }),
-      switchMap(clonedReq => next.handle(clonedReq))
-    );
+    const clonedReq = req.clone({ params: req.params });
+    return next.handle(clonedReq);
   }
 }

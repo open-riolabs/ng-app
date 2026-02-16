@@ -15,7 +15,7 @@ export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`
 export interface InterceptorMapping {
   // Key: The name of the Query Parameter to add to the request
   // Value: The property name to look for in Store data object
-  [httpParamName: string]: string;
+  [k: string]: string;
 }
 
 export interface AclConfiguration {
