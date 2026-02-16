@@ -21,16 +21,17 @@ export class CompanyInterceptor implements HttpInterceptor {
     }
     const currentApp = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
     const data = currentApp?.data as { [key: string]: string } | undefined;
+
     const mapping = this.config.acl?.interceptorMapping || {};
+    const params = req.params;
     const map = Object.keys(mapping).forEach((key) => {
       const storeKey = mapping[key];
       const value = data?.[storeKey];
-      if(!!value) {
-        req.params.set(key, value);
+      if (!!value) {
+        params.set(key, value);
       }
     });
-
-    const clonedReq = req.clone({ params: req.params });
+    const clonedReq = req.clone({ params });
     return next.handle(clonedReq);
   }
 }
