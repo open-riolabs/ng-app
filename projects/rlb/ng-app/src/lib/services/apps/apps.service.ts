@@ -2,8 +2,8 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, of, switchMap } from 'rxjs';
-import { AuthConfiguration, RLB_CFG_AUTH } from '../../configuration';
-import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AclConfiguration, AuthConfiguration, RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
+import { aclFeatureKey, AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
@@ -11,63 +11,79 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DEFAULT_ROUTES_CONFIG } from "../../pages/default-routes.config";
 
 interface AppConfig {
-	route: ActivatedRoute
-	appsConfig: AppInfo<any>[]
-	apps: AppInfo<any>[]
+  route: ActivatedRoute
+  appsConfig: AppInfo<any>[]
+  apps: AppInfo<any>[]
   fullPath: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class AppsService {
-	private logger: LoggerContext;
+  private logger: LoggerContext;
 
   constructor(
     private store: Store<BaseState>,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-		private loggerService: AppLoggerService,
-    @Inject(RLB_CFG_AUTH) @Optional() confAuth: AuthConfiguration | undefined
+    private loggerService: AppLoggerService,
+    @Inject(RLB_CFG_AUTH) @Optional() readonly confAuth: AuthConfiguration | undefined,
+    @Inject(RLB_CFG_ACL) @Optional() private readonly confAcl: AclConfiguration | undefined
   ) {
-		this.logger = this.loggerService.for(this.constructor.name);
-		this.logger.log('AppsService initialized');
+    this.logger = this.loggerService.for(this.constructor.name);
+    this.logger.log('AppsService initialized');
 
     this.initAuthProviders(store, confAuth);
-		this.initRouterListener()
+    this.initRouterListener()
   }
 
   get currentDomain() {
     return window.location.hostname;
   }
 
-	get apps() {
-		return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-			.filter(app => app.id && (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain)));
-	}
+  get apps() {
+    const resources = this.store.selectSignal(state => state[aclFeatureKey].resources)()
+    if (!this.confAcl) {
+      this.logger.warn('ACL configuration not provided. Returning all apps without ACL filtering.');
+      return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+        .filter(app => {
+          if (!app.id) return false; // Filter out not finalized apps
+          let domainMatch = (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
+          return domainMatch;
+        });
+    }
+    return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+      .filter(app => {
+        if (!app.id) return false; // Filter out not finalized apps
+        let domainMatch = (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
+        let resourceMatch = resources?.some(r => r.resourceBusinessId === app.data?.[this.confAcl?.businessIdKey || 'businessId'] &&
+          r.resources.some(res => res.resourceId === app.data?.[this.confAcl?.resourceIdKey || 'resourceId'] && res.actions.some(a => app.actions?.includes(a))));
+        return domainMatch && resourceMatch;
+      });
+  }
 
-	get currentApp() {
-		const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
-		this.logger.log('Current app from store:', app);
-		return app;
-	}
+  get currentApp() {
+    const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
+    this.logger.log('Current app from store:', app);
+    return app;
+  }
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
     const currentApp = this.currentApp;
-		if (!app) {
-			this.logger.warn('Deselecting app (null).');
-			this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
-			return;
-		}
-		if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
-			this.logger.info('App already selected with same id and viewMode. Skipping dispatch.');
-			return;
-		}
-		this.logger.warn('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
-		this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
+    if (!app) {
+      this.logger.warn('Deselecting app (null).');
+      this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
+      return;
+    }
+    if (currentApp && currentApp.id === app.id && currentApp.viewMode === viewMode) {
+      this.logger.info('App already selected with same id and viewMode. Skipping dispatch.');
+      return;
+    }
+    this.logger.warn('Dispatching setCurrentApp with:', { app, mode: viewMode, url });
+    this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 
-	private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
+  private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
     const currentProviderInStore = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
 
     if (currentProviderInStore) {
@@ -75,45 +91,45 @@ export class AppsService {
       return;
     }
 
-		if (!confAuth?.providers?.length) {
-			this.logger.warn('No auth providers configured.');
-			return;
-		}
+    if (!confAuth?.providers?.length) {
+      this.logger.warn('No auth providers configured.');
+      return;
+    }
 
-		if (confAuth?.providers && confAuth.providers.length === 1) {
-			this.logger.info('Single auth provider detected:', confAuth.providers[0]);
-			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
-			return
-		}
+    if (confAuth?.providers && confAuth.providers.length === 1) {
+      this.logger.info('Single auth provider detected:', confAuth.providers[0]);
+      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
+      return
+    }
 
-		this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
+    this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
 
-		const authProvidersMatched = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
+    const authProvidersMatched = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
 
-		if (authProvidersMatched && authProvidersMatched.length === 1) {
-			this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
-			store.dispatch(AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }));
-		} else if (authProvidersMatched && authProvidersMatched.length > 1) {
-			this.logger.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
-		} else {
-			this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
-		}
-	}
+    if (authProvidersMatched && authProvidersMatched.length === 1) {
+      this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
+      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }));
+    } else if (authProvidersMatched && authProvidersMatched.length > 1) {
+      this.logger.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
+    } else {
+      this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
+    }
+  }
 
-	private initRouterListener() {
-		this.router.events
-			.pipe(
-				filter(event => event instanceof NavigationEnd),
-				switchMap(() => this.resolveRouteAndApps()),
-				takeUntilDestroyed()
-			)
-			.subscribe(data => this.handleResolvedApps(data));
-	}
+  private initRouterListener() {
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        switchMap(() => this.resolveRouteAndApps()),
+        takeUntilDestroyed()
+      )
+      .subscribe(data => this.handleResolvedApps(data));
+  }
 
-	// Core logic
+  // Core logic
 
-	private resolveRouteAndApps(): Observable<AppConfig | null> {
-		const route = this.findDeepestChild(this.activatedRoute);
+  private resolveRouteAndApps(): Observable<AppConfig | null> {
+    const route = this.findDeepestChild(this.activatedRoute);
 
     // 1. Get abstract route template (LIKE ".../:id")
     const configPath = this.getConfigPath(route);
@@ -123,21 +139,21 @@ export class AppsService {
 
     this.logger.info(`Resolving. ConfigPath: '${configPath}', ActualPath: '${actualPath}'`);
 
-		const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
-			type: app.type,
-			routes: app.routes || [],
-			viewMode: app.viewMode,
-			enabled: app.enabled,
+    const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
+      type: app.type,
+      routes: app.routes || [],
+      viewMode: app.viewMode,
+      enabled: app.enabled,
       core: app.core
     }));
 
-		let appRoutesMatched: AppInfo[] = [];
+    let appRoutesMatched: AppInfo[] = [];
 
-		if (configPath  && !this.isDefaultRoute(configPath)) {
-			appRoutesMatched = appRoutes?.filter(app =>
-				app.routes?.some(r => r.includes(configPath))
-			) ?? [];
-		}
+    if (configPath && !this.isDefaultRoute(configPath)) {
+      appRoutesMatched = appRoutes?.filter(app =>
+        app.routes?.some(r => r.includes(configPath))
+      ) ?? [];
+    }
 
     this.logger.info('Matched appRoute:', appRoutesMatched);
 
@@ -163,7 +179,7 @@ export class AppsService {
         return null;
       })
     );
-	}
+  }
 
   private handleResolvedApps(data: AppConfig | null) {
     const route = this.findDeepestChild(this.activatedRoute);
@@ -242,8 +258,8 @@ export class AppsService {
     // Here we go only if route not empty  !="" and not root !="/"
 
     const matchedApps = domainApps.filter(app =>
-        app.routes?.some(r => r.includes(route.routeConfig?.path!)) ||
-        app.core?.url === '/' + route.routeConfig?.path
+      app.routes?.some(r => r.includes(route.routeConfig?.path!)) ||
+      app.core?.url === '/' + route.routeConfig?.path
     );
 
     let appToSelect: AppInfo | undefined;
@@ -268,42 +284,42 @@ export class AppsService {
     this.selectApp(appToSelect, viewMode, url);
   }
 
-	private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
-		while (route.firstChild) route = route.firstChild;
-		this.logger.info('Activated deepest child route:', route);
-		return route;
-	}
+  private findDeepestChild(route: ActivatedRoute): ActivatedRoute {
+    while (route.firstChild) route = route.firstChild;
+    this.logger.info('Activated deepest child route:', route);
+    return route;
+  }
 
-	private getStoredAppId(): string | null {
-		try {
-			return localStorage.getItem('c-app-id');
-		} catch (e) {
-			this.logger.warn('LocalStorage not available:', e);
-			return null;
-		}
-	}
+  private getStoredAppId(): string | null {
+    try {
+      return localStorage.getItem('c-app-id');
+    } catch (e) {
+      this.logger.warn('LocalStorage not available:', e);
+      return null;
+    }
+  }
 
-	private isSettingsRoute(route: ActivatedRoute): boolean {
-		return route.routeConfig?.path?.includes('settings') ?? false;
-	}
+  private isSettingsRoute(route: ActivatedRoute): boolean {
+    return route.routeConfig?.path?.includes('settings') ?? false;
+  }
 
-	private isDefaultRoute(route: string): boolean {
-		return DEFAULT_ROUTES_CONFIG
-			.some(r => r.path.includes(route));
-	}
+  private isDefaultRoute(route: string): boolean {
+    return DEFAULT_ROUTES_CONFIG
+      .some(r => r.path.includes(route));
+  }
 
-	private getConfigPath(route: ActivatedRoute): string {
-		const segments: string[] = [];
-		let current: ActivatedRoute | null = route.root;
+  private getConfigPath(route: ActivatedRoute): string {
+    const segments: string[] = [];
+    let current: ActivatedRoute | null = route.root;
 
-		while (current) {
-			const path = current.routeConfig?.path;
-			if (path && path !== '') segments.push(path);
-			current = current.firstChild ?? null;
-		}
+    while (current) {
+      const path = current.routeConfig?.path;
+      if (path && path !== '') segments.push(path);
+      current = current.firstChild ?? null;
+    }
 
-		return segments.join('/');
-	}
+    return segments.join('/');
+  }
 
   private getActualPath(route: ActivatedRoute): string {
     const segments: string[] = [];
