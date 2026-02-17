@@ -49,7 +49,6 @@ export class AppsService {
 
     return apps.filter(app => {
       // Basic domain check
-      console.log('Filtering app:', app);
       const isDomainAllowed = !app.domains || app.domains.includes(this.currentDomain);
       if (!isDomainAllowed) return false;
 
