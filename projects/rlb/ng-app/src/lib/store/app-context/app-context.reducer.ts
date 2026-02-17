@@ -8,14 +8,14 @@ export const appFeature = createFeature({
     initialAppContextState,
     on(AppContextActionsInternal.setCurrentApp, (state, { app, mode, url }) => ({ ...state, currentApp: app ? { ...app, viewMode: mode, navigationUrl: url } : null })),
     on(AppContextActions.removeApp, (state, { appType }) => ({ ...state, apps: state.apps.filter(a => a.type !== appType) })),
-    on(AppContextActions.finalizeApp, (state, { appType, data, appId }) => {
+    on(AppContextActions.finalizeApp, (state, { appType, data, appId, actions }) => {
       const appsOfType = state.apps.filter(a => a.type === appType);
       if (appsOfType.length === 0) throw new Error(`App type: ${appType} not found. Cannot finalize app.`);
       let updatedAppsOfType: typeof appsOfType;
       if (appsOfType.length === 1 && !appsOfType[0].id) {
-        updatedAppsOfType = [{ ...appsOfType[0], data, id: appId, }];
+        updatedAppsOfType = [{ ...appsOfType[0], data, id: appId, actions }];
       } else {
-        updatedAppsOfType = [...appsOfType, { ...appsOfType[0], data, id: appId, }];
+        updatedAppsOfType = [...appsOfType, { ...appsOfType[0], data, id: appId, actions}];
       }
       const remainingApps = state.apps.filter(a => a.type !== appType);
       return { ...state, apps: [...remainingApps, ...updatedAppsOfType], };

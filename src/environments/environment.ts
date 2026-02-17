@@ -12,6 +12,7 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
     errorDialogName: 'error-modal-component',
     pwaUpdateEnabled: true,
     errorDialogSize: 'md',
+    logLevel: 'log'
   },
   i18n: {
     availableLangs: ['it'],

@@ -1,11 +1,11 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable, of, switchMap } from 'rxjs';
+import { filter, map, Observable, switchMap } from 'rxjs';
 import { AclConfiguration, AuthConfiguration, RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
 import { aclFeatureKey, AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
-import { AppInfo, AppViewMode } from './app';
+import { AppInfo } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DEFAULT_ROUTES_CONFIG } from "../../pages/default-routes.config";
@@ -16,6 +16,7 @@ interface AppConfig {
   apps: AppInfo<any>[]
   fullPath: string;
 }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,24 +43,41 @@ export class AppsService {
   }
 
   get apps() {
+    const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)()
     const resources = this.store.selectSignal(state => state[aclFeatureKey].resources)()
-    if (!this.confAcl) {
-      this.logger.warn('ACL configuration not provided. Returning all apps without ACL filtering.');
-      return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-        .filter(app => {
-          if (!app.id) return false; // Filter out not finalized apps
-          let domainMatch = (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
-          return domainMatch;
+    const confAcl = this.confAcl;
+
+    return apps.filter(app => {
+      // Basic domain check
+      const isDomainAllowed = !app.domains || app.domains.includes(this.currentDomain);
+      if (!isDomainAllowed) return false;
+
+      // If acl config doesnt exist return apps filtered by domain
+      if (!confAcl) return true;
+
+      if (!resources && app.actions?.length) return true
+
+      if (!resources && app.actions && app.actions.length > 0) return false
+
+      return resources?.some(userResource => {
+        // Matching by Business ID
+        // IMPORTANT: app.data must have key, name of this key is in confAcl
+        const appBusId = app.data?.[confAcl.businessIdKey];
+        const matchBusId = userResource.resourceBusinessId === appBusId;
+
+        if (!matchBusId) return false;
+
+        // Matching by Resource ID
+        return userResource.resources.some(res => {
+          const appResId = app.data?.[confAcl.resourceIdKey];
+          const matchResId = res.resourceId === appResId;
+
+          if (!matchResId) return false;
+
+          return res.actions.some(action => app.actions?.includes(action));
         });
-    }
-    return this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-      .filter(app => {
-        if (!app.id) return false; // Filter out not finalized apps
-        let domainMatch = (app.domains === undefined || app.domains == null || app.domains.includes(this.currentDomain));
-        let resourceMatch = resources?.some(r => r.resourceBusinessId === app.data?.[this.confAcl?.businessIdKey || 'businessId'] &&
-          r.resources.some(res => res.resourceId === app.data?.[this.confAcl?.resourceIdKey || 'resourceId'] && res.actions.some(a => app.actions?.includes(a))));
-        return domainMatch && resourceMatch;
       });
+    });
   }
 
   get currentApp() {

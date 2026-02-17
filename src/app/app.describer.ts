@@ -7,19 +7,25 @@ export const appDescriber: AppDescriber = {
   info: {
     type: 'chat',
     enabled: false,
+    actions: [
+      "write-customer",
+      "role-management",
+      "read-agency",
+      "read-customer"
+    ],
     core: {
       title: 'Chat',
       description: 'Chat with other users',
       url: 'chatto',
       icon: 'bi-chat',
-      auth: true
+      auth: false
     },
     settings: {
       title: 'Chat settings',
       description: 'Chat settings description',
       url: 'settings/chatto',
       icon: 'bi bi-gear',
-      auth: true
+      auth: false
     }
   },
   providers: [

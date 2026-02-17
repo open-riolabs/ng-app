@@ -1,8 +1,8 @@
 import { Inject, Injectable, Optional } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { AuthConfiguration, RLB_CFG, ProjectConfiguration, RLB_CFG_ACL, AclConfiguration } from '../../configuration';
+import { AclConfiguration, ProjectConfiguration, RLB_CFG, RLB_CFG_ACL } from '../../configuration';
 import { UserResource } from '../../store/acl/acl.model'
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
@@ -14,7 +14,8 @@ export class AdminApiService {
 
   public resourcesByUser$(): Observable<UserResource[]> {
     if (!this.aclConfig) {
-      throw new Error("ACL configuration is missing. Provide 'acl' in ProjectConfiguration.");
+      console.error("ACL configuration is missing. Provide 'acl' in ProjectConfiguration.");
+      return of([])
     }
 
     const endpoint = this.config.endpoints?.[this.aclConfig.endpointKey];

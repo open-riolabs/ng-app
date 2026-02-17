@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActions } from '@open-rlb/ng-app';
@@ -12,10 +11,6 @@ import { AppContextActions, BaseState, NavbarActions, RlbAppModule, SidebarActio
 export class AppComponent {
 
   constructor(public store: Store<BaseState>) {
-
-    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App 1' }, appId: 'chat-app-1' }));
-    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App 2' }, appId: 'chat-app-2' }));
-    this.store.dispatch(AppContextActions.finalizeApp({ appType: 'chat', data: { title: 'Chat App 3' }, appId: 'chat-app-3' }));
     this.store.dispatch(
       AppContextActions.setSupportedLanguages({
         supportedLanguages: ['en', 'it', 'ja'],

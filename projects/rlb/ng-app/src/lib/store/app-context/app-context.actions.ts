@@ -23,6 +23,6 @@ export const AppContextActions = createActionGroup({
     setCurrentApp: props<{ app: AppInfo | null, mode?: AppViewMode; url?: string; }>(),
     removeApp: props<{ appType: string; }>(),
     setTheme: props<{ theme: AppTheme; }>(),
-    finalizeApp: props<{ appType: string; appId: string; data?: any; }>(),
+    finalizeApp: props<{ appType: string; appId: string; actions: string[]; data?: any; }>(),
   }
 });

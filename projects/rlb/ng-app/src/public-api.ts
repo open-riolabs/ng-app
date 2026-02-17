@@ -1,11 +1,5 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import {
-  EnvironmentProviders,
-  inject,
-  isDevMode,
-  provideAppInitializer,
-  Provider
-} from '@angular/core';
+import { EnvironmentProviders, inject, isDevMode, provideAppInitializer, Provider } from '@angular/core';
 import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
@@ -13,13 +7,13 @@ import { provideState, provideStore } from '@ngrx/store';
 import { ModalRegistryOptions, provideRlbBootstrap, ToastRegistryOptions } from '@open-rlb/ng-bootstrap';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import {
-	ProjectConfiguration,
-	RLB_CFG,
-	RLB_CFG_CMS,
-	RLB_CFG_ENV,
-	RLB_CFG_I18N,
-	RLB_CFG_PAGES,
-  RLB_CFG_ACL
+  ProjectConfiguration,
+  RLB_CFG,
+  RLB_CFG_ACL,
+  RLB_CFG_CMS,
+  RLB_CFG_ENV,
+  RLB_CFG_I18N,
+  RLB_CFG_PAGES
 } from './lib/configuration';
 import { ErrorModalComponent } from './lib/modals/error-modal.component';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component';
@@ -27,7 +21,7 @@ import { getDefaultRoutes } from './lib/pages/shared.routes';
 import { RlbAppModule } from './lib/rlb-app.module';
 import { AppDescriber } from './lib/services/apps/app-describer';
 import { provideRlbI18n } from './lib/services/i18n/i18n.provider';
-import { aclFeatureKey, RLB_APPS } from './lib/store';
+import { RLB_APPS } from './lib/store';
 import { AppContextEffects } from './lib/store/app-context/app-context.effects';
 import { appFeature } from './lib/store/app-context/app-context.reducer';
 import { AuthEffects } from './lib/store/auth/auth.effects';
@@ -39,6 +33,7 @@ import { AuthenticationService } from "./lib/auth";
 import { AppsService } from "./lib/services";
 import { AclEffects } from "./lib/store/acl/acl.effects";
 import { aclFeature } from "./lib/store/acl/acl.reducer";
+import { AclStore } from "./lib/store/acl/acl.store";
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -79,6 +74,11 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
     provideAppInitializer(() => {
       const authService = inject(AuthenticationService);
       return authService.checkAuthMultiple();
+    }),
+    provideAppInitializer(() => {
+      const aclStore = inject(AclStore);
+      // We call the rxMethod, AppInitializer can guarantee that this logic will be executed before routing
+      return aclStore.loadACL();
     }),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },
