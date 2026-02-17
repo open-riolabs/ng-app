@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
       }
 
       // return call result, to make app wait for it
-      return provider.finalizeApps(store, acl, appDescriber.info);
+      return provider.finalizeApps(store, acl);
     })
   ]
 };

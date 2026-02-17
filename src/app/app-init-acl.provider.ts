@@ -15,7 +15,7 @@ import { filter, firstValueFrom } from "rxjs";
  */
 @Injectable()
 export class AppInitAclProvider implements RlbInitProvider {
-  async finalizeApps(store: Store<BaseState>, acl: AclConfiguration,  appInfo: AppInfo): Promise<void> {
+  async finalizeApps(store: Store<BaseState>, acl: AclConfiguration): Promise<void> {
     await firstValueFrom(
       store.select(state => state[aclFeatureKey]).pipe(
         filter(state => !!state && state.loaded === true)
@@ -41,7 +41,6 @@ export class AppInitAclProvider implements RlbInitProvider {
         store.dispatch(AppContextActions.finalizeApp({
           appType: 'chat',
           appId: `chat-${res.resourceId}`,
-          actions: appInfo.actions || [],
           data: appData,
         }));
       });
