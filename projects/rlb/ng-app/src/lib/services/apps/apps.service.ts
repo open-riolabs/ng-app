@@ -56,9 +56,9 @@ export class AppsService {
       // If acl config doesnt exist return apps filtered by domain
       if (!confAcl) return true;
 
-      if (!resources && app.actions?.length) return true
+      if (!resources && app.actions?.length) return false; // If app has actions defined, but no resources in store, we assume it's ACL protected and not allowed
 
-      if (!resources && app.actions && app.actions.length > 0) return false
+      if (resources && !app.actions?.length) return true; // If app has no actions defined, we assume it's not ACL protected and allow it
 
       return resources?.some(userResource => {
         // Matching by Business ID
