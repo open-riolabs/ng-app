@@ -14,6 +14,7 @@ export interface AppInfo<T extends AppInfoData = any> {
   viewMode?: AppViewMode;
   routes?: string[];
   domains?: string[];
+  actions?: string[];
   navigationUrl?: string;
   data?: T;
   autoRedirectOnRootEnabled?: boolean;

@@ -23,13 +23,13 @@ export class CompanyInterceptor implements HttpInterceptor {
 
     const mapping = this.config.acl?.interceptorMapping || {};
     let params = req.params;
-    Object.keys(mapping).forEach((key) => {
+    for (const key of Object.keys(mapping)) {
       const storeKey = mapping[key];
       const value = data?.[storeKey];
       if (!!value) {
-        params = params.set(key, value); 
+        params = params.set(key, value);
       }
-    });
+    };
     const clonedReq = req.clone({ params });
     return next.handle(clonedReq);
   }

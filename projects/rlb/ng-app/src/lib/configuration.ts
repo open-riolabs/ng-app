@@ -22,6 +22,8 @@ export interface AclConfiguration {
   endpointKey: string; // The key in the 'endpoints'
   path: string;        // The path
   interceptorMapping?: InterceptorMapping;
+  businessIdKey: string; // The key in the Store data object to match with resourceBusinessId
+  resourceIdKey: string; // The key in the Store data object to match with resourceId
 }
 
 export interface ProviderConfiguration extends OpenIdConfiguration {
