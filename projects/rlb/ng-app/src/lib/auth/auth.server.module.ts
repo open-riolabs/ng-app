@@ -4,19 +4,15 @@ import { TokenCookiesService } from './providers/token-cookies.service';
 import { authCodeFlowConfig } from './authentication.config';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppLoggerService } from '../services/apps/app-logger.service';
-import { RlbRole } from './directives/role.directive';
 
 
 @NgModule({
-  declarations: [
-    RlbRole
-  ],
+  declarations: [],
   imports: [
     AuthModule.forRoot(authCodeFlowConfig),
   ],
   exports: [
     AuthModule,
-    RlbRole
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

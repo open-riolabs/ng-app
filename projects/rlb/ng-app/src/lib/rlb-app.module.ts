@@ -21,6 +21,7 @@ import { AutolinkPipe, TruncatePipe } from './pipes';
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
 import { AppContainerComponent } from './templates/app-container/app-container.component';
+import { RlbRole } from "./auth/directives/role.directive";
 
 @NgModule({
   declarations: [
@@ -44,7 +45,9 @@ import { AppContainerComponent } from './templates/app-container/app-container.c
     CmsComponent,
     ContentComponent,
     AppTemplateComponent,
-    AppContainerComponent
+    AppContainerComponent,
+    // directives
+    RlbRole
   ],
   exports: [
     // pipes
@@ -65,7 +68,9 @@ import { AppContainerComponent } from './templates/app-container/app-container.c
     TranslateModule,
     RlbBootstrapModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    // directives
+    RlbRole
   ],
   imports: [
     CommonModule,

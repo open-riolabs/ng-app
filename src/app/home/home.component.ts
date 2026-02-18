@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { appContextFeatureKey, BaseState } from '@open-rlb/ng-app';
+import { appContextFeatureKey, BaseState, RlbAppModule } from '@open-rlb/ng-app';
 import { AppInfo } from '../../../projects/rlb/ng-app/src/lib/services/apps/app';
+import { ProtectedPageComponent } from "../protected-page/protected-page.component";
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  imports: [CommonModule, ProtectedPageComponent, RlbAppModule],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {

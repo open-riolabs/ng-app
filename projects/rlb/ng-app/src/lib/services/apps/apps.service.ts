@@ -1,9 +1,10 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { AclConfiguration, AuthConfiguration, RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
-import { aclFeatureKey, AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AppContextActions, AuthActions, authsFeatureKey, BaseState, } from '../../store';
+import { AclStore } from '../../store/acl/acl.store'
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
 import { AppLoggerService, LoggerContext } from "./app-logger.service";
@@ -22,6 +23,7 @@ interface AppConfig {
 })
 export class AppsService {
   private logger: LoggerContext;
+  private aclStore = inject(AclStore); // Inject SignalStore here
 
   constructor(
     private store: Store<BaseState>,
@@ -44,7 +46,7 @@ export class AppsService {
 
   get apps() {
     const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)()
-    const resources = this.store.selectSignal(state => state[aclFeatureKey].resources)()
+    const resources = this.aclStore.resources();
     const confAcl = this.confAcl;
 
     return apps.filter(app => {
@@ -80,10 +82,26 @@ export class AppsService {
     });
   }
 
+  get currentAppAclInfo() {
+    const app = this.currentApp;
+    if (!app || !app.data || !this.confAcl) return null;
+
+    return {
+      busId: app.data[this.confAcl.businessIdKey],
+      resId: app.data[this.confAcl.resourceIdKey]
+    };
+  }
+
   get currentApp() {
     const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
     this.logger.log('Current app from store:', app);
     return app;
+  }
+
+  checkPermissionInCurrentApp(action?: string): boolean {
+    const info = this.currentAppAclInfo;
+    if (!info) return false;
+    return this.aclStore.hasPermission(info.busId, info.resId, action);
   }
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {

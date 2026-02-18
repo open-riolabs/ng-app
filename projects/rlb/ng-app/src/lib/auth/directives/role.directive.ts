@@ -1,47 +1,27 @@
-import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { map, tap } from 'rxjs';
-import { AuthenticationService } from '../services/auth.service';
-import { ParseJwtService } from '../services/parse-jwt.service';
+import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { AppsService } from "../../services";
 
 @Directive({
   selector: '[roles]',
   standalone: false
 })
-export class RlbRole implements OnInit {
+export class RlbRole {
+  private appsService = inject(AppsService);
+  private templateRef = inject(TemplateRef<any>);
+  private viewContainer = inject(ViewContainerRef);
 
-  constructor(
-    private readonly templateRef: TemplateRef<any>,
-    private readonly viewContainer: ViewContainerRef,
-    private readonly authenticationService: AuthenticationService,
-    private readonly parseJwtService: ParseJwtService,
-  ) { }
+  action = input<string | undefined>(undefined, { alias: 'roles' });
 
-  @Input() set roles(roles: string[] | string) {
-    if (typeof roles === 'string') {
-      if (roles.includes(',')) roles = roles.split(',').map(role => role.trim());
-      else roles = [roles];
-    }
-  }
+  constructor() {
+    // Effect automatically re-runs if store.resources or inputs change
+    effect(() => {
+      const action = this.action() || '';
+      const hasPerm = this.appsService.checkPermissionInCurrentApp(action);
 
-  private updateView() {
-    return this.authenticationService.
-      accessToken$.pipe(
-        map(token => this.parseJwtService.parseJwt(token)),
-        //map(payload => this.authenticationService.currentProvider.roleClaim?.(payload) || []),
-        tap(roles => {
-          let valid = true;
-          for (const role of this.roles) {
-            if (roles.includes(role)) valid &&= true;
-          }
-          if (valid) {
-            this.viewContainer.createEmbeddedView(this.templateRef);
-          } else {
-            this.viewContainer.clear();
-          }
-        }));
-  }
-
-  ngOnInit() {
-    this.updateView().subscribe();
+      this.viewContainer.clear();
+      if (hasPerm) {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+      }
+    });
   }
 }

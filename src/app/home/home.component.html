@@ -1,5 +1,16 @@
 <p>home works!</p>
 
 @if (app) {
+  <div>
+    Test directive (component should be shown if busId && resId && action match)
+    <app-protected-page *roles="'read-agency'"></app-protected-page>
+  </div>
+
+  <div class="mt-3">
+    Test permissionGuard
+    <a [routerLink]="'/protected-page'">
+      Go to protected page
+    </a>
+  </div>
   <pre>  {{ app | json }}</pre>
 }

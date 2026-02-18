@@ -13,15 +13,17 @@ export const AclStore = signalStore(
     adminApi = inject(AdminApiService),
     //errorManagement = inject(ErrorManagementService)
   ) => ({
-    // REUSABLE LOGIC: Will be used in guard
-    hasPermission: (resourceName: string, action?: string) => {
+    // Core logic: ID based only.
+    hasPermission: (busId: string, resId: string, action?: string) => {
       const resources = store.resources();
       if (!resources) return false;
 
-      return resources.some(company => company.resourceBusinessId === resourceName && company.resources.some(res => {
-        const matchName = res.resourceId === resourceName; if (!action) return matchName;
-        return matchName && res.actions.includes(action);
-      })
+      return resources.some(company =>
+        company.resourceBusinessId === busId &&
+        company.resources.some(res => {
+          const matchRes = res.resourceId === resId;
+          return action ? (matchRes && res.actions.includes(action)) : matchRes;
+        })
       );
     },
     // Replaces legacy ngrx action and the effect
