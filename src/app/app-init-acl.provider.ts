@@ -1,28 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-  AclConfiguration,
-  aclFeatureKey,
-  AppContextActions,
-  AppInfo,
-  BaseState,
-  RlbInitProvider
-} from '@open-rlb/ng-app';
-import { filter, firstValueFrom } from "rxjs";
+import { AclConfiguration, AppContextActions, BaseState, RlbInitProvider, UserResource } from '@open-rlb/ng-app';
 
 /*
   Example how to finalizeApp with ACL enabled
  */
 @Injectable()
 export class AppInitAclProvider implements RlbInitProvider {
-  async finalizeApps(store: Store<BaseState>, acl: AclConfiguration): Promise<void> {
-    await firstValueFrom(
-      store.select(state => state[aclFeatureKey]).pipe(
-        filter(state => !!state && state.loaded === true)
-      )
-    );
-
-    let resources = store.selectSignal(state => state[aclFeatureKey].resources)();
+  async finalizeApps(resources: UserResource[] ,store: Store<BaseState>, acl: AclConfiguration): Promise<void> {
 
     if (!resources || resources.length === 0) {
       return;
@@ -30,10 +15,12 @@ export class AppInitAclProvider implements RlbInitProvider {
 
     resources.forEach(company => {
       company.resources.forEach(res => {
-
         const appData = {
           title: res.friendlyName,
           appName: res.friendlyName,
+          // 'Data' Object must have the actions
+          //  Since we dont want to pull it from appDescriber we can get it from resources
+          actions: res.actions,
           [acl.businessIdKey]: company.resourceBusinessId,
           [acl.resourceIdKey]: res.resourceId,
         };

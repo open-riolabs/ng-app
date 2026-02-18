@@ -33,7 +33,6 @@ import { AuthenticationService } from "./lib/auth";
 import { AppsService } from "./lib/services";
 import { AclEffects } from "./lib/store/acl/acl.effects";
 import { aclFeature } from "./lib/store/acl/acl.reducer";
-import { AclStore } from "./lib/store/acl/acl.store";
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -72,13 +71,9 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
       inject(AppsService);
     }),
     provideAppInitializer(() => {
+      // From here starts all pipeline: checkAuthMultiple -> resourcesByUser -> finalizeApp -> orchestration in appsService
       const authService = inject(AuthenticationService);
       return authService.checkAuthMultiple();
-    }),
-    provideAppInitializer(() => {
-      const aclStore = inject(AclStore);
-      // We call the rxMethod, AppInitializer can guarantee that this logic will be executed before routing
-      return aclStore.loadACL();
     }),
     { provide: RLB_CFG, useValue: env },
     { provide: RLB_CFG_ENV, useValue: env.environment },

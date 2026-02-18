@@ -2,7 +2,7 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   EnvironmentConfiguration,
@@ -66,18 +66,13 @@ export class AuthenticationService {
             currentProvider: authenticatedConfig.configId
           }));
 
-          if (this.appconfig.acl) {
-            // SignalStore methods can trigger the API call
-            return this.aclStore.loadACL().pipe(
-              tap(() => this.handleRedirect()),
-              map(() => responses))
-          } else {
-            this.handleRedirect();
-            return of(responses);
-          }
         }
 
-        return of(responses);
+        // SignalStore methods can trigger the API call
+        return this.aclStore.loadACL().pipe(
+          tap(() => this.handleRedirect()),
+          map(() => responses)
+        );
       })
     );
   }

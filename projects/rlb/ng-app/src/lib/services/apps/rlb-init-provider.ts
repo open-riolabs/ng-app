@@ -1,9 +1,9 @@
 import { InjectionToken } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { BaseState } from '../../store/'
+import { BaseState, UserResource } from '../../store/'
 import { AclConfiguration, RLB_CFG } from '../../configuration'
 
 export const RLB_INIT_PROVIDER = new InjectionToken<RlbInitProvider>(`${RLB_CFG}:init.provider`);
 export interface RlbInitProvider {
-  finalizeApps(store: Store<BaseState>, acl: AclConfiguration): Promise<void>;
+  finalizeApps(resources: UserResource[], store: Store<BaseState>, acl: AclConfiguration | null): Promise<void>;
 }
