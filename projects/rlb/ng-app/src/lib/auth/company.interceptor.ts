@@ -20,7 +20,6 @@ export class CompanyInterceptor implements HttpInterceptor {
     }
     const currentApp = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
     const data = currentApp?.data as { [key: string]: string } | undefined;
-
     const mapping = this.config.acl?.interceptorMapping || {};
     let params = req.params;
     for (const key of Object.keys(mapping)) {

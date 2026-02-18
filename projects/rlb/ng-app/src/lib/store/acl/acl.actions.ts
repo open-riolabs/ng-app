@@ -9,5 +9,7 @@ export const AclActions = createActionGroup({
     'Load ACL Success': props<{ resources: UserResource[] }>(),
     'Load ACL Failure': props<{ error: any }>(),
     'Reset': emptyProps(),
+    'Finalized Apps Success': emptyProps(),
+    'Finalized Apps Failure': emptyProps()
   }
 });
