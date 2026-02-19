@@ -2,10 +2,8 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
 import { appContextFeatureKey, } from '../store/app-context/app-context.model';
 import { ProjectConfiguration, RLB_CFG } from '../configuration';
-import { AppInfo } from '../services/apps/app'
 
 @Injectable()
 export class CompanyInterceptor implements HttpInterceptor {
@@ -26,7 +24,7 @@ export class CompanyInterceptor implements HttpInterceptor {
       const storeKey = mapping[key];
       const value = data?.[storeKey];
       if (!!value) {
-        params = params.set(key, value);
+        params = params.set(storeKey, value);
       }
     };
     const clonedReq = req.clone({ params });
