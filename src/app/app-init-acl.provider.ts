@@ -18,9 +18,6 @@ export class AppInitAclProvider implements RlbInitProvider {
         const appData = {
           title: res.friendlyName,
           appName: res.friendlyName,
-          // 'Data' Object must have the actions
-          //  Since we dont want to pull it from appDescriber we can get it from resources
-          actions: res.actions,
           [acl.businessIdKey]: company.resourceBusinessId,
           [acl.resourceIdKey]: res.resourceId,
         };
