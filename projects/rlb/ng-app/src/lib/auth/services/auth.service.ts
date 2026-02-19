@@ -2,7 +2,7 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
+import { EMPTY, lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   EnvironmentConfiguration,
@@ -66,6 +66,9 @@ export class AuthenticationService {
             currentProvider: authenticatedConfig.configId
           }));
 
+        } else {
+          this.login();
+          return EMPTY
         }
 
         // SignalStore methods can trigger the API call
