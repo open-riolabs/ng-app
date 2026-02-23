@@ -1,0 +1,24 @@
+# Build folders
+dist/
+build/
+node_modules/
+
+# Logs and Coverage
+logs/
+coverage/
+
+# Lock files (do not format these!)
+package-lock.json
+yarn.lock
+
+# IDE and Tooling
+.vscode/
+.idea/
+.git/
+.agent/
+.system_generated/
+.gemini/
+
+# Angular specific
+.angular/
+.cache/

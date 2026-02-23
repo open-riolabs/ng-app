@@ -1,11 +1,10 @@
-
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
-import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
+import { IToast, ToastData, ToastDirective } from '@open-rlb/ng-bootstrap';
 
 @Component({
-    imports: [RlbAppModule],
-    template: `
+  imports: [RlbAppModule],
+  template: `
     <div class="toast-header">
       <strong class="me-auto">
         <svg
@@ -16,13 +15,17 @@ import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
           aria-hidden="true"
           preserveAspectRatio="xMidYMid slice"
           focusable="false"
-          >
-          <rect width="100%" height="100%" fill="#007aff"></rect>
+        >
+          <rect
+            width="100%"
+            height="100%"
+            fill="#007aff"
+          ></rect>
         </svg>
-        {{ data.title }}
+        {{ data().title }}
       </strong>
-      @if (data.subtitle) {
-        <small> {{ data.subtitle }}</small>
+      @if (data().subtitle) {
+        <small>{{ data().subtitle }}</small>
       }
       <button
         type="button"
@@ -31,18 +34,17 @@ import { ToastData, ToastDirective, IToast } from '@open-rlb/ng-bootstrap';
         aria-label="Close"
       ></button>
     </div>
-    <div class="toast-body">{{ data.content }}</div>
-    `,
-    hostDirectives: [
-        {
-            directive: ToastDirective,
-            inputs: ['id', 'data-instance', 'data-options'],
-        },
-    ]
+    <div class="toast-body">{{ data().content }}</div>
+  `,
+  hostDirectives: [
+    {
+      directive: ToastDirective,
+      inputs: ['id', 'data-instance', 'data-options'],
+    },
+  ],
 })
 export class ToastComponent implements IToast<string, void> {
-  data!: ToastData<string>;
+  data = input.required<ToastData<any>>();
   valid?: boolean = true;
   result?: any;
 }
-

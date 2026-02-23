@@ -8,8 +8,23 @@
 
 # Node
 /node_modules
+/projects/rlb/ng-bootstrap/node_modules
 npm-debug.log
 yarn-error.log
+
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
 
 # IDEs and editors
 .idea/
@@ -37,6 +52,6 @@ yarn-error.log
 testem.log
 /typings
 
-# System files
-.DS_Store
-Thumbs.db
+# Environment files
+.env
+.env.*
