@@ -35,7 +35,7 @@ import { IModal, ModalData, ModalDirective } from '@open-rlb/ng-bootstrap';
   ],
 })
 export class ErrorModalComponent implements IModal<string, void>, OnInit {
-  data = input<ModalData<any>>({} as any);
+  data = input.required<ModalData<any>>();
   valid = model(true);
 
   onEnter() {}

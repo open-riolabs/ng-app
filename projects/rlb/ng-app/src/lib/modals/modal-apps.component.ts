@@ -44,7 +44,7 @@ import { CommonModule } from '@angular/common';
   hostDirectives: [{ directive: ModalDirective, inputs: ['id', 'data-instance', 'data-options'] }],
 })
 export class ModalAppsComponent implements IModal<AppInfo[], AppInfo> {
-  data = input<ModalData<any>>({} as any);
+  data = input.required<ModalData<any>>();
   valid = model(true);
   result?: any;
   apps: AppInfo[] = [];
