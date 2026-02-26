@@ -1,6 +1,6 @@
 <div class="rlb-app">
   @if (navVisible$ | async) {
-    <rlb-navbar expand="lg" class="border-bottom py-1 rlb-navbar">
+    <rlb-navbar [dark]="theme === 'dark'"  expand="lg" class="border-bottom py-1 rlb-navbar">
       @if (navHeader$ | async; as header) {
         <a rlb-navbar-brand href="#">
 
@@ -82,7 +82,7 @@
   }
   <div class="rlb-main-wrapper">
     @if ((sidebarVisible$ | async)) {
-      <rlb-sidebar id="sidebar" class="rlb-sidebar">
+      <rlb-sidebar [dark]="theme === 'dark'" id="sidebar" class="rlb-sidebar">
         @for (item of  (sidebarItems$ | async); track item) {
           <rlb-sidebar-item
             [icon]="item.icon" [link]="item.url"
