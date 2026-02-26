@@ -1,17 +1,17 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { NavigableItem } from '@open-rlb/ng-bootstrap'
+import { createActionGroup, props } from '@ngrx/store';
+import { NavbarHeader } from './navbar.model';
+
 export const NavbarActionsInternal = createActionGroup({
   source: 'Navbar/Internal',
-  events: {}
+  events: {},
 });
-
 
 export const NavbarActions = createActionGroup({
   source: 'Navbar/API',
   events: {
     SetVisible: props<{ visible: boolean }>(),
     SetSearchVisible: props<{ visible: boolean }>(),
-    SetHeader: props<{ header: string | null }>(),
+    SetHeader: props<{ header: NavbarHeader | null }>(),
     SetSearchText: props<{ text: string | null }>(),
     SetLeftItems: props<{ items: string[] }>(),
     SetRightItems: props<{ items: string[] }>(),
@@ -19,6 +19,5 @@ export const NavbarActions = createActionGroup({
     SetSettingsVisible: props<{ visible: boolean }>(),
     SetAppsVisible: props<{ visible: boolean }>(),
     SetSeparatorVisible: props<{ visible: boolean }>(),
-  }
+  },
 });
-
