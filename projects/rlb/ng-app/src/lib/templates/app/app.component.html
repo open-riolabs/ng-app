@@ -1,6 +1,6 @@
 <div class="rlb-app">
   @if (navVisible$ | async) {
-    <rlb-navbar [dark]="theme === 'dark'"  expand="lg" class="border-bottom py-1 rlb-navbar">
+    <rlb-navbar [dark]="theme === 'dark'" [showSideBarToggler]="(sidebarVisible$ | async)"  expand="lg" class="border-bottom py-1 rlb-navbar">
       @if (navHeader$ | async; as header) {
         <a rlb-navbar-brand href="#">
 
