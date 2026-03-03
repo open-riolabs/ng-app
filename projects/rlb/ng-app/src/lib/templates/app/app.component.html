@@ -29,13 +29,13 @@
           </rlb-input-group>
         </rlb-navbar-form>
       }
-      <rlb-navbar-items class="ms-lg-auto">
-        @for (navComponent of navLeftItems$ | async; track navComponent) {
+      @for (navComponent of navLeftItems$ | async; track navComponent) {
+        <rlb-navbar-items class="me-auto">
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
           </ng-container>
-        }
-      </rlb-navbar-items>
+        </rlb-navbar-items>
+      }
       <rlb-navbar-items>
         @for (navComponent of navRightItems$ | async; track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
