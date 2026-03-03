@@ -30,13 +30,13 @@
         </rlb-navbar-form>
       }
       @for (navComponent of navLeftItems$ | async; track navComponent) {
-        <rlb-navbar-items class="me-auto">
+        <rlb-navbar-items class="me-auto align-items-center">
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
           </ng-container>
         </rlb-navbar-items>
       }
-      <rlb-navbar-items>
+      <rlb-navbar-items class="align-items-center">
         @for (navComponent of navRightItems$ | async; track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>

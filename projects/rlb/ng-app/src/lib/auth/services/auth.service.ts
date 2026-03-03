@@ -1,15 +1,15 @@
-import { inject, Inject, Injectable, Optional } from '@angular/core';
+import { inject, Inject, Injectable, isDevMode, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { EMPTY, lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
-  AuthConfiguration,
-  EnvironmentConfiguration,
-  IConfiguration,
-  RLB_CFG,
-  RLB_CFG_AUTH,
-  RLB_CFG_ENV
+    AuthConfiguration,
+    EnvironmentConfiguration,
+    IConfiguration,
+    RLB_CFG,
+    RLB_CFG_AUTH,
+    RLB_CFG_ENV
 } from '../../configuration';
 import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
 import { AuthActions, authsFeatureKey, BaseState } from '../../store';
@@ -67,7 +67,9 @@ export class AuthenticationService {
           }));
 
         } else {
-          this.login();
+            if (!isDevMode()) {
+                this.login();
+            }
           return EMPTY
         }
 
