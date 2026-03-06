@@ -1,4 +1,4 @@
-import { inject, Inject, Injectable, isDevMode, Optional } from '@angular/core';
+import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
@@ -60,11 +60,7 @@ export class AuthenticationService {
   public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
     return this.oidc.checkAuthMultiple(url).pipe(
       switchMap((responses: LoginResponse[]) => {
-        let authenticatedConfig = responses.find(o => o.isAuthenticated);
-
-        if (isDevMode() && responses[0]) {
-          authenticatedConfig = responses[0];
-        }
+        const authenticatedConfig = responses.find(o => o.isAuthenticated);
 
         if (authenticatedConfig && authenticatedConfig.configId) {
           this.store.dispatch(
@@ -73,6 +69,10 @@ export class AuthenticationService {
             }),
           );
         } else {
+          // wrap login with this to bypass login flow
+          // if (!isDevMode()) {
+          //
+          // }
           this.login();
           return EMPTY;
         }
