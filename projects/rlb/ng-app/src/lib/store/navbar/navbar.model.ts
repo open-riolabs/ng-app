@@ -4,6 +4,8 @@ export type NavbarHeader =
   | { type: 'text'; text: string }
   | { type: 'image'; src: string; alt?: string; height?: number };
 
+export type NavbarActionsLayout = 'default' | 'dropdown';
+
 export interface Navbar {
   visible: boolean;
   header: NavbarHeader | null;
@@ -15,6 +17,7 @@ export interface Navbar {
   settingsVisible: boolean;
   appsVisible: boolean;
   separatorVisible: boolean;
+  actionsLayout: NavbarActionsLayout;
 }
 
 export const initialNavbarState: Navbar = {
@@ -28,6 +31,7 @@ export const initialNavbarState: Navbar = {
   settingsVisible: false,
   appsVisible: false,
   separatorVisible: true,
+  actionsLayout: 'dropdown',
 };
 
 export interface NavbarState {

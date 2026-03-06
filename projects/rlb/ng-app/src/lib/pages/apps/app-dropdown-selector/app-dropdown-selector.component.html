@@ -1,0 +1,26 @@
+<rlb-navbar-dropdown-item dropdown>
+     <span tooltip-placement="bottom" [tooltip]="('core.apps.button') | translate">
+       <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
+     </span>
+   <span class="ms-1 d-lg-none">{{ 'core.apps.button' | translate }}</span>
+  <rlb-dropdown-container placement="right">
+    <div class="row row-cols-3 g-2 p-3" style="width: 320px;">
+      @for (app of apps(); track app.id) {
+        <div class="col">
+          <button
+            rlb-button
+            outline
+            class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-center"
+            [disabled]="!app.enabled && (app.core?.auth && !(isAuth()))"
+            (click)="selectApp(app)">
+
+            <i [ngClass]="['bi', 'fs-3', 'mb-1', app.core?.icon || 'bi-app']"></i>
+            <span class="small text-truncate w-100" [title]="app.data?.appName">
+              {{ app.data?.appName }}
+            </span>
+          </button>
+        </div>
+      }
+    </div>
+  </rlb-dropdown-container>
+</rlb-navbar-dropdown-item>

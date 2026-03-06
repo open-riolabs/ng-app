@@ -4,21 +4,21 @@ import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { EMPTY, lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
-    AuthConfiguration,
-    EnvironmentConfiguration,
-    IConfiguration,
-    RLB_CFG,
-    RLB_CFG_AUTH,
-    RLB_CFG_ENV
+  AuthConfiguration,
+  EnvironmentConfiguration,
+  IConfiguration,
+  RLB_CFG,
+  RLB_CFG_AUTH,
+  RLB_CFG_ENV,
 } from '../../configuration';
 import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
 import { AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
-import { AdminApiService } from "../../services/acl/user-resources.service";
-import { AclStore } from "../../store/acl/acl.store";
+import { AdminApiService } from '../../services/acl/user-resources.service';
+import { AclStore } from '../../store/acl/acl.store';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthenticationService {
   modal!: Window | null;
@@ -36,7 +36,7 @@ export class AuthenticationService {
     private readonly adminApi: AdminApiService,
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration,
-    @Optional() @Inject(RLB_CFG) private appconfig: IConfiguration
+    @Optional() @Inject(RLB_CFG) private appconfig: IConfiguration,
   ) {
     this.logger = this.log.for(this.constructor.name);
     this.logger.log('AuthenticationService initialized');
@@ -51,34 +51,38 @@ export class AuthenticationService {
   }
 
   get currentProvider() {
-    const currentProvider = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
-    return this.authConfig?.providers.find((provider) => provider.configId === currentProvider);
+    const currentProvider = this.store.selectSignal(
+      state => state[authsFeatureKey].currentProvider,
+    )();
+    return this.authConfig?.providers.find(provider => provider.configId === currentProvider);
   }
 
   public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
     return this.oidc.checkAuthMultiple(url).pipe(
       switchMap((responses: LoginResponse[]) => {
-        const authenticatedConfig = responses.find(o => o.isAuthenticated);
+        let authenticatedConfig = responses.find(o => o.isAuthenticated);
+
+        if (isDevMode() && responses[0]) {
+          authenticatedConfig = responses[0];
+        }
 
         if (authenticatedConfig && authenticatedConfig.configId) {
-
-          this.store.dispatch(AuthActions.setCurrentProvider({
-            currentProvider: authenticatedConfig.configId
-          }));
-
+          this.store.dispatch(
+            AuthActions.setCurrentProvider({
+              currentProvider: authenticatedConfig.configId,
+            }),
+          );
         } else {
-            if (!isDevMode()) {
-                this.login();
-            }
-          return EMPTY
+          this.login();
+          return EMPTY;
         }
 
         // SignalStore methods can trigger the API call
         return this.aclStore.loadACL().pipe(
           tap(() => this.handleRedirect()),
-          map(() => responses)
+          map(() => responses),
         );
-      })
+      }),
     );
   }
 
@@ -88,9 +92,11 @@ export class AuthenticationService {
     this.localStorage.writeLocal('loginRedirectUrl', returnUrl);
     this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
     // electron
-    if (typeof (process) !== 'undefined' &&
-      typeof (process?.version) !== 'undefined' &&
-      typeof (process?.versions['electron']) !== undefined) {
+    if (
+      typeof process !== 'undefined' &&
+      typeof process?.version !== 'undefined' &&
+      typeof process?.versions['electron'] !== undefined
+    ) {
       const urlHandler = (authUrl: string) => {
         console.log(authUrl);
         this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
@@ -120,17 +126,25 @@ export class AuthenticationService {
   }
 
   public get userInfo$(): Observable<any> {
-    return this.oidc.userData$.pipe(map((userData) => {
-      const user = userData.allUserData.find(o => o.configId === this.currentProvider?.configId);
-      return user ? user.userData : null;
-    }));
+    return this.oidc.userData$.pipe(
+      map(userData => {
+        const user = userData.allUserData.find(o => o.configId === this.currentProvider?.configId);
+        return user ? user.userData : null;
+      }),
+    );
   }
 
   public get isAuthenticated$(): Observable<boolean> {
-    return this.oidc.isAuthenticated$.pipe(map((isAuthenticated) => {
-      // this.logger.log(`oidc isAuthenticated$ check, response: ${JSON.stringify(isAuthenticated)}; looking for isAuthenticated of ${this.currentProvider?.configId} configId`);
-      return isAuthenticated.allConfigsAuthenticated.find(o => o.configId === this.currentProvider?.configId)?.isAuthenticated || false;
-    }));
+    return this.oidc.isAuthenticated$.pipe(
+      map(isAuthenticated => {
+        // this.logger.log(`oidc isAuthenticated$ check, response: ${JSON.stringify(isAuthenticated)}; looking for isAuthenticated of ${this.currentProvider?.configId} configId`);
+        return (
+          isAuthenticated.allConfigsAuthenticated.find(
+            o => o.configId === this.currentProvider?.configId,
+          )?.isAuthenticated || false
+        );
+      }),
+    );
   }
 
   public get accessToken$(): Observable<string | undefined> {
@@ -147,8 +161,8 @@ export class AuthenticationService {
 
   public get roles$(): Observable<string[]> {
     return this.accessToken$.pipe(
-      map((token) => (this.parseJwtService.parseJwt(token))),
-      map((payload) => payload['roles'] as string[]),
+      map(token => this.parseJwtService.parseJwt(token)),
+      map(payload => payload['roles'] as string[]),
     );
   }
 

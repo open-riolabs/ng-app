@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { NavbarHeader } from './navbar.model';
+import { NavbarActionsLayout, NavbarHeader } from './navbar.model';
 
 export const NavbarActionsInternal = createActionGroup({
   source: 'Navbar/Internal',
@@ -19,5 +19,6 @@ export const NavbarActions = createActionGroup({
     SetSettingsVisible: props<{ visible: boolean }>(),
     SetAppsVisible: props<{ visible: boolean }>(),
     SetSeparatorVisible: props<{ visible: boolean }>(),
+    SetActionsLayout: props<{ layout: NavbarActionsLayout }>(),
   },
 });

@@ -21,7 +21,9 @@ import { AutolinkPipe, TruncatePipe } from './pipes';
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
 import { AppContainerComponent } from './templates/app-container/app-container.component';
-import { RlbRole } from "./auth/directives/role.directive";
+import { RlbRole } from './auth/directives/role.directive';
+import { SettingsDropdownSelectorComponent } from './pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
+import { AppDropdownSelectorComponent } from './pages/apps/app-dropdown-selector/app-dropdown-selector.component';
 
 @NgModule({
   declarations: [
@@ -46,8 +48,10 @@ import { RlbRole } from "./auth/directives/role.directive";
     ContentComponent,
     AppTemplateComponent,
     AppContainerComponent,
+    SettingsDropdownSelectorComponent,
+    AppDropdownSelectorComponent,
     // directives
-    RlbRole
+    RlbRole,
   ],
   exports: [
     // pipes
@@ -70,7 +74,7 @@ import { RlbRole } from "./auth/directives/role.directive";
     RouterModule,
     FormsModule,
     // directives
-    RlbRole
+    RlbRole,
   ],
   imports: [
     CommonModule,
@@ -78,8 +82,7 @@ import { RlbRole } from "./auth/directives/role.directive";
     ReactiveFormsModule,
     TranslateModule,
     RlbBootstrapModule,
-    RouterModule
-  ]
+    RouterModule,
+  ],
 })
-export class RlbAppModule { }
-
+export class RlbAppModule {}

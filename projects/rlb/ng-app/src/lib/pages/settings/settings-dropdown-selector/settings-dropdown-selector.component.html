@@ -1,0 +1,203 @@
+<rlb-navbar-dropdown-item #menu dropdown auto-close="outside" (status-changed)="change($event)">
+  <!-- Dropdown Toggle Icon -->
+  <span tooltip-placement="bottom" [tooltip]="('core.settings.title') | translate">
+      <i class="bi bi-gear fs-5"></i>
+  </span>
+  <span class="ms-1 d-lg-none">{{ 'core.settings.title' | translate }}</span>
+
+  <!-- Dropdown Container -->
+  <rlb-dropdown-container placement="right">
+
+    <rlb-carousel
+      [hide-indicators]="true"
+      [hide-controls]="true"
+      autoplay="none"
+      [no-touch]="true"
+      [(current-slide)]="activeSlide"
+      style="width: 320px; display: block;">
+
+      <rlb-carousel-slide [active]="true">
+      <div class="p-3">
+        <h6 class="dropdown-header px-0 text-center mb-2 fw-bold text-dark">
+          {{ 'core.settings.title' | translate }}
+        </h6>
+
+        <div class="row row-cols-3 g-2">
+
+          <!-- General Settings -->
+          <div class="col">
+            <button
+              rlb-button
+              outline
+              color="primary"
+              (click)="goToInlineSettings()"
+              class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+              <i class="bi bi-sliders fs-4 mb-1"></i>
+              <span class="small text-truncate w-100">{{ 'core.settings.generalTitle' | translate }}</span>
+            </button>
+          </div>
+
+          <!-- Dynamic App Settings -->
+          @for (app of apps(); track app.id) {
+            @if (app.settings) {
+              <div class="col">
+                <button
+                  rlb-button
+                  outline
+                  color="primary"
+                  [disabled]="!app.enabled && (app.settings.auth && !(isAuth()))"
+                  (click)="selectApp(app)"
+                  class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                  <i [ngClass]="['bi', 'fs-4', 'mb-1', app.settings.icon || 'bi-gear']"></i>
+                  <span class="small text-truncate w-100" [title]="(app.settings.title | translate) || app.data?.appName">
+                    {{ (app.settings.title | translate) || app.data?.appName }}
+                </span>
+                </button>
+              </div>
+            }
+          }
+
+          <!-- System / Status -->
+          @if (pages?.['status']?.path) {
+            <div class="col">
+              <button rlb-button outline color="primary" routerLink="/status" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-check2-circle fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">{{ 'core.settings.status' | translate }}</span>
+              </button>
+            </div>
+          }
+
+          <!-- Logger -->
+          @if (pages?.['logger']?.path) {
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                routerLink="/logger"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-file-text fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">
+                {{ 'core.settings.logger' | translate }}
+              </span>
+              </button>
+            </div>
+          }
+
+          <!-- Privacy -->
+          @if (pages?.['privacy']?.path) {
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                routerLink="/privacy"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-shield-check fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">
+                  {{ 'core.settings.privacy' | translate }}
+                </span>
+              </button>
+            </div>
+          }
+
+          <!-- Cookies -->
+          @if (pages?.['cookies']?.path) {
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                routerLink="/cookies"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-cookie fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">
+                {{ 'core.settings.cookies' | translate }}
+              </span>
+              </button>
+            </div>
+          }
+
+          <!-- Terms -->
+          @if (pages?.['terms']?.path) {
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                routerLink="/terms"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-vector-pen fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">
+                {{ 'core.settings.legal' | translate }}
+              </span>
+              </button>
+            </div>
+          }
+
+          <!-- Support -->
+          @if (pages?.['support']?.path) {
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                routerLink="/support"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-chat-quote fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">
+                {{ 'core.settings.support' | translate }}
+              </span>
+              </button>
+            </div>
+          }
+
+        </div>
+      </div>
+      </rlb-carousel-slide>
+
+      <rlb-carousel-slide>
+        <div class="p-3">
+
+          <div class="d-flex align-items-center mb-3">
+            <button class="btn btn-sm btn-link text-dark p-0 me-2 border-0 text-decoration-none" (click)="goToFirst()">
+              <i class="bi bi-arrow-left fs-5"></i>
+            </button>
+            <h6 class="mb-0 fw-bold">{{ 'core.settings.generalTitle' | translate }}</h6>
+          </div>
+
+          <!-- Inline Settings Content without routing -->
+          <rlb-list class="settings">
+            <rlb-list-item class="settings-item">
+              <div class="d-flex justify-content-between">
+                <div class="settings-text">
+                  <h6 class="mt-1">{{ 'core.settings.generalTheme' | translate}}</h6>
+                </div>
+                <div class="settings-control">
+                  <rlb-switch size="small" [(ngModel)]="darkMode" class="mt-2" />
+                </div>
+              </div>
+            </rlb-list-item>
+            <rlb-list-item class="settings-item">
+              <div class="d-flex justify-content-between">
+                <div class="settings-text">
+                  <h6 class="mt-1">{{ 'core.settings.generalLanguage' | translate}}</h6>
+                </div>
+                <div class="settings-control">
+                  <rlb-select size="small" [(ngModel)]="currentLanguage">
+                    @for (l of languages; track l.value) {
+                      <rlb-option [value]="l.value">{{l.label}}</rlb-option>
+                    }
+                  </rlb-select>
+                </div>
+              </div>
+            </rlb-list-item>
+          </rlb-list>
+
+        </div>
+      </rlb-carousel-slide>
+
+    </rlb-carousel>
+
+  </rlb-dropdown-container>
+</rlb-navbar-dropdown-item>

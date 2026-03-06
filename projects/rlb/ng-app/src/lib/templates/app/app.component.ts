@@ -3,8 +3,14 @@ import { Store } from '@ngrx/store';
 import { NavigableItem, SidebarNavigableItem } from '@open-rlb/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
-import { AppsService } from '../../services';
-import { appContextFeatureKey, AuthActions, BaseState, NavbarActions, SidebarActions } from '../../store';
+import { AppInfo, AppsService } from '../../services';
+import {
+  appContextFeatureKey,
+  AuthActions,
+  BaseState,
+  NavbarActions,
+  SidebarActions,
+} from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { AuthenticationService } from '../../auth/services/auth.service';
@@ -13,10 +19,9 @@ import { AuthenticationService } from '../../auth/services/auth.service';
   selector: 'rlb-app-template',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class AppTemplateComponent implements OnDestroy {
-
   private navbarItemsSubscription: Subscription | undefined;
   private sidebarItemsSubscription: Subscription | undefined;
   private sidebarFooterItemsSubscription: Subscription | undefined;
@@ -32,8 +37,8 @@ export class AppTemplateComponent implements OnDestroy {
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
     public appsService: AppsService,
-    private readonly authService: AuthenticationService
-  ) { }
+    private readonly authService: AuthenticationService,
+  ) {}
 
   ngOnDestroy(): void {
     this.navbarItemsSubscription?.unsubscribe();
@@ -117,6 +122,10 @@ export class AppTemplateComponent implements OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].appsVisible);
   }
 
+  get navbarLayout$() {
+    return this.store.select(state => state[navbarsFeatureKey].actionsLayout);
+  }
+
   get apps() {
     return this.appsService.apps;
   }
@@ -135,5 +144,9 @@ export class AppTemplateComponent implements OnDestroy {
     if (item.externalUrl) {
       window.open(item.externalUrl, '_blank')?.focus();
     }
+  }
+
+  selectApp(app: AppInfo) {
+    this.appsService.selectApp(app, 'app');
   }
 }
