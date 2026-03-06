@@ -14,9 +14,9 @@
             [disabled]="!app.enabled && (app.core?.auth && !(isAuth()))"
             (click)="selectApp(app)">
 
-            <i [ngClass]="['bi', 'fs-3', 'mb-1', app.core?.icon || 'bi-app']"></i>
-            <span class="small text-truncate w-100" [title]="app.data?.appName">
-              {{ app.data?.appName }}
+            <i [ngClass]="['fs-3', 'mb-1', app.core?.icon || 'bi bi-app']"></i>
+            <span class="small text-truncate w-100" [title]="app.core?.title | translate">
+              {{ app.core?.title | translate }}
             </span>
           </button>
         </div>
