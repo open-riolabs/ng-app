@@ -2,24 +2,29 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, switchMap } from 'rxjs';
-import { AclConfiguration, AuthConfiguration, RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
-import { AppContextActions, AuthActions, authsFeatureKey, BaseState, } from '../../store';
-import { AclStore } from '../../store/acl/acl.store'
+import {
+  AclConfiguration,
+  AuthConfiguration,
+  RLB_CFG_ACL,
+  RLB_CFG_AUTH,
+} from '../../configuration';
+import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AclStore } from '../../store/acl/acl.store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo } from './app';
-import { AppLoggerService, LoggerContext } from "./app-logger.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { DEFAULT_ROUTES_CONFIG } from "../../pages/default-routes.config";
+import { AppLoggerService, LoggerContext } from './app-logger.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DEFAULT_ROUTES_CONFIG } from '../../pages/default-routes.config';
 
 interface AppConfig {
-  route: ActivatedRoute
-  appsConfig: AppInfo<any>[]
-  apps: AppInfo<any>[]
+  route: ActivatedRoute;
+  appsConfig: AppInfo<any>[];
+  apps: AppInfo<any>[];
   fullPath: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppsService {
   private logger: LoggerContext;
@@ -31,13 +36,13 @@ export class AppsService {
     private router: Router,
     private loggerService: AppLoggerService,
     @Inject(RLB_CFG_AUTH) @Optional() readonly confAuth: AuthConfiguration | undefined,
-    @Inject(RLB_CFG_ACL) @Optional() private readonly confAcl: AclConfiguration | undefined
+    @Inject(RLB_CFG_ACL) @Optional() private readonly confAcl: AclConfiguration | undefined,
   ) {
     this.logger = this.loggerService.for(this.constructor.name);
     this.logger.log('AppsService initialized');
 
     this.initAuthProviders(store, confAuth);
-    this.initRouterListener()
+    this.initRouterListener();
   }
 
   get currentDomain() {
@@ -45,7 +50,7 @@ export class AppsService {
   }
 
   get apps() {
-    const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)()
+    const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)();
     const resources = this.aclStore.resources();
     const confAcl = this.confAcl;
 
@@ -88,7 +93,7 @@ export class AppsService {
 
     return {
       busId: app.data[this.confAcl.businessIdKey],
-      resId: app.data[this.confAcl.resourceIdKey]
+      resId: app.data[this.confAcl.resourceIdKey],
     };
   }
 
@@ -120,10 +125,14 @@ export class AppsService {
   }
 
   private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
-    const currentProviderInStore = this.store.selectSignal((state) => state[authsFeatureKey].currentProvider)();
+    const currentProviderInStore = this.store.selectSignal(
+      state => state[authsFeatureKey].currentProvider,
+    )();
 
     if (currentProviderInStore) {
-      this.logger.info(`Auth provider already set to '${currentProviderInStore}' by Initializer. AppsService initAuthProviders skipping init.`);
+      this.logger.info(
+        `Auth provider already set to '${currentProviderInStore}' by Initializer. AppsService initAuthProviders skipping init.`,
+      );
       return;
     }
 
@@ -134,19 +143,27 @@ export class AppsService {
 
     if (confAuth?.providers && confAuth.providers.length === 1) {
       this.logger.info('Single auth provider detected:', confAuth.providers[0]);
-      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }));
-      return
+      store.dispatch(
+        AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }),
+      );
+      return;
     }
 
     this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
 
-    const authProvidersMatched = confAuth.providers.filter(provider => provider.domains?.includes(this.currentDomain));
+    const authProvidersMatched = confAuth.providers.filter(provider =>
+      provider.domains?.includes(this.currentDomain),
+    );
 
     if (authProvidersMatched && authProvidersMatched.length === 1) {
       this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
-      store.dispatch(AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }));
+      store.dispatch(
+        AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }),
+      );
     } else if (authProvidersMatched && authProvidersMatched.length > 1) {
-      this.logger.warn(`Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`);
+      this.logger.warn(
+        `Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`,
+      );
     } else {
       this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
     }
@@ -157,7 +174,7 @@ export class AppsService {
       .pipe(
         filter(event => event instanceof NavigationEnd),
         switchMap(() => this.resolveRouteAndApps()),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe(data => this.handleResolvedApps(data));
   }
@@ -180,41 +197,42 @@ export class AppsService {
       routes: app.routes || [],
       viewMode: app.viewMode,
       enabled: app.enabled,
-      core: app.core
+      core: app.core,
     }));
 
     let appRoutesMatched: AppInfo[] = [];
 
     if (configPath && !this.isDefaultRoute(configPath)) {
-      appRoutesMatched = appRoutes?.filter(app =>
-        app.routes?.some(r => r.includes(configPath))
-      ) ?? [];
+      appRoutesMatched =
+        appRoutes?.filter(app => app.routes?.some(r => r.includes(configPath))) ?? [];
     }
 
     this.logger.info('Matched appRoute:', appRoutesMatched);
 
-    return this.store.select(state => state[appContextFeatureKey].apps).pipe(
-      // waiting for all "finalizeApp" dispatches
-      filter(apps => {
-        if (!apps || apps.length === 0) return true;
-        const allFinalized = !apps.some(app => !app.id);
-        if (!allFinalized) {
-          this.logger.info('Waiting for apps initialization (finalizeApp)...');
-        }
-        return allFinalized;
-      }),
-      map(apps => {
-        if (appRoutesMatched.length > 0 || actualPath === '') {
-          return {
-            route,
-            appsConfig: appRoutesMatched,
-            apps,
-            fullPath: actualPath
-          } as AppConfig;
-        }
-        return null;
-      })
-    );
+    return this.store
+      .select(state => state[appContextFeatureKey].apps)
+      .pipe(
+        // waiting for all "finalizeApp" dispatches
+        filter(apps => {
+          if (!apps || apps.length === 0) return true;
+          const allFinalized = !apps.some(app => !app.id);
+          if (!allFinalized) {
+            this.logger.info('Waiting for apps initialization (finalizeApp)...');
+          }
+          return allFinalized;
+        }),
+        map(apps => {
+          if (appRoutesMatched.length > 0 || actualPath === '') {
+            return {
+              route,
+              appsConfig: appRoutesMatched,
+              apps,
+              fullPath: actualPath,
+            } as AppConfig;
+          }
+          return null;
+        }),
+      );
   }
 
   private handleResolvedApps(data: AppConfig | null) {
@@ -237,8 +255,8 @@ export class AppsService {
     }
 
     // Filter by domain
-    const domainApps = data.apps.filter(app =>
-      !app.domains || app.domains?.some((domain) => domain.includes(this.currentDomain))
+    const domainApps = data.apps.filter(
+      app => !app.domains || app.domains?.some(domain => domain.includes(this.currentDomain)),
     );
 
     if (domainApps.length === 0) {
@@ -246,7 +264,6 @@ export class AppsService {
       this.selectApp(undefined);
       return;
     }
-
 
     // CASE 1: SINGLE APP REDIRECT
     // We are in root route and there is only one app available
@@ -256,10 +273,12 @@ export class AppsService {
       const targetUrl = singleApp.core?.url;
 
       if (targetUrl && targetUrl !== '/' && targetUrl !== '') {
-        this.logger.info(`[AutoRedirect] Single app detected at root. Redirecting to: ${targetUrl}`);
+        this.logger.info(
+          `[AutoRedirect] Single app detected at root. Redirecting to: ${targetUrl}`,
+        );
         this.router.navigate([targetUrl], {
           queryParams: route.snapshot.queryParams,
-          replaceUrl: true
+          replaceUrl: true,
         });
         return;
       }
@@ -269,19 +288,26 @@ export class AppsService {
     // We are in root route, and there are more than one app available
     // ====================================================================
     if (isRoot && domainApps.length > 1) {
-      this.logger.info(`Root detected with multiple apps (${domainApps.length}). Showing App Hub / Core home page.`);
-      const redirectApps = domainApps.filter((app) => app.autoRedirectOnRootEnabled);
+      this.logger.info(
+        `Root detected with multiple apps (${domainApps.length}). Showing App Hub / Core home page.`,
+      );
+      const redirectApps = domainApps.filter(app => app.autoRedirectOnRootEnabled);
 
       if (redirectApps?.length > 1) {
-        this.logger.warn('Multiple apps have autoRedirectOnRootEnabled: true. Picking the first one.', redirectApps);
+        this.logger.warn(
+          'Multiple apps have autoRedirectOnRootEnabled: true. Picking the first one.',
+          redirectApps,
+        );
       }
 
       if (redirectApps.length) {
         const targetUrl = redirectApps[0].core?.url;
-        this.logger.info(`[AutoRedirect] Detected app with root redirect. Redirecting to: ${targetUrl}`);
+        this.logger.info(
+          `[AutoRedirect] Detected app with root redirect. Redirecting to: ${targetUrl}`,
+        );
         this.router.navigate([targetUrl], {
           queryParams: route.snapshot.queryParams,
-          replaceUrl: true
+          replaceUrl: true,
         });
         return;
       }
@@ -292,11 +318,19 @@ export class AppsService {
 
     // CASE 3: Standard logic to get app (Deep linking) ---
     // Here we go only if route not empty  !="" and not root !="/"
+    const configPath = this.getConfigPath(route);
+    const matchedApps = domainApps.filter(app => {
+      if (!configPath || configPath === '') {
+        return false;
+      }
 
-    const matchedApps = domainApps.filter(app =>
-      app.routes?.some(r => r.includes(route.routeConfig?.path!)) ||
-      app.core?.url === '/' + route.routeConfig?.path
-    );
+      const hasRouteMatch = app.routes?.some(r => r.includes(configPath) || configPath.includes(r));
+
+      const hasCoreMatch =
+        app.core?.url === '/' + configPath || app.core?.url?.includes(configPath);
+
+      return hasRouteMatch || hasCoreMatch;
+    });
 
     let appToSelect: AppInfo | undefined;
 
@@ -340,8 +374,7 @@ export class AppsService {
   }
 
   private isDefaultRoute(route: string): boolean {
-    return DEFAULT_ROUTES_CONFIG
-      .some(r => r.path.includes(route));
+    return DEFAULT_ROUTES_CONFIG.some(r => r.path.includes(route));
   }
 
   private getConfigPath(route: ActivatedRoute): string {
