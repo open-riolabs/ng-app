@@ -104,7 +104,7 @@
                 [isAuth]="isAuth$ | async"
                 [navbarHasLogin]="navbarHasLogin$ | async"
                 [navbarHasSettings]="navbarHasSettings$ | async"
-                (appSelected)="selectApp($event)"
+                (appSelected)="selectApp($event, 'settings')"
               />
             }
 
@@ -113,7 +113,7 @@
               <rlb-app-dropdown-selector
                 [apps]="apps"
                 [isAuth]="isAuth$ | async"
-                (appSelected)="selectApp($event)"
+                (appSelected)="selectApp($event, 'app')"
               />
             }
           }

@@ -42,7 +42,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
     return this.pageOptions;
   }
 
-  selectApp(app: any): void {
+  selectApp(app: AppInfo): void {
     this.appSelected.emit(app);
   }
 

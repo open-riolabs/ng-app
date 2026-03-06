@@ -146,7 +146,7 @@ export class AppTemplateComponent implements OnDestroy {
     }
   }
 
-  selectApp(app: AppInfo) {
-    this.appsService.selectApp(app, 'app');
+  selectApp(app: AppInfo, viewMode: 'app' | 'settings') {
+    this.appsService.selectApp(app, viewMode);
   }
 }
