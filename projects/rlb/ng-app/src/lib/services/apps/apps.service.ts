@@ -11,7 +11,7 @@ import {
 import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { AclStore } from '../../store/acl/acl.store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
-import { AppInfo } from './app';
+import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from './app-logger.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DEFAULT_ROUTES_CONFIG } from '../../pages/default-routes.config';
@@ -349,7 +349,11 @@ export class AppsService {
 
     const qp = new URLSearchParams(route.snapshot.queryParams).toString();
     const url = currentPath + (qp ? `?${qp}` : '');
-    const viewMode = this.isSettingsRoute(route) ? 'settings' : 'app';
+    const viewMode = appToSelect
+      ? appToSelect.viewMode
+      : this.getAppViewMode(route)
+        ? 'settings'
+        : 'app';
 
     this.selectApp(appToSelect, viewMode, url);
   }
@@ -369,8 +373,8 @@ export class AppsService {
     }
   }
 
-  private isSettingsRoute(route: ActivatedRoute): boolean {
-    return route.routeConfig?.path?.includes('settings') ?? false;
+  private getAppViewMode(route: ActivatedRoute): AppViewMode {
+    return route.routeConfig?.path?.includes('settings') ? 'settings' : 'app';
   }
 
   private isDefaultRoute(route: string): boolean {
