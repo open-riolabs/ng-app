@@ -7,7 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { AppInfo, LanguageService } from '../../../services';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
-import { AppContextActions, appContextFeatureKey, BaseState } from '../../../store';
+import { AppContextActions, appContextFeatureKey, AuthActions, BaseState } from '../../../store';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -52,6 +52,10 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
 
   goToInlineSettings() {
     this.activeSlide = 1;
+  }
+
+  logout() {
+    this.store.dispatch(AuthActions.logout());
   }
 
   ngOnDestroy() {}

@@ -32,8 +32,8 @@
               color="primary"
               (click)="goToInlineSettings()"
               class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
-              <i class="bi bi-sliders fs-4 mb-1"></i>
-              <span class="small text-truncate w-100">{{ 'core.settings.generalTitle' | translate }}</span>
+              <i class="bi bi-person fs-4 mb-1"></i>
+              <span class="small text-truncate w-100">{{ 'core.account.settings.title' | translate }}</span>
             </button>
           </div>
 
@@ -159,29 +159,33 @@
       <rlb-carousel-slide>
         <div class="p-3">
 
+          <!-- Header -->
           <div class="d-flex align-items-center mb-3">
-            <button class="btn btn-sm btn-link text-dark p-0 me-2 border-0 text-decoration-none" (click)="goToFirst()">
+            <button class="btn btn-sm btn-link text-reset p-0 me-2 border-0 text-decoration-none" (click)="goToFirst()">
               <i class="bi bi-arrow-left fs-5"></i>
             </button>
-            <h6 class="mb-0 fw-bold">{{ 'core.settings.generalTitle' | translate }}</h6>
+            <h6 class="mb-0 fw-bold">{{ 'core.account.settings.title' | translate }}</h6>
           </div>
 
-          <!-- Inline Settings Content without routing -->
           <rlb-list class="settings">
+
+            <!-- Theme Settings -->
             <rlb-list-item class="settings-item">
-              <div class="d-flex justify-content-between">
+              <div class="d-flex justify-content-between align-items-center">
                 <div class="settings-text">
-                  <h6 class="mt-1">{{ 'core.settings.generalTheme' | translate}}</h6>
+                  <span class="fw-semibold">{{ 'core.settings.generalTheme' | translate}}</span>
                 </div>
                 <div class="settings-control">
-                  <rlb-switch size="small" [(ngModel)]="darkMode" class="mt-2" />
+                  <rlb-switch size="small" [(ngModel)]="darkMode" />
                 </div>
               </div>
             </rlb-list-item>
+
+            <!-- Language Settings -->
             <rlb-list-item class="settings-item">
-              <div class="d-flex justify-content-between">
+              <div class="d-flex justify-content-between align-items-center">
                 <div class="settings-text">
-                  <h6 class="mt-1">{{ 'core.settings.generalLanguage' | translate}}</h6>
+                  <span class="fw-semibold">{{ 'core.settings.generalLanguage' | translate}}</span>
                 </div>
                 <div class="settings-control">
                   <rlb-select size="small" [(ngModel)]="currentLanguage">
@@ -192,8 +196,32 @@
                 </div>
               </div>
             </rlb-list-item>
-          </rlb-list>
 
+            <!-- Show More -->
+            <rlb-list-item action class="settings-item" routerLink="/profile" style="cursor: pointer;">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="settings-text">
+                  <span class="fw-semibold">{{ 'core.account.settings.showMore' | translate }}</span>
+                </div>
+                <div class="settings-control text-primary">
+                  <i class="bi bi-arrow-up-right-square fs-5"></i>
+                </div>
+              </div>
+            </rlb-list-item>
+
+            <!-- Logout -->
+            <rlb-list-item action (click)="logout()" class="settings-item" style="cursor: pointer;">
+              <div class="d-flex justify-content-between align-items-center text-danger">
+                <div class="settings-text">
+                  <span class="fw-semibold">{{ 'core.account.logout' | translate }}</span>
+                </div>
+                <div class="settings-control">
+                  <i class="bi bi-box-arrow-left fs-5"></i>
+                </div>
+              </div>
+            </rlb-list-item>
+
+          </rlb-list>
         </div>
       </rlb-carousel-slide>
 
