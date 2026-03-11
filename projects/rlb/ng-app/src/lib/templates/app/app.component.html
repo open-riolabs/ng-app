@@ -87,7 +87,7 @@
         }
       </rlb-navbar-items>
 
-      <rlb-navbar-items class="align-items-center">
+      <rlb-navbar-items class="ms-auto align-items-center">
         @for (navComponent of navRightItems$ | async; track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
