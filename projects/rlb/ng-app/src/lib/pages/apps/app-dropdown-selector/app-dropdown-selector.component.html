@@ -1,28 +1,34 @@
-<rlb-navbar-dropdown-item dropdown>
-     <span tooltip-placement="bottom" [tooltip]="('core.apps.button') | translate">
-       <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
-     </span>
-   <span class="ms-1 d-lg-none">{{ 'core.apps.button' | translate }}</span>
-  <rlb-dropdown-container placement="right">
-    <div class="row row-cols-3 g-2 p-3" style="width: 320px;">
-      @for (app of apps(); track app.id) {
-        @if (app.core) {
-          <div class="col">
-            <button
-              rlb-button
-              outline
-              class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-center"
-              [disabled]="!app.enabled && (app.core.auth && !(isAuth()))"
-              (click)="selectApp(app)">
+@if (mode() === 'desktop') {
+  <rlb-navbar-dropdown-item dropdown>
+    <span tooltip-placement="bottom" [tooltip]="('core.apps.button') | translate">
+      <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
+    </span>
+    <rlb-dropdown-container placement="right">
 
-              <i [ngClass]="['fs-3', 'mb-1', app.core.icon || 'bi bi-app']"></i>
-              <span class="small text-truncate w-100" [title]="app.core.title | translate">
+      <div style="width: 320px;">
+        <ng-container *ngTemplateOutlet="appGrid"></ng-container>
+      </div>
+
+    </rlb-dropdown-container>
+  </rlb-navbar-dropdown-item>
+} @else {
+  <ng-container *ngTemplateOutlet="appGrid"></ng-container>
+}
+
+<ng-template #appGrid>
+  <div class="row row-cols-3 g-2 p-3">
+    @for (app of apps(); track app.id) {
+      @if (app.core) {
+        <div class="col">
+          <button rlb-button outline class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-center"
+                  [disabled]="!app.enabled && (app.core.auth && !(isAuth()))" (click)="selectApp(app)">
+            <i [ngClass]="['fs-3', 'mb-1', app.core.icon || 'bi bi-app']"></i>
+            <span class="small text-truncate w-100" [title]="app.core.title | translate">
               {{ app.core.title | translate }}
             </span>
-            </button>
-          </div>
-        }
+          </button>
+        </div>
       }
-    </div>
-  </rlb-dropdown-container>
-</rlb-navbar-dropdown-item>
+    }
+  </div>
+</ng-template>

@@ -8,6 +8,7 @@ import { AppInfo } from '../../../services';
   styleUrls: ['./app-dropdown-selector.component.scss'],
 })
 export class AppDropdownSelectorComponent {
+  mode = input<'desktop' | 'mobile'>('desktop');
   apps = input.required<AppInfo[]>();
   isAuth = input.required<boolean | null>();
 

@@ -1,7 +1,12 @@
-import { Component, Inject, Input, OnDestroy } from '@angular/core';
+import { Component, Inject, Input, OnDestroy, viewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NavigableItem, SidebarNavigableItem } from '@open-rlb/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import {
+  NavigableItem,
+  OffcanvasComponent,
+  SidebarNavigableItem,
+  VisibilityEvent,
+} from '@open-rlb/ng-bootstrap';
+import { filter, Subscription } from 'rxjs';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppInfo, AppsService } from '../../services';
 import {
@@ -14,6 +19,8 @@ import {
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { AuthenticationService } from '../../auth/services/auth.service';
+import { NavigationEnd, Router } from '@angular/router';
+import { SettingsDropdownSelectorComponent } from '../../pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
 
 @Component({
   selector: 'rlb-app-template',
@@ -33,12 +40,20 @@ export class AppTemplateComponent implements OnDestroy {
   @Input('modal-container-id') modalContainerId!: string;
   @Input('toast-container-ids') toastContainerIds!: string | string[];
 
+  readonly mobileOffcanvas = viewChild<OffcanvasComponent>('mobileOffcanvas');
+  readonly mobileSettingsMenu = viewChild<SettingsDropdownSelectorComponent>('mobileSettingsMenu');
+
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
     public store: Store<BaseState>,
     public appsService: AppsService,
     private readonly authService: AuthenticationService,
-  ) {}
+    private readonly router: Router,
+  ) {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.closeMobileMenu();
+    });
+  }
 
   ngOnDestroy(): void {
     this.navbarItemsSubscription?.unsubscribe();
@@ -148,5 +163,16 @@ export class AppTemplateComponent implements OnDestroy {
 
   selectApp(app: AppInfo, viewMode: 'app' | 'settings') {
     this.appsService.selectApp(app, viewMode);
+    this.closeMobileMenu();
+  }
+
+  onMobileMenuStatusChange(event: VisibilityEvent) {
+    if (event === 'hidden') {
+      this.mobileSettingsMenu()?.goToFirstSlide();
+    }
+  }
+
+  private closeMobileMenu() {
+    this.mobileOffcanvas()?.close();
   }
 }

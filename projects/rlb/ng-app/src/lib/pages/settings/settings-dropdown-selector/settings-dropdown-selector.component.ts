@@ -17,6 +17,8 @@ import { Store } from '@ngrx/store';
   styleUrl: './settings-dropdown-selector.component.scss',
 })
 export class SettingsDropdownSelectorComponent implements OnDestroy {
+  mode = input<'desktop' | 'mobile'>('desktop');
+
   apps = input.required<AppInfo[]>();
   navbarHasSettings = input.required();
   navbarHasLogin = input.required();
@@ -32,7 +34,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   private readonly languageService: LanguageService = inject(LanguageService);
   private readonly toastService: ToastService = inject(ToastService);
   private readonly router: Router = inject(Router);
-  private readonly menu = viewChild.required<NavbarDropdownItemComponent>('menu');
+  private readonly menu = viewChild<NavbarDropdownItemComponent>('menu');
 
   constructor() {
     this.router.events.subscribe(() => this.close());
@@ -46,7 +48,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
     this.appSelected.emit(app);
   }
 
-  goToFirst() {
+  goToFirstSlide() {
     this.activeSlide = 0;
   }
 
@@ -62,7 +64,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
 
   change(event: VisibilityEventBase) {
     if (event === 'hidden') {
-      this.goToFirst();
+      this.goToFirstSlide();
     }
   }
 
@@ -106,6 +108,6 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   }
 
   private close() {
-    this.menu().close();
+    this.menu()?.close();
   }
 }

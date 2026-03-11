@@ -1,22 +1,22 @@
-<rlb-navbar-dropdown-item #menu dropdown auto-close="outside" (status-changed)="change($event)">
-  <!-- Dropdown Toggle Icon -->
-  <span tooltip-placement="bottom" [tooltip]="('core.settings.title') | translate">
-      <i class="bi bi-gear fs-5"></i>
-  </span>
-  <span class="ms-1 d-lg-none">{{ 'core.settings.title' | translate }}</span>
+@if (mode() === 'desktop') {
+  <rlb-navbar-dropdown-item #menu dropdown auto-close="outside" (status-changed)="change($event)">
+    <span tooltip-placement="bottom" [tooltip]="('core.settings.title') | translate">
+        <i class="bi bi-gear fs-5"></i>
+    </span>
+    <rlb-dropdown-container placement="right">
+      <div style="width: 320px;">
+        <ng-container *ngTemplateOutlet="settingsCarousel"></ng-container>
+      </div>
+    </rlb-dropdown-container>
+  </rlb-navbar-dropdown-item>
+} @else {
+  <!-- Inline mode for Offcanvas -->
+  <ng-container *ngTemplateOutlet="settingsCarousel"></ng-container>
+}
 
-  <!-- Dropdown Container -->
-  <rlb-dropdown-container placement="right">
-
-    <rlb-carousel
-      [hide-indicators]="true"
-      [hide-controls]="true"
-      autoplay="none"
-      [no-touch]="true"
-      [(current-slide)]="activeSlide"
-      style="width: 320px; display: block;">
-
-      <rlb-carousel-slide [active]="true">
+<ng-template #settingsCarousel>
+  <rlb-carousel [hide-indicators]="true" [hide-controls]="true" autoplay="none"[no-touch]="true" [(current-slide)]="activeSlide" class="w-100 d-block">
+    <rlb-carousel-slide [active]="true">
       <div class="p-3">
         <h6 class="dropdown-header px-0 text-center mb-2 fw-bold text-dark">
           {{ 'core.settings.title' | translate }}
@@ -154,78 +154,75 @@
 
         </div>
       </div>
-      </rlb-carousel-slide>
+    </rlb-carousel-slide>
 
-      <rlb-carousel-slide>
-        <div class="p-3">
+    <rlb-carousel-slide>
+      <div class="p-3">
 
-          <!-- Header -->
-          <div class="d-flex align-items-center mb-3">
-            <button class="btn btn-sm btn-link text-reset p-0 me-2 border-0 text-decoration-none" (click)="goToFirst()">
-              <i class="bi bi-arrow-left fs-5"></i>
-            </button>
-            <h6 class="mb-0 fw-bold">{{ 'core.account.settings.title' | translate }}</h6>
-          </div>
-
-          <rlb-list class="settings">
-
-            <!-- Theme Settings -->
-            <rlb-list-item class="settings-item">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="settings-text">
-                  <span class="fw-semibold">{{ 'core.settings.generalTheme' | translate}}</span>
-                </div>
-                <div class="settings-control">
-                  <rlb-switch size="small" [(ngModel)]="darkMode" />
-                </div>
-              </div>
-            </rlb-list-item>
-
-            <!-- Language Settings -->
-            <rlb-list-item class="settings-item">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="settings-text">
-                  <span class="fw-semibold">{{ 'core.settings.generalLanguage' | translate}}</span>
-                </div>
-                <div class="settings-control">
-                  <rlb-select size="small" [(ngModel)]="currentLanguage">
-                    @for (l of languages; track l.value) {
-                      <rlb-option [value]="l.value">{{l.label}}</rlb-option>
-                    }
-                  </rlb-select>
-                </div>
-              </div>
-            </rlb-list-item>
-
-            <!-- Show More -->
-            <rlb-list-item action class="settings-item" routerLink="/profile" style="cursor: pointer;">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="settings-text">
-                  <span class="fw-semibold">{{ 'core.account.settings.showMore' | translate }}</span>
-                </div>
-                <div class="settings-control text-primary">
-                  <i class="bi bi-arrow-up-right-square fs-5"></i>
-                </div>
-              </div>
-            </rlb-list-item>
-
-            <!-- Logout -->
-            <rlb-list-item action (click)="logout()" class="settings-item" style="cursor: pointer;">
-              <div class="d-flex justify-content-between align-items-center text-danger">
-                <div class="settings-text">
-                  <span class="fw-semibold">{{ 'core.account.logout' | translate }}</span>
-                </div>
-                <div class="settings-control">
-                  <i class="bi bi-box-arrow-left fs-5"></i>
-                </div>
-              </div>
-            </rlb-list-item>
-
-          </rlb-list>
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-3">
+          <button class="btn btn-sm btn-link text-reset p-0 me-2 border-0 text-decoration-none" (click)="goToFirstSlide()">
+            <i class="bi bi-arrow-left fs-5"></i>
+          </button>
+          <h6 class="mb-0 fw-bold">{{ 'core.account.settings.title' | translate }}</h6>
         </div>
-      </rlb-carousel-slide>
 
-    </rlb-carousel>
+        <rlb-list class="settings">
 
-  </rlb-dropdown-container>
-</rlb-navbar-dropdown-item>
+          <!-- Theme Settings -->
+          <rlb-list-item class="settings-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="settings-text">
+                <span class="fw-semibold">{{ 'core.settings.generalTheme' | translate}}</span>
+              </div>
+              <div class="settings-control">
+                <rlb-switch size="small" [(ngModel)]="darkMode" />
+              </div>
+            </div>
+          </rlb-list-item>
+
+          <!-- Language Settings -->
+          <rlb-list-item class="settings-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="settings-text">
+                <span class="fw-semibold">{{ 'core.settings.generalLanguage' | translate}}</span>
+              </div>
+              <div class="settings-control">
+                <rlb-select size="small" [(ngModel)]="currentLanguage">
+                  @for (l of languages; track l.value) {
+                    <rlb-option [value]="l.value">{{l.label}}</rlb-option>
+                  }
+                </rlb-select>
+              </div>
+            </div>
+          </rlb-list-item>
+
+          <!-- Show More -->
+          <rlb-list-item action class="settings-item" routerLink="/profile" style="cursor: pointer;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="settings-text">
+                <span class="fw-semibold">{{ 'core.account.settings.showMore' | translate }}</span>
+              </div>
+              <div class="settings-control text-primary">
+                <i class="bi bi-arrow-up-right-square fs-5"></i>
+              </div>
+            </div>
+          </rlb-list-item>
+
+          <!-- Logout -->
+          <rlb-list-item action (click)="logout()" class="settings-item" style="cursor: pointer;">
+            <div class="d-flex justify-content-between align-items-center text-danger">
+              <div class="settings-text">
+                <span class="fw-semibold">{{ 'core.account.logout' | translate }}</span>
+              </div>
+              <div class="settings-control">
+                <i class="bi bi-box-arrow-left fs-5"></i>
+              </div>
+            </div>
+          </rlb-list-item>
+
+        </rlb-list>
+      </div>
+    </rlb-carousel-slide>
+  </rlb-carousel>
+</ng-template>

@@ -29,13 +29,64 @@
           </rlb-input-group>
         </rlb-navbar-form>
       }
-      @for (navComponent of navLeftItems$ | async; track navComponent) {
-        <rlb-navbar-items class="me-auto align-items-center">
+
+      <!-- MOBILE VIEWS -->
+      <div rlb-custom-navbar-items class="d-flex d-lg-none">
+        <rlb-fab size="sm" outline toggle="offcanvas" toggle-target="mobileMenuOffcanvas">
+          <i class="bi bi-three-dots-vertical"></i>
+        </rlb-fab>
+
+        <rlb-offcanvas
+          #mobileOffcanvas
+          id="mobileMenuOffcanvas"
+          [placement]="'end'"
+          (statusChange)="onMobileMenuStatusChange($event)"
+        >
+          <rlb-offcanvas-header class="border-bottom">
+            <h5 rlb-offcanvas-title class="fw-bold mb-0">Menu</h5>
+          </rlb-offcanvas-header>
+
+          <rlb-offcanvas-body class="p-0 overflow-x-hidden">
+
+            <!-- Mobile Apps Grid -->
+            @if ((navbarHasApps$ | async) && apps.length > 1) {
+              <div class="border-bottom pb-2">
+                <rlb-app-dropdown-selector
+                  mode="mobile"
+                  [apps]="apps"
+                  [isAuth]="isAuth$ | async"
+                  (appSelected)="selectApp($event, 'app')"
+                />
+              </div>
+            }
+
+            <!-- Mobile Settings Carousel -->
+            @if (((navbarHasLogin$ | async) && (isAuth$ | async)) || (navbarHasSettings$ | async)) {
+              <div class="pt-2">
+                <rlb-settings-dropdown-selector
+                  mode="mobile"
+                  #mobileSettingsMenu
+                  [apps]="apps"
+                  [isAuth]="isAuth$ | async"
+                  [navbarHasLogin]="navbarHasLogin$ | async"
+                  [navbarHasSettings]="navbarHasSettings$ | async"
+                  (appSelected)="selectApp($event, 'settings')"
+                />
+              </div>
+            }
+
+          </rlb-offcanvas-body>
+        </rlb-offcanvas>
+      </div>
+
+      <rlb-navbar-items>
+        @for (navComponent of navLeftItems$ | async; track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
           </ng-container>
-        </rlb-navbar-items>
-      }
+        }
+      </rlb-navbar-items>
+
       <rlb-navbar-items class="align-items-center">
         @for (navComponent of navRightItems$ | async; track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
