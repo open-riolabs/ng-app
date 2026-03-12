@@ -177,6 +177,7 @@
       <rlb-sidebar [dark]="theme === 'dark'" id="sidebar" class="rlb-sidebar">
         @for (item of  (sidebarItems$ | async); track $index) {
           <rlb-sidebar-item
+            *roles="item.action"
             [icon]="item.icon" [link]="item.url"
             [title]="item.title" [label]="item.label"
             [badgeCounter]="item.badgeCounter"

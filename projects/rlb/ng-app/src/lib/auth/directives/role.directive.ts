@@ -1,9 +1,9 @@
 import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AppsService } from "../../services";
+import { AppsService } from '../../services';
 
 @Directive({
   selector: '[roles]',
-  standalone: false
+  standalone: false,
 })
 export class RlbRole {
   private appsService = inject(AppsService);
@@ -15,8 +15,9 @@ export class RlbRole {
   constructor() {
     // Effect automatically re-runs if store.resources or inputs change
     effect(() => {
-      const action = this.action() || '';
-      const hasPerm = this.appsService.checkPermissionInCurrentApp(action);
+      const action = this.action();
+      // If no action is provided, it's a public element -> Grant access automatically
+      const hasPerm = !action ? true : this.appsService.checkPermissionInCurrentApp(action);
 
       this.viewContainer.clear();
       if (hasPerm) {
