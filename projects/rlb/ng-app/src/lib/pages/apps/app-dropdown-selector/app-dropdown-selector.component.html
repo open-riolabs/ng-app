@@ -23,8 +23,8 @@
           <button rlb-button outline class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-center"
                   [disabled]="!app.enabled && (app.core.auth && !(isAuth()))" (click)="selectApp(app)">
             <i [ngClass]="['fs-3', 'mb-1', app.core.icon || 'bi bi-app']"></i>
-            <span class="small text-truncate w-100" [title]="app.core.title | translate">
-              {{ app.core.title | translate }}
+            <span class="small text-truncate w-100" [title]="app.data.friendlyName ? app.data.friendlyName : app.core.title | translate">
+              {{ app.data.friendlyName ? app.data.friendlyName : app.core.title | translate }}
             </span>
           </button>
         </div>
