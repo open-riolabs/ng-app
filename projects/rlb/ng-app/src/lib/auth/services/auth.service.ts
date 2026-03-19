@@ -60,7 +60,13 @@ export class AuthenticationService {
   public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
     return this.oidc.checkAuthMultiple(url).pipe(
       switchMap((responses: LoginResponse[]) => {
-        const authenticatedConfig = responses.find(o => o.isAuthenticated);
+        let authenticatedConfig = responses.find(o => o.isAuthenticated);
+
+        // uncomment to bypass login
+        // if (isDevMode()) {
+        //   //@ts-ignore
+        //   authenticatedConfig = { configId: 'chattoo' };
+        // }
 
         if (authenticatedConfig && authenticatedConfig.configId) {
           this.store.dispatch(
@@ -69,16 +75,17 @@ export class AuthenticationService {
             }),
           );
         } else {
-          // wrap login with this to bypass login flow
-          // if (!isDevMode()) {
-          //
-          // }
           this.login();
           return EMPTY;
         }
 
-        // SignalStore methods can trigger the API call
-        return this.aclStore.loadACL().pipe(
+        // Find the active provider's configuration
+        const activeProviderConfig = this.authConfig?.providers.find(
+          p => p.configId === authenticatedConfig?.configId,
+        );
+
+        // Pass the specific provider's ACL config to the store
+        return this.aclStore.loadACL(activeProviderConfig?.acl).pipe(
           tap(() => this.handleRedirect()),
           map(() => responses),
         );

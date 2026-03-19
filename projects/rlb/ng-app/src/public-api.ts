@@ -1,10 +1,20 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { EnvironmentProviders, inject, isDevMode, provideAppInitializer, Provider } from '@angular/core';
+import {
+  EnvironmentProviders,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  Provider,
+} from '@angular/core';
 import { provideRouter, Route } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
-import { ModalRegistryOptions, provideRlbBootstrap, ToastRegistryOptions } from '@open-rlb/ng-bootstrap';
+import {
+  ModalRegistryOptions,
+  provideRlbBootstrap,
+  ToastRegistryOptions,
+} from '@open-rlb/ng-bootstrap';
 import { provideRlbCodeBrowserOAuth } from './lib/auth/auth.provider';
 import {
   ProjectConfiguration,
@@ -13,7 +23,7 @@ import {
   RLB_CFG_CMS,
   RLB_CFG_ENV,
   RLB_CFG_I18N,
-  RLB_CFG_PAGES
+  RLB_CFG_PAGES,
 } from './lib/configuration';
 import { ErrorModalComponent } from './lib/modals/error-modal.component';
 import { ModalAppsComponent } from './lib/modals/modal-apps.component';
@@ -29,10 +39,8 @@ import { authsFeature } from './lib/store/auth/auth.reducer';
 import { navbarsFeature } from './lib/store/navbar/navbar.reducer';
 import { sidebarsFeature } from './lib/store/sidebar/sidebar.reducer';
 import { ToastComponent } from './lib/toasts/error-toast.component';
-import { AuthenticationService } from "./lib/auth";
-import { AppsService } from "./lib/services";
-import { AclEffects } from "./lib/store/acl/acl.effects";
-import { aclFeature } from "./lib/store/acl/acl.reducer";
+import { AuthenticationService } from './lib/auth';
+import { AppsService } from './lib/services';
 
 export * from './lib/auth';
 export * from './lib/guards';
@@ -47,18 +55,18 @@ export * from './lib/toasts';
 export * from './lib/configuration';
 export * from './lib/rlb-app.module';
 
-export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfiguration<T>): (EnvironmentProviders | Provider)[] {
+export function provideRlbConfig<T = { [k: string]: any }>(
+  env: ProjectConfiguration<T>,
+): (EnvironmentProviders | Provider)[] {
   return [
     provideRlbBootstrap(),
     RlbAppModule,
     provideStore(),
     provideState(authsFeature),
-    provideEffects(AuthEffects, AppContextEffects, AclEffects),
+    provideEffects(AuthEffects, AppContextEffects),
     provideState(navbarsFeature),
     provideState(sidebarsFeature),
     provideState(appFeature),
-    provideState(aclFeature),
-    // provideEffects(AppContextEffects),
     provideRouter(getDefaultRoutes(env.pages)),
     provideRlbCodeBrowserOAuth(env.auth),
     provideRlbI18n(env.i18n),
@@ -82,12 +90,14 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
     { provide: RLB_CFG_I18N, useValue: env.i18n },
     { provide: RLB_CFG_ACL, useValue: env.acl },
     {
-      provide: ModalRegistryOptions, useValue: {
+      provide: ModalRegistryOptions,
+      useValue: {
         modals: {
-          "modal-apps-component": ModalAppsComponent,
+          'modal-apps-component': ModalAppsComponent,
           'error-modal-component': ErrorModalComponent,
-        }
-      }, multi: true
+        },
+      },
+      multi: true,
     },
     {
       provide: ToastRegistryOptions,
@@ -102,14 +112,18 @@ export function provideRlbConfig<T = { [k: string]: any; }>(env: ProjectConfigur
 }
 
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
-	const routesPaths = app.routes ? flattenRoutes(app.routes) : [];
+  const routesPaths = app.routes ? flattenRoutes(app.routes) : [];
 
-	const providers: (EnvironmentProviders | Provider)[] = [{
-    provide: RLB_APPS, useValue: {
-      ...app.info,
-      routes: routesPaths,
-    }, multi: true
-  },];
+  const providers: (EnvironmentProviders | Provider)[] = [
+    {
+      provide: RLB_APPS,
+      useValue: {
+        ...app.info,
+        routes: routesPaths,
+      },
+      multi: true,
+    },
+  ];
   if (app.routes) {
     providers.push(provideRouter(app.routes));
   }
@@ -120,9 +134,9 @@ export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)
 }
 
 function flattenRoutes(routes: Route[], parentPath = ''): string[] {
-	return routes.flatMap(route => {
-		const fullPath = route.path ? `${parentPath}${parentPath && '/'}${route.path}` : parentPath;
-		const childPaths = route.children ? flattenRoutes(route.children, fullPath) : [];
-		return route.path ? [fullPath, ...childPaths] : childPaths;
-	});
+  return routes.flatMap(route => {
+    const fullPath = route.path ? `${parentPath}${parentPath && '/'}${route.path}` : parentPath;
+    const childPaths = route.children ? flattenRoutes(route.children, fullPath) : [];
+    return route.path ? [fullPath, ...childPaths] : childPaths;
+  });
 }

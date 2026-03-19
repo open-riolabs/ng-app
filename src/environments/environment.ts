@@ -1,6 +1,6 @@
 import { ProjectConfiguration } from '@open-rlb/ng-app';
 
-export const environment: ProjectConfiguration & { payment: { stripe: { key: string; }; }; } = {
+export const environment: ProjectConfiguration & { payment: { stripe: { key: string } } } = {
   production: false,
   environment: {
     baseUrl: 'http://localhost:4200',
@@ -12,7 +12,7 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
     errorDialogName: 'error-modal-component',
     pwaUpdateEnabled: true,
     errorDialogSize: 'md',
-    logLevel: 'log'
+    logLevel: 'log',
   },
   i18n: {
     availableLangs: ['it'],
@@ -27,15 +27,22 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
     interceptor: 'oauth-code-ep',
     allowedUrls: ['api.staging.riolabs.net'],
     enableCompanyInterceptor: true,
-    providers: [{
-      configId: 'chattoo',
-      authority: 'https://login.riolabs.net/realms/riolabs-dev',
-      redirectUrl: 'http://localhost:4200',
-      postLogoutRedirectUri: 'http://localhost:4200',
-      clientId: 'chattoo',
-      scope: 'openid profile offline_access',
-      logLevel: 2,
-    }]
+    providers: [
+      {
+        configId: 'chattoo',
+        authority: 'https://login.riolabs.net/realms/riolabs-dev',
+        domains: ['localhost'],
+        redirectUrl: 'http://localhost:4202',
+        postLogoutRedirectUri: 'http://localhost:4202',
+        clientId: 'chattoo',
+        scope: 'openid profile offline_access',
+        logLevel: 2,
+        // acl: {
+        //   endpointKey: 'http-gateway',
+        //   path: 'admin/acl/resources',
+        // },
+      },
+    ],
   },
   pages: {
     content: { path: 'content' },
@@ -48,22 +55,30 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
     logger: { path: 'logger' },
   },
   endpoints: {
-    "http-gateway": { baseUrl: 'https://api.staging.riolabs.net', auth: true, healthPath: 'health', wss: false },
-    "ws-gateway": { baseUrl: 'wss://api.staging.riolabs.net', healthPath: 'health', auth: true, wss: true, }
-  },
-  acl: {
-    endpointKey: 'http-gateway',
-    path: 'admin/acl/resources',
-    businessIdKey: 'businessId',
-    resourceIdKey: 'resourceId',
-    interceptorMapping: {
-      companyId: 'companyId',
-      chatId: 'productId',
+    'http-gateway': {
+      baseUrl: 'https://api.staging.riolabs.net',
+      auth: true,
+      healthPath: 'health',
+      wss: false,
+    },
+    'ws-gateway': {
+      baseUrl: 'wss://api.staging.riolabs.net',
+      healthPath: 'health',
+      auth: true,
+      wss: true,
     },
   },
+  // acl: {
+  //   businessIdKey: 'businessId',
+  //   resourceIdKey: 'resourceId',
+  //   interceptorMapping: {
+  //     companyId: 'companyId',
+  //     chatId: 'productId',
+  //   },
+  // },
   payment: {
     stripe: {
-      key: ""
-    }
-  }
+      key: '',
+    },
+  },
 };

@@ -1,11 +1,13 @@
-import { InjectionToken, Type } from "@angular/core";
-import { OpenIdConfiguration } from "angular-auth-oidc-client";
-import { LogLevel } from "./services";
+import { InjectionToken, Type } from '@angular/core';
+import { OpenIdConfiguration } from 'angular-auth-oidc-client';
+import { LogLevel } from './services';
 
 // export const RLB_CFG = 'rlb.options';
 export const RLB_CFG = new InjectionToken<ProjectConfiguration>('rlb.options');
 export const RLB_CFG_CMS = new InjectionToken<CmsConfiguration>(`${RLB_CFG}:cms`);
-export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(`${RLB_CFG}:i18n`);
+export const RLB_CFG_I18N = new InjectionToken<InternationalizationConfiguration>(
+  `${RLB_CFG}:i18n`,
+);
 export const RLB_CFG_PAGES = new InjectionToken<PagesConfiguration>(`${RLB_CFG}:pages`);
 export const RLB_CFG_ENV = new InjectionToken<EnvironmentConfiguration>(`${RLB_CFG}:env`);
 export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:auth`);
@@ -18,9 +20,14 @@ export interface InterceptorMapping {
   [k: string]: string;
 }
 
+export interface ProviderAclConfiguration {
+  endpointKey: string;
+  path: string;
+}
+
 export interface AclConfiguration {
-  endpointKey: string; // The key in the 'endpoints'
-  path: string;        // The path
+  // endpointKey: string; // The key in the 'endpoints'
+  // path: string;        // The path
   interceptorMapping?: InterceptorMapping;
   businessIdKey: string; // The key in the Store data object to match with resourceBusinessId
   resourceIdKey: string; // The key in the Store data object to match with resourceId
@@ -30,16 +37,17 @@ export interface ProviderConfiguration extends OpenIdConfiguration {
   configId: string;
   domains?: string[];
   roleClaim?: (data: any) => string | string[];
+  acl?: ProviderAclConfiguration;
 }
 
 export interface NavbarComponents {
   left: {
-    component: Type<any>,
-    name: string,
-  }[],
+    component: Type<any>;
+    name: string;
+  }[];
   right: {
-    component: Type<any>,
-    name: string,
+    component: Type<any>;
+    name: string;
   }[];
 }
 
@@ -103,7 +111,9 @@ export interface IConfiguration {
   i18n?: InternationalizationConfiguration;
   pages?: PagesConfiguration;
   acl?: AclConfiguration;
-  endpoints?: { [key: string]: Endpoint; };
+  endpoints?: { [key: string]: Endpoint };
 }
 
-export type ProjectConfiguration<T = { [k: string]: any; }> = IConfiguration & { production: boolean; } & T;
+export type ProjectConfiguration<T = { [k: string]: any }> = IConfiguration & {
+  production: boolean;
+} & T;
