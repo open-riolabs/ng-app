@@ -10,7 +10,7 @@ import { AppInfo } from '../../../services';
 export class AppDropdownSelectorComponent {
   mode = input<'desktop' | 'mobile'>('desktop');
   apps = input.required<AppInfo[]>();
-  isAuth = input.required<boolean | null>();
+  isAuthenticated = input.required<boolean | null>();
 
   appSelected = output<AppInfo>();
 

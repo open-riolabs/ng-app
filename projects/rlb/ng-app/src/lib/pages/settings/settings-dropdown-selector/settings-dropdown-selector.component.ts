@@ -22,7 +22,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   apps = input.required<AppInfo[]>();
   navbarHasSettings = input.required();
   navbarHasLogin = input.required();
-  isAuth = input.required();
+  isAuthenticated = input.required();
   appSelected = output<AppInfo>();
   activeSlide: number = 0;
 

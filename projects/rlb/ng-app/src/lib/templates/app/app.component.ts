@@ -105,7 +105,7 @@ export class AppTemplateComponent implements OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].header);
   }
 
-  get isAuth$() {
+  get isAuthenticated$() {
     return this.authService.isAuthenticated$;
   }
 

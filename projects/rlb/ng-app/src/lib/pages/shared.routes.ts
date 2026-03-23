@@ -13,6 +13,7 @@ import { UserAccountComponent } from './apps/user-account/user-account.component
 import { SettingsCoreComponent } from './settings/settings-core/settings-core.component';
 import { SettingsListComponent } from './settings/settings-list/settings-list.component';
 import { DEFAULT_ROUTES_CONFIG } from './default-routes.config';
+import { oauthGuard } from '../auth';
 
 export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   const defaultRoutes = DEFAULT_ROUTES_CONFIG.filter(
@@ -21,13 +22,17 @@ export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   ).map(route => {
     switch (route.path) {
       case 'settings':
-        return { path: 'settings', component: SettingsListComponent };
+        return { path: 'settings', component: SettingsListComponent, canActivate: [oauthGuard] };
       case 'settings/general':
-        return { path: 'settings/general', component: SettingsCoreComponent };
+        return {
+          path: 'settings/general',
+          component: SettingsCoreComponent,
+          canActivate: [oauthGuard],
+        };
       case 'apps':
-        return { path: 'apps', component: AppSelectorComponent };
+        return { path: 'apps', component: AppSelectorComponent, canActivate: [oauthGuard] };
       case 'profile':
-        return { path: 'profile', component: UserAccountComponent };
+        return { path: 'profile', component: UserAccountComponent, canActivate: [oauthGuard] };
       case 'content':
         return { path: 'content', component: CmsContentComponent };
       case 'cookies':

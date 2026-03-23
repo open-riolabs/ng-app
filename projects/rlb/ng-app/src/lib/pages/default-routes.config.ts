@@ -1,8 +1,10 @@
 import { PagesConfiguration } from '../configuration';
+import { CanActivateFn } from '@angular/router';
 
 export interface DefaultRouteConfig {
   path: string;
   configKey?: keyof PagesConfiguration;
+  canActivate?: Array<CanActivateFn>;
 }
 
 export const DEFAULT_ROUTES_CONFIG: DefaultRouteConfig[] = [

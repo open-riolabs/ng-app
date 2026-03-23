@@ -24,28 +24,30 @@
 
         <div class="row row-cols-3 g-2">
 
-          <!-- General Settings -->
-          <div class="col">
-            <button
-              rlb-button
-              outline
-              color="primary"
-              (click)="goToInlineSettings()"
-              class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
-              <i class="bi bi-person fs-4 mb-1"></i>
-              <span class="small text-truncate w-100">{{ 'core.account.settings.title' | translate }}</span>
-            </button>
-          </div>
+          @if (isAuthenticated()) {
+            <!-- General Settings -->
+            <div class="col">
+              <button
+                rlb-button
+                outline
+                color="primary"
+                (click)="goToInlineSettings()"
+                class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+                <i class="bi bi-person fs-4 mb-1"></i>
+                <span class="small text-truncate w-100">{{ 'core.account.settings.title' | translate }}</span>
+              </button>
+            </div>
+          }
 
           <!-- Dynamic App Settings -->
           @for (app of apps(); track app.id) {
-            @if (app.settings) {
+            @if (app.settings && app.enabled && (app.settings.auth && !(isAuthenticated()))) {
               <div class="col">
                 <button
                   rlb-button
                   outline
                   color="primary"
-                  [disabled]="!app.enabled && (app.settings.auth && !(isAuth()))"
+                  [disabled]="!app.enabled && (app.settings.auth && !(isAuthenticated()))"
                   (click)="selectApp(app)"
                   class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                   <i [ngClass]="['bi', 'fs-4', 'mb-1', app.settings.icon || 'bi-gear']"></i>

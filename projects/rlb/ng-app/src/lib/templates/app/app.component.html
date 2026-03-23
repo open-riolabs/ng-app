@@ -54,20 +54,20 @@
                 <rlb-app-dropdown-selector
                   mode="mobile"
                   [apps]="apps"
-                  [isAuth]="isAuth$ | async"
+                  [isAuthenticated]="isAuthenticated$ | async"
                   (appSelected)="selectApp($event, 'app')"
                 />
               </div>
             }
 
             <!-- Mobile Settings Carousel -->
-            @if (((navbarHasLogin$ | async) && (isAuth$ | async)) || (navbarHasSettings$ | async)) {
+            @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
               <div class="pt-2">
                 <rlb-settings-dropdown-selector
                   mode="mobile"
                   #mobileSettingsMenu
                   [apps]="apps"
-                  [isAuth]="isAuth$ | async"
+                  [isAuthenticated]="isAuthenticated$ | async"
                   [navbarHasLogin]="navbarHasLogin$ | async"
                   [navbarHasSettings]="navbarHasSettings$ | async"
                   (appSelected)="selectApp($event, 'settings')"
@@ -99,7 +99,7 @@
 
         <ng-container ngProjectAs="rlb-navbar-item">
           @if ((navbarLayout$ | async) == 'default') {
-            @if ((navbarHasLogin$ | async) && !(isAuth$ | async)) {
+            @if ((navbarHasLogin$ | async) && !(isAuthenticated$ | async)) {
               <rlb-navbar-item (click)="loginNav($event)">
                 <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
                   <i class=" bi bi-box-arrow-in-left"></i>
@@ -108,7 +108,7 @@
               </rlb-navbar-item>
             }
 
-            @if ( (navbarHasLogin$ | async) && (isAuth$ | async)) {
+            @if ( (navbarHasLogin$ | async) && (isAuthenticated$ | async)) {
               <rlb-navbar-item [router-link]="'/profile'">
               <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
                 <i class="bi bi-person"></i>
@@ -139,7 +139,7 @@
             <!-- MODERN DROPDOWN MODE -->
 
             <!--Unauthenticated Login -->
-            @if ((navbarHasLogin$ | async) && !(isAuth$ | async)) {
+            @if ((navbarHasLogin$ | async) && !(isAuthenticated$ | async)) {
               <rlb-navbar-item (click)="loginNav($event)">
                 <span tooltip-placement="bottom" [tooltip]="('core.account.login') | translate">
                   <i class="bi bi-box-arrow-in-left fs-5"></i>
@@ -149,10 +149,10 @@
             }
 
             <!-- Profile & Settings Account Card -->
-            @if (((navbarHasLogin$ | async) && (isAuth$ | async)) || (navbarHasSettings$ | async)) {
+            @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
               <rlb-settings-dropdown-selector
                 [apps]="apps"
-                [isAuth]="isAuth$ | async"
+                [isAuthenticated]="isAuthenticated$ | async"
                 [navbarHasLogin]="navbarHasLogin$ | async"
                 [navbarHasSettings]="navbarHasSettings$ | async"
                 (appSelected)="selectApp($event, 'settings')"
@@ -163,7 +163,7 @@
             @if ((navbarHasApps$ | async) && apps.length > 1) {
               <rlb-app-dropdown-selector
                 [apps]="apps"
-                [isAuth]="isAuth$ | async"
+                [isAuthenticated]="isAuthenticated$ | async"
                 (appSelected)="selectApp($event, 'app')"
               />
             }

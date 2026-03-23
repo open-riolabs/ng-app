@@ -2,7 +2,7 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { EMPTY, lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   EnvironmentConfiguration,
@@ -62,33 +62,23 @@ export class AuthenticationService {
       switchMap((responses: LoginResponse[]) => {
         let authenticatedConfig = responses.find(o => o.isAuthenticated);
 
-        // uncomment to bypass login
-        // if (isDevMode()) {
-        //   //@ts-ignore
-        //   authenticatedConfig = { configId: 'chattoo' };
-        // }
-
         if (authenticatedConfig && authenticatedConfig.configId) {
           this.store.dispatch(
-            AuthActions.setCurrentProvider({
-              currentProvider: authenticatedConfig.configId,
-            }),
+            AuthActions.setCurrentProvider({ currentProvider: authenticatedConfig.configId }),
+          );
+          const activeProviderConfig = this.authConfig?.providers.find(
+            p => p.configId === authenticatedConfig?.configId,
+          );
+          return this.aclStore.loadACL(activeProviderConfig?.acl).pipe(
+            tap(() => this.handleRedirect()),
+            map(() => responses),
           );
         } else {
-          this.login();
-          return EMPTY;
+          // dispatch a "guest" state, or just let it proceed
+          // TODO consider whether it is worth creating the guest state
+          // this.store.dispatch(AuthActions.setGuestUser());
+          return of(responses);
         }
-
-        // Find the active provider's configuration
-        const activeProviderConfig = this.authConfig?.providers.find(
-          p => p.configId === authenticatedConfig?.configId,
-        );
-
-        // Pass the specific provider's ACL config to the store
-        return this.aclStore.loadACL(activeProviderConfig?.acl).pipe(
-          tap(() => this.handleRedirect()),
-          map(() => responses),
-        );
       }),
     );
   }
