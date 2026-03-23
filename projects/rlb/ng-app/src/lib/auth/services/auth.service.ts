@@ -2,7 +2,7 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   EnvironmentConfiguration,
@@ -74,10 +74,8 @@ export class AuthenticationService {
             map(() => responses),
           );
         } else {
-          // dispatch a "guest" state, or just let it proceed
-          // TODO consider whether it is worth creating the guest state
-          // this.store.dispatch(AuthActions.setGuestUser());
-          return of(responses);
+          // GUEST/ANONYMOUS USER: Trigger loadACL with undefined.
+          return this.aclStore.loadACL(undefined).pipe(map(() => responses));
         }
       }),
     );
