@@ -41,7 +41,7 @@
 
           <!-- Dynamic App Settings -->
           @for (app of apps(); track app.id) {
-            @if (app.settings && app.enabled && (app.settings.auth && !(isAuthenticated()))) {
+            @if (app.settings && app.enabled && (app.settings.auth && (isAuthenticated()))) {
               <div class="col">
                 <button
                   rlb-button
@@ -49,6 +49,7 @@
                   color="primary"
                   [disabled]="!app.enabled && (app.settings.auth && !(isAuthenticated()))"
                   (click)="selectApp(app)"
+                  [class.active]="isAppSelected(app.id)"
                   class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                   <i [ngClass]="['bi', 'fs-4', 'mb-1', app.settings.icon || 'bi-gear']"></i>
                   <span class="small text-truncate w-100" [title]="(app.settings.title | translate) || app.data?.appName">
@@ -62,7 +63,7 @@
           <!-- System / Status -->
           @if (pages?.['status']?.path) {
             <div class="col">
-              <button rlb-button outline color="primary" routerLink="/status" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
+              <button rlb-button outline color="primary" routerLink="/status" routerLinkActive="active" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-check2-circle fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">{{ 'core.settings.status' | translate }}</span>
               </button>
@@ -77,6 +78,7 @@
                 outline
                 color="primary"
                 routerLink="/logger"
+                routerLinkActive="active"
                 class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-file-text fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">
@@ -94,6 +96,7 @@
                 outline
                 color="primary"
                 routerLink="/privacy"
+                routerLinkActive="active"
                 class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-shield-check fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">
@@ -111,6 +114,7 @@
                 outline
                 color="primary"
                 routerLink="/cookies"
+                routerLinkActive="active"
                 class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-cookie fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">
@@ -128,6 +132,7 @@
                 outline
                 color="primary"
                 routerLink="/terms"
+                routerLinkActive="active"
                 class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-vector-pen fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">
@@ -145,6 +150,7 @@
                 outline
                 color="primary"
                 routerLink="/support"
+                routerLinkActive="active"
                 class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-chat-quote fs-4 mb-1"></i>
                 <span class="small text-truncate w-100">

@@ -1,5 +1,5 @@
-import { Component, input, output } from '@angular/core';
-import { AppInfo } from '../../../services';
+import { Component, inject, input, output } from '@angular/core';
+import { AppInfo, AppsService } from '../../../services';
 
 @Component({
   selector: 'rlb-app-dropdown-selector',
@@ -14,7 +14,16 @@ export class AppDropdownSelectorComponent {
 
   appSelected = output<AppInfo>();
 
+  private appsService: AppsService = inject(AppsService);
+
   selectApp(app: any): void {
     this.appSelected.emit(app);
+  }
+
+  isAppSelected(appId: string | undefined): boolean {
+    if (appId) {
+      return this.appsService.isAppSelected(appId);
+    }
+    throw new Error(`${appId} is not defined`);
   }
 }

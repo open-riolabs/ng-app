@@ -103,6 +103,10 @@ export class AppsService {
     return app;
   }
 
+  isAppSelected(appId: string) {
+    return this.getStoredAppId() === appId;
+  }
+
   checkPermissionInCurrentApp(action?: string): boolean {
     const info = this.currentAppAclInfo;
     if (!info) return false;

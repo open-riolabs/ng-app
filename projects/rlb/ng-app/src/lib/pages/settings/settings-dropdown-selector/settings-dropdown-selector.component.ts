@@ -5,7 +5,7 @@ import {
   VisibilityEventBase,
 } from '@open-rlb/ng-bootstrap';
 import { Router } from '@angular/router';
-import { AppInfo, LanguageService } from '../../../services';
+import { AppInfo, AppsService, LanguageService } from '../../../services';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 import { AppContextActions, appContextFeatureKey, AuthActions, BaseState } from '../../../store';
 import { Store } from '@ngrx/store';
@@ -35,6 +35,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   private readonly toastService: ToastService = inject(ToastService);
   private readonly router: Router = inject(Router);
   private readonly menu = viewChild<NavbarDropdownItemComponent>('menu');
+  private appsService: AppsService = inject(AppsService);
 
   constructor() {
     this.router.events.subscribe(() => this.close());
@@ -66,6 +67,13 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
     if (event === 'hidden') {
       this.goToFirstSlide();
     }
+  }
+
+  isAppSelected(appId: string | undefined): boolean {
+    if (appId) {
+      return this.appsService.isAppSelected(appId);
+    }
+    throw new Error(`${appId} is not defined`);
   }
 
   get languages() {
