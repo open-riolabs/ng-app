@@ -117,9 +117,11 @@
             }
 
             @if (type.userCredentialMetadatas.length === 0) {
-              <div class="py-4 text-center text-muted">
-                {{ 'core.account.credentials.noCredentials' | translate}}
-              </div>
+              <rlb-list-item>
+                <div class="py-4 text-center text-muted">
+                  {{ 'core.account.credentials.noCredentials' | translate}}
+                </div>
+              </rlb-list-item>
             }
           </rlb-list>
         </rlb-card-body>
