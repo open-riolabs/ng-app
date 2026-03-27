@@ -62,15 +62,13 @@
               }
 
               <!-- Mobile Settings Carousel -->
-              @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
+              @if (((isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
                 <div class="pt-2">
                   <rlb-settings-dropdown-selector
                     mode="mobile"
                     #mobileSettingsMenu
                     [apps]="apps"
                     [isAuthenticated]="isAuthenticated$ | async"
-                    [navbarHasLogin]="navbarHasLogin$ | async"
-                    [navbarHasSettings]="navbarHasSettings$ | async"
                     (appSelected)="selectApp($event, 'settings')"
                   />
                 </div>
@@ -156,12 +154,10 @@
             }
 
             <!-- Profile & Settings Account Card -->
-            @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async))) {
+            @if (((navbarHasSettings$ | async) && (isAuthenticated$ | async))) {
               <rlb-settings-dropdown-selector
                 [apps]="apps"
                 [isAuthenticated]="isAuthenticated$ | async"
-                [navbarHasLogin]="navbarHasLogin$ | async"
-                [navbarHasSettings]="navbarHasSettings$ | async"
                 (appSelected)="selectApp($event, 'settings')"
               />
             }

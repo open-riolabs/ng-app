@@ -20,8 +20,6 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   mode = input<'desktop' | 'mobile'>('desktop');
 
   apps = input.required<AppInfo[]>();
-  navbarHasSettings = input.required();
-  navbarHasLogin = input.required();
   isAuthenticated = input.required();
   appSelected = output<AppInfo>();
   activeSlide: number = 0;
