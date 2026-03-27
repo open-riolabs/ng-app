@@ -93,7 +93,7 @@
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
           </ng-container>
         }
-        @if ((separatorVisible$ | async)) {
+        @if ((separatorVisible$ | async) && (isAuthenticated$ | async)) {
           <rlb-navbar-separator />
         }
 
@@ -108,7 +108,7 @@
               </rlb-navbar-item>
             }
 
-            @if ( (navbarHasLogin$ | async) && (isAuthenticated$ | async)) {
+            @if ((navbarHasLogin$ | async) && (isAuthenticated$ | async)) {
               <rlb-navbar-item [router-link]="'/profile'">
               <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
                 <i class="bi bi-person"></i>
@@ -149,7 +149,7 @@
             }
 
             <!-- Profile & Settings Account Card -->
-            @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
+            @if (((navbarHasLogin$ | async) && (isAuthenticated$ | async))) {
               <rlb-settings-dropdown-selector
                 [apps]="apps"
                 [isAuthenticated]="isAuthenticated$ | async"
@@ -160,7 +160,7 @@
             }
 
             <!-- Apps Launcher -->
-            @if ((navbarHasApps$ | async) && apps.length > 1) {
+            @if ((navbarHasApps$ | async) && (isAuthenticated$ | async) && apps.length > 1) {
               <rlb-app-dropdown-selector
                 [apps]="apps"
                 [isAuthenticated]="isAuthenticated$ | async"
