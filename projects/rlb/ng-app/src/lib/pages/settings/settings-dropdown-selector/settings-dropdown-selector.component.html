@@ -52,8 +52,8 @@
                   [class.active]="isAppSelected(app.id)"
                   class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                   <i [ngClass]="['bi', 'fs-4', 'mb-1', app.settings.icon || 'bi-gear']"></i>
-                  <span class="small text-truncate w-100" [title]="(app.settings.title | translate) || app.data?.appName">
-                    {{ (app.settings.title | translate) || app.data?.appName }}
+                  <span class="small text-truncate w-100" [title]="app.data.friendlyName ? app.data.friendlyName : app.settings.title | translate">
+                    {{ app.data.friendlyName ? app.data.friendlyName : app.settings.title | translate }}
                 </span>
                 </button>
               </div>
