@@ -72,8 +72,10 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
   isAppSelected(appId: string | undefined): boolean {
     if (appId) {
       return this.appsService.isAppSelected(appId);
+    } else {
+      console.error('AppId is not defined');
+      return false;
     }
-    throw new Error(`${appId} is not defined`);
   }
 
   get languages() {
