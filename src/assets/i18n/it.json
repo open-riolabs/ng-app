@@ -80,6 +80,11 @@
       "content": "La pagina che stai cercando non esiste.",
       "button": "Vai alla home page"
     },
+    "forbidden": {
+      "title": "Accesso negato",
+      "content": "Non hai i permessi necessari per accedere a questa pagina.",
+      "button": "Vai alla home page"
+    },
     "support": {
       "title": "Supporto",
       "legal": "Legale",

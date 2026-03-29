@@ -84,6 +84,12 @@
       "content": "The page you are looking for does not exist.",
       "button": "Go to home page"
     },
+    "forbidden": {
+      "title": "Access forbidden",
+      "content": "You do not have permission to access this page.",
+      "button": "Go to home page"
+    },
+
     "support": {
       "title": "Support",
       "legal": "Legal",

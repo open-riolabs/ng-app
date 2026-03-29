@@ -24,6 +24,7 @@ import { AppContainerComponent } from './templates/app-container/app-container.c
 import { RlbRole } from './auth/directives/role.directive';
 import { SettingsDropdownSelectorComponent } from './pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
 import { AppDropdownSelectorComponent } from './pages/apps/app-dropdown-selector/app-dropdown-selector.component';
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { AppDropdownSelectorComponent } from './pages/apps/app-dropdown-selector
     PrivacyComponent,
     SupportComponent,
     TermsAndConditionsComponent,
+    ForbiddenComponent,
     // pipes
     CmsPipe,
     AsMultiPipe,

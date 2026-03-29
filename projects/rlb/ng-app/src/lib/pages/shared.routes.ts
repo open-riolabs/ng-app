@@ -14,6 +14,7 @@ import { SettingsCoreComponent } from './settings/settings-core/settings-core.co
 import { SettingsListComponent } from './settings/settings-list/settings-list.component';
 import { DEFAULT_ROUTES_CONFIG } from './default-routes.config';
 import { oauthGuard } from '../auth';
+import { ForbiddenComponent } from './forbidden/forbidden.component';
 
 export function getDefaultRoutes(config?: PagesConfiguration): Routes {
   const defaultRoutes = DEFAULT_ROUTES_CONFIG.filter(
@@ -39,6 +40,8 @@ export function getDefaultRoutes(config?: PagesConfiguration): Routes {
         return { path: 'cookies', component: CookiesComponent };
       case 'notFound':
         return { path: 'notFound', component: NotFoundComponent };
+      case 'forbidden':
+        return { path: 'forbidden', component: ForbiddenComponent };
       case 'privacy':
         return { path: 'privacy', component: PrivacyComponent };
       case 'support':

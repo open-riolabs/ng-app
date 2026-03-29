@@ -19,7 +19,7 @@ export const permissionGuard: CanActivateFn = (route) => {
       if (appsService.checkPermissionInCurrentApp(action)) {
         return true;
       }
-      return router.createUrlTree(['/notFound']);
+      return router.createUrlTree(['/forbidden']);
     })
   );
 };

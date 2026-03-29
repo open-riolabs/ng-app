@@ -48,6 +48,7 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
     content: { path: 'content' },
     cookies: { path: 'cookies' },
     notFound: { path: 'not-found' },
+    forbidden: { path: 'forbidden' },
     privacy: { path: 'privacy' },
     support: { path: 'support' },
     terms: { path: 'terms' },
