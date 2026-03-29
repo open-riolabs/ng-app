@@ -189,6 +189,7 @@
             {{item.label}}
             @for (subitem of item.items || []; track $index) {
               <rlb-sidebar-item
+                *roles="subitem.action"
                 [icon]="subitem.icon"
                 [link]="subitem.url"
                 [title]="subitem.title"
