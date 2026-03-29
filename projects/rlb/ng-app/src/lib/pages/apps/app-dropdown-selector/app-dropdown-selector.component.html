@@ -29,8 +29,8 @@
             (click)="selectApp(app)"
           >
             <i [ngClass]="['fs-3', 'mb-1', app.core.icon || 'bi bi-app']"></i>
-            <span class="small text-truncate w-100" [title]="app.data.friendlyName ? app.data.friendlyName : app.core.title | translate">
-              {{ app.data.friendlyName ? app.data.friendlyName : app.core.title | translate }}
+            <span class="small text-truncate w-100" [title]="app?.data?.friendlyName ? app.data.friendlyName : app.core.title | translate">
+              {{ app?.data?.friendlyName ? app.data.friendlyName : app.core.title | translate }}
             </span>
           </button>
         </div>
