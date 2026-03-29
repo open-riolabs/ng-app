@@ -142,7 +142,7 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get apps() {
-    return this.appsService.apps;
+    return this.appsService.apps.filter(app => app.enabled && app.id); // Only enabled and initialized apps (with id). 
   }
 
   get separatorVisible$() {
