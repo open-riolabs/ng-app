@@ -14,6 +14,9 @@ export const RLB_CFG_AUTH = new InjectionToken<AuthConfiguration>(`${RLB_CFG}:au
 export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.navcomp`);
 export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`);
 
+export type AuthUrlHandler = (url: string) => void | Promise<void>;
+export const RLB_AUTH_URL_HANDLER = new InjectionToken<AuthUrlHandler>('rlb.auth.urlHandler');
+
 export interface InterceptorMapping {
   // Key: The name of the Query Parameter to add to the request
   // Value: The property name to look for in Store data object

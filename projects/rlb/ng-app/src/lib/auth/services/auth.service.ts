@@ -5,8 +5,10 @@ import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
+  AuthUrlHandler,
   EnvironmentConfiguration,
   IConfiguration,
+  RLB_AUTH_URL_HANDLER,
   RLB_CFG,
   RLB_CFG_AUTH,
   RLB_CFG_ENV,
@@ -37,6 +39,7 @@ export class AuthenticationService {
     @Optional() @Inject(RLB_CFG_ENV) private envConfig: EnvironmentConfiguration,
     @Optional() @Inject(RLB_CFG_AUTH) private authConfig: AuthConfiguration,
     @Optional() @Inject(RLB_CFG) private appconfig: IConfiguration,
+    @Optional() @Inject(RLB_AUTH_URL_HANDLER) private authUrlHandler: AuthUrlHandler | null,
   ) {
     this.logger = this.log.for(this.constructor.name);
     this.logger.log('AuthenticationService initialized');
@@ -83,33 +86,24 @@ export class AuthenticationService {
 
   public login(targetUrl?: string) {
     const returnUrl = targetUrl || this.router.url || '/';
-    // this.cookiesService.setCookie('loginRedirectUrl', returnUrl, 1);
     this.localStorage.writeLocal('loginRedirectUrl', returnUrl);
     this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
-    // electron
-    if (
-      typeof process !== 'undefined' &&
-      typeof process?.version !== 'undefined' &&
-      typeof process?.versions['electron'] !== undefined
-    ) {
-      const urlHandler = (authUrl: string) => {
-        console.log(authUrl);
-        this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
-      };
+
+    const urlHandler = this.electronUrlHandler ?? this.authUrlHandler;
+    if (urlHandler) {
       return this.oidc.authorize(this.currentProvider?.configId, { urlHandler });
     }
-    // capacitor
-    // else if (Capacitor.isNativePlatform()) {
-    //   const urlHandler = async (url: string) => {
-    //     console.log('opening', url);
-    //     await Browser.open({ url, windowName: '_self' })
-    //   };
-    //   this.oidc.authorize(config, { urlHandler });
-    // }
-    // browser
-    else {
-      return this.oidc.authorize(this.currentProvider?.configId);
+    return this.oidc.authorize(this.currentProvider?.configId);
+  }
+
+  private get electronUrlHandler(): AuthUrlHandler | null {
+    const proc = (globalThis as any)['process'];
+    if (proc?.version !== undefined && proc?.versions?.['electron'] !== undefined) {
+      return (authUrl: string) => {
+        this.modal = window.open(authUrl, '_blank', 'nodeIntegration=no');
+      };
     }
+    return null;
   }
 
   async logout() {

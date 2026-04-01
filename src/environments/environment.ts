@@ -34,7 +34,7 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
         domains: ['localhost'],
         redirectUrl: 'http://localhost:4202',
         postLogoutRedirectUri: 'http://localhost:4202',
-        clientId: 'chattoo',
+        clientId: 'riolabs',
         scope: 'openid profile offline_access',
         logLevel: 2,
         // acl: {
