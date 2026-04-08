@@ -14,5 +14,6 @@ export * from './navbar/navbar.model';
 export * from './sidebar/sidebar.actions';
 export * from './sidebar/sidebar.model';
 export * from './acl/acl.model';
+export * from './acl/acl.store';
 
 export interface BaseState extends AclState, AuthState, SidebarState, NavbarState, AppState {}
