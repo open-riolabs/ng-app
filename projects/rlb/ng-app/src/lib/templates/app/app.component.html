@@ -131,7 +131,7 @@
               </rlb-navbar-item>
             }
 
-            @if ((navbarHasApps$ | async) && apps.length > 1) {
+            @if ((navbarHasApps$ | async) && apps().length > 1) {
               <rlb-navbar-item [router-link]="'/apps'">
               <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
                 <i class="bi bi-grid-3x3-gap-fill"></i>
@@ -163,7 +163,7 @@
             }
 
             <!-- Apps Launcher -->
-            @if ((navbarHasApps$ | async) && (isAuthenticated$ | async) && apps.length > 1) {
+            @if ((navbarHasApps$ | async) && (isAuthenticated$ | async) && apps().length > 1) {
               <rlb-app-dropdown-selector
                 [apps]="apps()"
                 [isAuthenticated]="isAuthenticated$ | async"
