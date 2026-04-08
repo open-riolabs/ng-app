@@ -1,9 +1,10 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@open-rlb/ng-bootstrap';
-import { EMPTY, filter, lastValueFrom, Subscription, switchMap, tap } from 'rxjs';
+import { EMPTY, filter, lastValueFrom, switchMap, tap } from 'rxjs';
 import { KeycloakCredential, KeycloakProfileService, KeycloakSession, KeycloakUser } from '../../../auth/keycloak';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { LanguageService } from '../../../services/i18n/language.service';
@@ -11,55 +12,46 @@ import { BaseState } from '../../../store';
 import { AuthActions } from '../../../store/auth/auth.actions';
 import { AuthenticationService } from '../../../auth/services/auth.service';
 
-
 @Component({
   selector: 'rlb-user-account',
   imports: [RlbAppModule, CommonModule],
   templateUrl: './user-account.component.html',
-  styleUrl: './user-account.component.scss'
+  styleUrl: './user-account.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserAccountComponent implements OnInit, OnDestroy {
-  constructor(
-    private _location: Location,
-    public store: Store<BaseState>,
-    private keycloakProfileService: KeycloakProfileService,
-    private modalService: ModalService,
-    private languageService: LanguageService,
-    private readonly authService: AuthenticationService,
-    private router: Router
-  ) {
+export class UserAccountComponent implements OnInit {
+  private readonly _location = inject(Location);
+  private readonly store = inject(Store<BaseState>);
+  private readonly keycloakProfileService = inject(KeycloakProfileService);
+  private readonly modalService = inject(ModalService);
+  private readonly languageService = inject(LanguageService);
+  private readonly authService = inject(AuthenticationService);
+  private readonly router = inject(Router);
+
+  readonly keyCloakUser = signal<KeycloakUser | undefined>(undefined);
+  readonly keyCloakDevices = toSignal(this.keycloakProfileService.getDevices());
+  readonly keycloakCredentials = signal<KeycloakCredential[]>([]);
+
+  constructor() {
     this.authService.isAuthenticated$.pipe(
+      takeUntilDestroyed(),
       filter(isAuth => !isAuth),
       switchMap(() => this.router.navigate(['/']))
     ).subscribe();
   }
-
-
-  keyCloakUser!: KeycloakUser;
-  keyCloakDevices!: KeycloakSession[];
-  keycloakCredentials!: KeycloakCredential[];
-  private subs: Subscription[] = [];
 
   backClicked() {
     this._location.back();
   }
 
   ngOnInit() {
-    this.subs.push(this.keycloakProfileService.getUserProfile().subscribe((user) => {
-      this.keyCloakUser = user;
-    }));
-    this.subs.push(this.keycloakProfileService.getDevices().subscribe((devices) => {
-      this.keyCloakDevices = devices;
-    }));
-    this.subs.push(this.keycloakProfileService.getCredentials().subscribe((credentials) => {
-      this.keycloakCredentials = credentials;
-    }));
-  }
+    this.keycloakProfileService.getUserProfile()
+      .pipe(takeUntilDestroyed())
+      .subscribe((user) => this.keyCloakUser.set(user));
 
-  ngOnDestroy(): void {
-    while (this.subs.length) {
-      this.subs.pop()?.unsubscribe();
-    }
+    this.keycloakProfileService.getCredentials()
+      .pipe(takeUntilDestroyed())
+      .subscribe((credentials) => this.keycloakCredentials.set(credentials));
   }
 
   logout() {
@@ -75,11 +67,14 @@ export class UserAccountComponent implements OnInit, OnDestroy {
       this.languageService.translate("common.cancel")).pipe(switchMap((result) => {
         if (result) {
           return this.keycloakProfileService.removeCredential(id).pipe(tap(() => {
-            const meta = this.keycloakCredentials.find((c) => c.type === type)?.userCredentialMetadatas;
-            const idx = meta?.findIndex((m) => m.credential.id === id);
-            if (meta && idx !== undefined && idx !== -1) {
-              meta.splice(idx, 1);
-            }
+            this.keycloakCredentials.update(credentials => {
+              const newCredentials = [...credentials];
+              const credType = newCredentials.find(c => c.type === type);
+              if (credType?.userCredentialMetadatas) {
+                credType.userCredentialMetadatas = credType.userCredentialMetadatas.filter(m => m.credential.id !== id);
+              }
+              return newCredentials;
+            });
           }));
         }
         return EMPTY;
@@ -87,7 +82,11 @@ export class UserAccountComponent implements OnInit, OnDestroy {
   }
 
   async updateProfile() {
-    return await lastValueFrom(this.keycloakProfileService.updateUserProfile(this.keyCloakUser));
+    const user = this.keyCloakUser();
+    if (user) {
+      return await lastValueFrom(this.keycloakProfileService.updateUserProfile(user));
+    }
+    return;
   }
 
   updatePassword() {
@@ -98,4 +97,5 @@ export class UserAccountComponent implements OnInit, OnDestroy {
     this.keycloakProfileService.configureOTP();
   }
 }
+
 

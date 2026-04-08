@@ -1,6 +1,7 @@
-import { Component, Inject, Input, OnDestroy, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, input, OnDestroy, viewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
+  BreadcrumbItem,
   NavigableItem,
   OffcanvasComponent,
   SidebarNavigableItem,
@@ -27,8 +28,10 @@ import { SettingsDropdownSelectorComponent } from '../../pages/settings/settings
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppTemplateComponent implements OnDestroy {
+  protected readonly Array = Array;
   private navbarItemsSubscription: Subscription | undefined;
   private sidebarItemsSubscription: Subscription | undefined;
   private sidebarFooterItemsSubscription: Subscription | undefined;
@@ -37,11 +40,16 @@ export class AppTemplateComponent implements OnDestroy {
   public sidebarItems: NavigableItem[] = [];
   public sidebarFooterItems: NavigableItem[] = [];
 
-  @Input('modal-container-id') modalContainerId!: string;
-  @Input('toast-container-ids') toastContainerIds!: string | string[];
+  readonly modalContainerId = input.required<string>({ alias: 'modal-container-id' });
+  readonly breadcrumbInput = input<BreadcrumbItem[] | undefined>(undefined, { alias: 'breadcrumb' });
+  readonly breadcrumb = computed(() => this.breadcrumbInput() ?? []);
+  readonly toastContainerIds = input.required<string | string[]>({ alias: 'toast-container-ids' });
 
   readonly mobileOffcanvas = viewChild<OffcanvasComponent>('mobileOffcanvas');
   readonly mobileSettingsMenu = viewChild<SettingsDropdownSelectorComponent>('mobileSettingsMenu');
+
+  readonly theme = this.store.selectSignal(state => state[appContextFeatureKey].theme);
+  readonly apps = computed(() => this.appsService.apps.filter(app => app.enabled && app.id));
 
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
@@ -121,10 +129,6 @@ export class AppTemplateComponent implements OnDestroy {
     return this.store.select(state => state[navbarsFeatureKey].rightItems);
   }
 
-  get theme() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].theme)();
-  }
-
   get navbarHasLogin$() {
     return this.store.select(state => state[navbarsFeatureKey].loginVisible);
   }
@@ -139,10 +143,6 @@ export class AppTemplateComponent implements OnDestroy {
 
   get navbarLayout$() {
     return this.store.select(state => state[navbarsFeatureKey].actionsLayout);
-  }
-
-  get apps() {
-    return this.appsService.apps.filter(app => app.enabled && app.id); // Only enabled and initialized apps (with id). 
   }
 
   get separatorVisible$() {
@@ -176,3 +176,4 @@ export class AppTemplateComponent implements OnDestroy {
     this.mobileOffcanvas()?.close();
   }
 }
+

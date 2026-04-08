@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, input, OnDestroy, OnInit } from '@angular/core';
 import { Router, RoutesRecognized } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Subscription, tap } from 'rxjs';
@@ -19,12 +19,14 @@ import { AppLoggerService, LoggerContext } from "../../services";
   selector: 'rlb-app-container',
   templateUrl: './app-container.component.html',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppContainerComponent implements OnInit, OnDestroy {
+  protected readonly Array = Array;
   private swUpdateSubscription: Subscription | undefined;
   private readonly templateSubject = new BehaviorSubject<PageTemplate>('app');
-  @Input('modal-container-id') modalContainerId!: string;
-  @Input('toast-container-ids') toastContainerIds!: string | string[];
+  readonly modalContainerId = input.required<string>({ alias: 'modal-container-id' });
+  readonly toastContainerIds = input.required<string | string[]>({ alias: 'toast-container-ids' });
 	private logger: LoggerContext;
 
 
@@ -97,4 +99,5 @@ export class AppContainerComponent implements OnInit, OnDestroy {
   }
 
 }
+
 

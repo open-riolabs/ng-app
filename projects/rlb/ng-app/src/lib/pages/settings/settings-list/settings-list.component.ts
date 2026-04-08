@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, Inject, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, Optional } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 import { RlbAppModule } from '../../../rlb-app.module';
@@ -13,7 +13,8 @@ import { AuthenticationService } from '../../../auth/services/auth.service';
   selector: 'rlb-settings-list',
   imports: [RlbAppModule, CommonModule],
   templateUrl: './settings-list.component.html',
-  styleUrl: './settings-list.component.scss'
+  styleUrl: './settings-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsListComponent {
   constructor(
@@ -22,9 +23,8 @@ export class SettingsListComponent {
     private readonly authService: AuthenticationService,
     @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration | undefined) { }
 
-  get apps() {
-    return this.appsService.apps;
-  }
+  readonly apps = computed(() => this.appsService.apps);
+  readonly pages = computed(() => this.pageOptions);
 
   backClicked() {
     this._location.back();
@@ -34,11 +34,8 @@ export class SettingsListComponent {
     this.appsService.selectApp(app, 'settings');
   }
 
-  get pages() {
-    return this.pageOptions;
-  }
-
   get auth$() {
     return this.authService.isAuthenticated$;
   }
 }
+

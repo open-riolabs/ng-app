@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'rlb-forbidden',
   standalone: false,
-    template: `<div class="container" style="height:calc(100vh - 58px);">
+  template: `<div class="container" style="height:calc(100vh - 58px);">
   <div class="align-center">
     <div class="text-center">
       <h1 class="text-primary">
@@ -16,7 +16,8 @@ import { Component } from '@angular/core';
     </div>
   </div>
 </div>
-`
+`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForbiddenComponent {
 

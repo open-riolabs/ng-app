@@ -15,7 +15,7 @@
 }
 
 <ng-template #settingsCarousel>
-  <rlb-carousel [hide-indicators]="true" [hide-controls]="true" autoplay="none"[no-touch]="true" [(current-slide)]="activeSlide" class="w-100 d-block">
+  <rlb-carousel [hide-indicators]="true" [hide-controls]="true" autoplay="none" [no-touch]="true" [(current-slide)]="activeSlide" class="w-100 d-block">
     <rlb-carousel-slide [active]="true">
       <div class="p-3">
         <h6 class="dropdown-header px-0 text-center mb-2 fw-bold text-dark">
@@ -61,7 +61,7 @@
           }
 
           <!-- System / Status -->
-          @if (pages?.['status']?.path) {
+          @if (pages()?.['status']?.path) {
             <div class="col">
               <button rlb-button outline color="primary" routerLink="/status" routerLinkActive="active" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-check2-circle fs-4 mb-1"></i>
@@ -71,7 +71,7 @@
           }
 
           <!-- Logger -->
-          @if (pages?.['logger']?.path) {
+          @if (pages()?.['logger']?.path) {
             <div class="col">
               <button
                 rlb-button
@@ -89,7 +89,7 @@
           }
 
           <!-- Privacy -->
-          @if (pages?.['privacy']?.path) {
+          @if (pages()?.['privacy']?.path) {
             <div class="col">
               <button
                 rlb-button
@@ -107,7 +107,7 @@
           }
 
           <!-- Cookies -->
-          @if (pages?.['cookies']?.path) {
+          @if (pages()?.['cookies']?.path) {
             <div class="col">
               <button
                 rlb-button
@@ -125,7 +125,7 @@
           }
 
           <!-- Terms -->
-          @if (pages?.['terms']?.path) {
+          @if (pages()?.['terms']?.path) {
             <div class="col">
               <button
                 rlb-button
@@ -143,7 +143,7 @@
           }
 
           <!-- Support -->
-          @if (pages?.['support']?.path) {
+          @if (pages()?.['support']?.path) {
             <div class="col">
               <button
                 rlb-button
@@ -184,7 +184,7 @@
                 <span class="fw-semibold">{{ 'core.settings.generalTheme' | translate}}</span>
               </div>
               <div class="settings-control">
-                <rlb-switch size="small" [(ngModel)]="darkMode" />
+                <rlb-switch size="small" [ngModel]="darkMode()" (ngModelChange)="setDarkMode($event)" />
               </div>
             </div>
           </rlb-list-item>
@@ -196,8 +196,8 @@
                 <span class="fw-semibold">{{ 'core.settings.generalLanguage' | translate}}</span>
               </div>
               <div class="settings-control">
-                <rlb-select size="small" [(ngModel)]="currentLanguage">
-                  @for (l of languages; track l.value) {
+                <rlb-select size="small" [ngModel]="currentLanguage()" (ngModelChange)="setCurrentLanguage($event)">
+                  @for (l of languages(); track l.value) {
                     <rlb-option [value]="l.value">{{l.label}}</rlb-option>
                   }
                 </rlb-select>

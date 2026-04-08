@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { AppInfo, AppsService } from '../../../services';
 
 @Component({
@@ -6,6 +6,7 @@ import { AppInfo, AppsService } from '../../../services';
   standalone: false,
   templateUrl: './app-dropdown-selector.component.html',
   styleUrls: ['./app-dropdown-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDropdownSelectorComponent {
   mode = input<'desktop' | 'mobile'>('desktop');
@@ -16,16 +17,14 @@ export class AppDropdownSelectorComponent {
 
   private appsService: AppsService = inject(AppsService);
 
-  selectApp(app: any): void {
+  readonly currentAppId = computed(() => this.appsService.currentApp?.id);
+
+  selectApp(app: AppInfo): void {
     this.appSelected.emit(app);
   }
 
   isAppSelected(appId: string | undefined): boolean {
-    if (appId) {
-      return this.appsService.isAppSelected(appId);
-    } else {
-      console.error('AppId is not defined');
-      return false;
-    }
+    return this.currentAppId() === appId;
   }
 }
+

@@ -1,27 +1,29 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformServer } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable, map, of, shareReplay } from 'rxjs';
+import { isPlatformServer } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, of } from 'rxjs';
 
 @Component({
     selector: 'rlb-content-template',
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    standalone: false
+    standalone: false,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContentComponent {
-  constructor(
-    private breakpointObserver: BreakpointObserver,
-    @Inject(PLATFORM_ID) private platformId: Object) { }
+export class ContentComponent implements OnInit {
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  get isHandset$(): Observable<boolean> {
-    if (isPlatformServer(this.platformId)) {
-      return of(true)
-    } else {
-      return this.breakpointObserver.observe(Breakpoints.Handset)
-        .pipe(map(result => result.matches), shareReplay())
-    }
-  }
+  readonly isHandset = toSignal(
+    isPlatformServer(this.platformId)
+      ? of(true)
+      : this.breakpointObserver.observe(Breakpoints.Handset).pipe(map(result => result.matches)),
+    { initialValue: true }
+  );
+
+  constructor() { }
 
   ngOnInit() { }
 }
+

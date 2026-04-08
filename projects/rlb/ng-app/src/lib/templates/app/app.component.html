@@ -1,6 +1,6 @@
 <div class="rlb-app">
   @if (navVisible$ | async) {
-    <rlb-navbar [dark]="theme === 'dark'" [showSideBarToggler]="(sidebarVisible$ | async)"  expand="lg" class="border-bottom py-1 rlb-navbar">
+    <rlb-navbar [dark]="theme() === 'dark'" [showSideBarToggler]="(sidebarVisible$ | async)"  expand="lg" class="border-bottom py-1 rlb-navbar">
       @if (navHeader$ | async; as header) {
         <a rlb-navbar-brand href="#">
 
@@ -50,11 +50,11 @@
             <rlb-offcanvas-body class="p-0 overflow-x-hidden">
 
               <!-- Mobile Apps Grid -->
-              @if ((navbarHasApps$ | async) && apps.length > 1) {
+              @if ((navbarHasApps$ | async) && apps().length > 1) {
                 <div class="border-bottom pb-2">
                   <rlb-app-dropdown-selector
                     mode="mobile"
-                    [apps]="apps"
+                    [apps]="apps()"
                     [isAuthenticated]="isAuthenticated$ | async"
                     (appSelected)="selectApp($event, 'app')"
                   />
@@ -67,7 +67,7 @@
                   <rlb-settings-dropdown-selector
                     mode="mobile"
                     #mobileSettingsMenu
-                    [apps]="apps"
+                    [apps]="apps()"
                     [isAuthenticated]="isAuthenticated$ | async"
                     (appSelected)="selectApp($event, 'settings')"
                   />
@@ -156,7 +156,7 @@
             <!-- Profile & Settings Account Card -->
             @if (((navbarHasSettings$ | async) && (isAuthenticated$ | async))) {
               <rlb-settings-dropdown-selector
-                [apps]="apps"
+                [apps]="apps()"
                 [isAuthenticated]="isAuthenticated$ | async"
                 (appSelected)="selectApp($event, 'settings')"
               />
@@ -165,7 +165,7 @@
             <!-- Apps Launcher -->
             @if ((navbarHasApps$ | async) && (isAuthenticated$ | async) && apps.length > 1) {
               <rlb-app-dropdown-selector
-                [apps]="apps"
+                [apps]="apps()"
                 [isAuthenticated]="isAuthenticated$ | async"
                 (appSelected)="selectApp($event, 'app')"
               />
@@ -177,7 +177,7 @@
   }
   <div class="rlb-main-wrapper">
     @if ((sidebarVisible$ | async)) {
-      <rlb-sidebar [dark]="theme === 'dark'" id="sidebar" class="rlb-sidebar">
+      <rlb-sidebar [dark]="theme() === 'dark'" id="sidebar" class="rlb-sidebar">
         @for (item of  (sidebarItems$ | async); track $index) {
           <rlb-sidebar-item
             *roles="item.action"
@@ -210,16 +210,16 @@
   </div>
 </div>
 
-@if (modalContainerId) {
-  <rlb-modal-container [id]="modalContainerId" />
+@if (modalContainerId()) {
+  <rlb-modal-container [id]="modalContainerId()" />
 }
 
-@if (toastContainerIds) {
-  @if (toastContainerIds.constructor.name === 'Array') {
-    @for (toastContainerId of toastContainerIds | asMulti; track toastContainerId) {
+@if (toastContainerIds()) {
+  @if (Array.isArray(toastContainerIds())) {
+    @for (toastContainerId of toastContainerIds() | asMulti; track toastContainerId) {
       <rlb-toast-container [id]="toastContainerId" />
     }
   } @else {
-    <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds | asSingle" />
+    <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds() | asSingle" />
   }
 }

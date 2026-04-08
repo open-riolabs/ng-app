@@ -8,7 +8,7 @@
     <rlb-list-item-image icon="bi bi-gear" [avatar-size]="35" [line-1]=" 'core.settings.generalTitle' | translate"
       [routerLink]="'/settings/general'" [line-2]=" 'core.settings.generalDescription' | translate">
     </rlb-list-item-image>
-    @for (app of apps; track app.id) {
+    @for (app of apps(); track app.id) {
       <ng-container ngProjectAs="rlb-list-item-image">
         @if (app.settings) {
           <ng-container ngProjectAs="rlb-list-item-image">
@@ -23,14 +23,14 @@
     }
   </rlb-list>
 
-  @if (pages?.['status']?.path || pages?.['logger']?.path) {
+  @if (pages()?.['status']?.path || pages()?.['logger']?.path) {
     <rlb-list class="mt-5">
-      @if (pages?.['status']?.path) {
+      @if (pages()?.['status']?.path) {
         <rlb-list-item-image icon="bi bi-check2-circle" [avatar-size]="18"
           [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
         </rlb-list-item-image>
       }
-      @if (pages?.['logger']?.path) {
+      @if (pages()?.['logger']?.path) {
         <rlb-list-item-image icon="bi bi-file-text" [avatar-size]="18"
           [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
         </rlb-list-item-image>
@@ -38,25 +38,25 @@
     </rlb-list>
   }
 
-  @if (pages?.['privacy']?.path || pages?.['cookies']?.path || pages?.['terms']?.path || pages?.['support']?.path) {
+  @if (pages()?.['privacy']?.path || pages()?.['cookies']?.path || pages()?.['terms']?.path || pages()?.['support']?.path) {
     <rlb-list class="mt-4"
       >
-      @if (pages?.['privacy']?.path) {
+      @if (pages()?.['privacy']?.path) {
         <rlb-list-item-image icon="bi bi-shield-check" [avatar-size]="18"
           [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">
         </rlb-list-item-image>
       }
-      @if (pages?.['cookies']?.path) {
+      @if (pages()?.['cookies']?.path) {
         <rlb-list-item-image icon="bi bi bi-cookie" [avatar-size]="18"
           [line-1]="'core.settings.cookies' | translate" [routerLink]="'/cookies'">
         </rlb-list-item-image>
       }
-      @if (pages?.['terms']?.path) {
+      @if (pages()?.['terms']?.path) {
         <rlb-list-item-image icon="bi bi-vector-pen" [avatar-size]="18"
           [line-1]="'core.settings.legal' | translate" [routerLink]="'/terms'">
         </rlb-list-item-image>
       }
-      @if (pages?.['support']?.path) {
+      @if (pages()?.['support']?.path) {
         <rlb-list-item-image icon="bi bi-chat-quote" [avatar-size]="18"
           [line-1]=" 'core.settings.support' | translate" [routerLink]="'/support'">
         </rlb-list-item-image>
@@ -64,3 +64,4 @@
     </rlb-list>
   }
 </div>
+

@@ -1,41 +1,38 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { isPlatformServer } from '@angular/common';
-import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Inject, input, OnInit, PLATFORM_ID } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BreadcrumbItem } from '@open-rlb/ng-bootstrap';
-import { map, Observable, of, shareReplay } from 'rxjs';
+import { map, of } from 'rxjs';
 
 @Component({
   selector: 'rlb-base-template',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
-  standalone: false
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BaseComponent implements OnInit {
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  constructor(
-    private breakpointObserver: BreakpointObserver,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  readonly breadcrumbInput = input<BreadcrumbItem[] | undefined>(undefined, { alias: 'breadcrumb' });
+  readonly breadcrumb = computed(() => this.breadcrumbInput() ?? []);
+  readonly title = input.required<string>();
 
-  @Input()
-  breadcrumb: BreadcrumbItem[] | undefined;
+  readonly subtitle = input<string>();
 
-  @Input()
-  title!: string;
+  readonly isHandset = toSignal(
+    isPlatformServer(this.platformId)
+      ? of(true)
+      : this.breakpointObserver.observe(Breakpoints.Handset).pipe(map(result => result.matches)),
+    { initialValue: true }
+  );
 
-  @Input()
-  subtitle!: string;
-
-  get isHandset$(): Observable<boolean> {
-    if (isPlatformServer(this.platformId)) {
-      return of(true);
-    } else {
-      return this.breakpointObserver.observe(Breakpoints.Handset)
-        .pipe(map(result => result.matches), shareReplay());
-    }
-  }
+  constructor() { }
 
   ngOnInit() { }
 
 }
+
 

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'rlb-cookies',
-    templateUrl: './cookies.component.html',
-    styleUrl: './cookies.component.scss',
-    standalone: false
+  selector: 'rlb-cookies',
+  templateUrl: './cookies.component.html',
+  styleUrl: './cookies.component.scss',
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CookiesComponent {
+export class CookiesComponent {}
 
-}

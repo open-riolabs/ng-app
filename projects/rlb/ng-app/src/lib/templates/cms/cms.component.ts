@@ -1,6 +1,7 @@
-import { Component, Inject, Input, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, input, Optional } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BreadcrumbItem } from '@open-rlb/ng-bootstrap';
-import { EMPTY, Subscription, switchMap } from 'rxjs';
+import { combineLatest, EMPTY, startWith, switchMap } from 'rxjs';
 import { LanguageService, Page, StrapiService, AbstractMdService } from '../../services';
 import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
 
@@ -8,9 +9,27 @@ import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
     selector: 'rlb-cms-template',
     templateUrl: './cms.component.html',
     styleUrl: './cms.component.scss',
-    standalone: false
+    standalone: false,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CmsComponent {
+
+  readonly contentId = input<string | undefined>();
+  readonly breadcrumbInput = input<BreadcrumbItem[] | undefined>(undefined, { alias: 'breadcrumb' });
+  readonly breadcrumb = computed(() => this.breadcrumbInput() ?? []);
+
+  readonly page = toSignal(
+    combineLatest([
+      this.languageService.languageChanged$.pipe(startWith({ lang: this.languageService.language } as any)),
+      toObservable(this.contentId)
+    ]).pipe(
+      switchMap(([_, id]) => {
+        const lang = this.cmsOptions.useAppLanguage ? this.languageService.language : this.languageService.contentLanguage;
+        if (id === undefined) return EMPTY;
+        return this.strapiService.fetchPage(lang || this.languageService.defaultLanguage, id);
+      })
+    )
+  );
 
   constructor(
     private strapiService: StrapiService,
@@ -18,35 +37,6 @@ export class CmsComponent {
     @Inject(RLB_CFG_CMS) @Optional() private cmsOptions: CmsConfiguration,
     @Optional() private mdService?: AbstractMdService
   ) { }
-
-  @Input()
-  contentId: string | undefined
-
-  @Input()
-  breadcrumb: BreadcrumbItem[] | undefined
-
-  public page: Page | undefined
-
-  private subscriptionLang!: Subscription
-  private subscriptionPage!: Subscription
-
-  ngOnDestroy() {
-    this.subscriptionLang?.unsubscribe()
-    this.subscriptionPage?.unsubscribe()
-  }
-
-  ngOnInit() {
-    const lang = this.cmsOptions.useAppLanguage ? this.languageService.language : this.languageService.contentLanguage
-    const page$ = this.strapiService.fetchPage(lang || this.languageService.defaultLanguage, this.contentId || '')
-    this.subscriptionLang = this.languageService.languageChanged$.pipe(
-      switchMap(langEvent => {
-        if (langEvent.lang) {
-          return page$
-        }
-        return EMPTY
-      })).subscribe(p => this.page = p)
-    this.subscriptionPage = page$.subscribe(p => this.page = p)
-  }
 
   public md(md: string): string {
     if (this.cmsOptions.markdown === 'ignore') {
@@ -66,4 +56,5 @@ export class CmsComponent {
     return md;
   }
 }
+
 
