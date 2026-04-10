@@ -23,7 +23,7 @@ export class SettingsListComponent {
     private readonly authService: AuthenticationService,
     @Inject(RLB_CFG_PAGES) @Optional() private pageOptions: PagesConfiguration | undefined) { }
 
-  readonly apps = computed(() => this.appsService.apps);
+  readonly apps = this.appsService.apps;
   readonly pages = computed(() => this.pageOptions);
 
   backClicked() {

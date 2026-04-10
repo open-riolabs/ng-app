@@ -1,86 +1,91 @@
-import { EventEmitter, Inject, Injectable, Optional } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { CookiesService } from '..';
-import { InternationalizationConfiguration, RLB_CFG_I18N } from '../../configuration';
+import { RLB_CFG_I18N } from '../../configuration';
 
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
+  private readonly translateService = inject(TranslateService);
+  private readonly cookiesService = inject(CookiesService);
+  private readonly i18nOptions = inject(RLB_CFG_I18N, { optional: true });
 
-  private _contentLanguage: string | undefined
-  public contentLanguageChanged$: EventEmitter<string> = new EventEmitter();
+  private readonly _language = signal<string>(this.translateService.currentLang || this.i18nOptions?.defaultLanguage || 'en');
+  private readonly _contentLanguage = signal<string | undefined>(undefined);
 
-  constructor(
-    private translateService: TranslateService,
-    private cookiesService: CookiesService,
-    @Inject(RLB_CFG_I18N) @Optional() private i18nOptions: InternationalizationConfiguration,
-  ) {
+  readonly language = this._language.asReadonly();
+  readonly contentLanguage = this._contentLanguage.asReadonly();
+
+  readonly languageChanged$ = this.translateService.onLangChange;
+  readonly contentLanguageChanged = this._contentLanguage.asReadonly();
+
+  constructor() {
+    // Sync private signal with translate service changes
+    this.translateService.onLangChange
+      .pipe(takeUntilDestroyed())
+      .subscribe(e => this._language.set(e.lang));
+
     if (this.i18nOptions) {
-      translateService.addLangs(this.i18nOptions.availableLangs)
-      const languageUI = this.cookiesService.getCookie('ui-locale') || this.defaultLanguage || this.browserLanguage
-      const languageContent = this.cookiesService.getCookie('content-locale') || this.defaultLanguage
-      translateService.use(languageUI)
-      this.contentLanguage = languageContent
+      this.translateService.addLangs(this.i18nOptions.availableLangs);
+      const languageUI = this.cookiesService.getCookie('ui-locale') || this.defaultLanguage || this.browserLanguage;
+      const languageContent = this.cookiesService.getCookie('content-locale') || this.defaultLanguage;
+      this.translateService.use(languageUI);
+      this.setContentLanguage(languageContent);
     }
   }
 
-  get language() {
-    return this.translateService.getCurrentLang() || this.i18nOptions.defaultLanguage
+  get currentLanguage() {
+    return this.language();
   }
 
-  set language(value: string | undefined) {
-    if (!value) return
-    this.cookiesService.setCookie('ui-locale', value)
-    this.translateService.use(value)
+  setLanguage(value: string | undefined) {
+    if (!value) return;
+    this.cookiesService.setCookie('ui-locale', value);
+    this.translateService.use(value);
   }
 
-  get contentLanguage() {
-    return this._contentLanguage
+  setContentLanguage(value: string | undefined) {
+    this.cookiesService.setCookie('content-locale', value || this.defaultLanguage);
+    this._contentLanguage.set(value);
   }
 
-  set contentLanguage(value: string | undefined) {
-    this.cookiesService.setCookie('content-locale', value || this.defaultLanguage)
-    this._contentLanguage = value
-    this.contentLanguageChanged$.emit(value)
-  }
 
   public get languages(): readonly string[] {
-    return this.translateService.getLangs()
+    return this.translateService.getLangs();
   }
 
   public set languages(value: string[]) {
-    this.translateService.addLangs(value)
+    this.translateService.addLangs(value);
   }
 
   public get defaultLanguage(): string {
-    return this.translateService.getFallbackLang() || 'en'
+    return this.translateService.getFallbackLang() || 'en';
   }
 
   public get browserLanguage() {
-    return this.translateService.getBrowserLang() || 'en'
+    return this.translateService.getBrowserLang() || 'en';
   }
 
   public translate(key: string | Array<string>, interpolateParams?: Object) {
-    return this.translateService.instant(key, interpolateParams)
+    return this.translateService.instant(key, interpolateParams);
   }
 
   public translateAsync(key: string | Array<string>, interpolateParams?: Object) {
-    return this.translateService.get(key, interpolateParams)
-  }
-
-  public get languageChanged$() {
-    return this.translateService.onLangChange
+    return this.translateService.get(key, interpolateParams);
   }
 
   public getLanguageName(l: string): string {
-    switch (l) {
-      case 'it': return 'Italiano'
-      case 'en': return 'English'
-      case 'es': return 'Español'
-      case 'fr': return 'Francés'
-      case 'ja': return '日本語'
-      case 'de': return 'Deutsch'
-      default: return ''
-    }
+    const names: Record<string, string> = {
+      it: 'Italiano',
+      en: 'English',
+      es: 'Español',
+      fr: 'Francés',
+      ja: '日本語',
+      de: 'Deutsch',
+    };
+    return names[l] || '';
   }
 }
+
+

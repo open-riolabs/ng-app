@@ -20,11 +20,11 @@ export class CmsComponent {
 
   readonly page = toSignal(
     combineLatest([
-      this.languageService.languageChanged$.pipe(startWith({ lang: this.languageService.language } as any)),
+      this.languageService.languageChanged$.pipe(startWith({ lang: this.languageService.language() } as any)),
       toObservable(this.contentId)
     ]).pipe(
       switchMap(([_, id]) => {
-        const lang = this.cmsOptions.useAppLanguage ? this.languageService.language : this.languageService.contentLanguage;
+        const lang = this.cmsOptions.useAppLanguage ? this.languageService.language() : this.languageService.contentLanguage();
         if (id === undefined) return EMPTY;
         return this.strapiService.fetchPage(lang || this.languageService.defaultLanguage, id);
       })

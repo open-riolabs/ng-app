@@ -1,7 +1,7 @@
-import { inject, Inject, Injectable, Optional } from '@angular/core';
+import { computed, inject, Inject, Injectable, Optional, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable, switchMap } from 'rxjs';
+import { filter, map, Observable, switchMap, take } from 'rxjs';
 import {
   AclConfiguration,
   AuthConfiguration,
@@ -13,7 +13,7 @@ import { AclStore } from '../../store/acl/acl.store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from './app-logger.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { DEFAULT_ROUTES_CONFIG } from '../../pages/default-routes.config';
 
 interface AppConfig {
@@ -27,54 +27,45 @@ interface AppConfig {
   providedIn: 'root',
 })
 export class AppsService {
-  private logger: LoggerContext;
-  private aclStore = inject(AclStore); // Inject SignalStore here
+  private readonly store = inject(Store<BaseState>);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly loggerService = inject(AppLoggerService);
+  private readonly confAuth = inject(RLB_CFG_AUTH, { optional: true });
+  private readonly confAcl = inject(RLB_CFG_ACL, { optional: true });
+  private readonly aclStore = inject(AclStore);
 
-  constructor(
-    private store: Store<BaseState>,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private loggerService: AppLoggerService,
-    @Inject(RLB_CFG_AUTH) @Optional() readonly confAuth: AuthConfiguration | undefined,
-    @Inject(RLB_CFG_ACL) @Optional() private readonly confAcl: AclConfiguration | undefined,
-  ) {
+  private logger: LoggerContext;
+
+  constructor() {
     this.logger = this.loggerService.for(this.constructor.name);
     this.logger.log('AppsService initialized');
 
-    this.initAuthProviders(store, confAuth);
+    this.initAuthProviders();
     this.initRouterListener();
   }
 
-  get currentDomain() {
-    return window.location.hostname;
-  }
+  readonly currentDomain = window.location.hostname;
 
-  get apps() {
+  readonly apps = computed(() => {
     const apps = this.store.selectSignal(state => state[appContextFeatureKey].apps)();
     const resources = this.aclStore.resources();
     const confAcl = this.confAcl;
 
-    return apps.filter(app => {
-      // Basic domain check
+    return apps.filter((app: AppInfo) => {
       const isDomainAllowed = !app.domains || app.domains.includes(this.currentDomain);
       if (!isDomainAllowed) return false;
 
-      // If acl config doesnt exist return apps filtered by domain
       if (!confAcl) return true;
+      if (!resources && app.actions?.length) return false;
+      if (resources && !app.actions?.length) return true;
 
-      if (!resources && app.actions?.length) return false; // If app has actions defined, but no resources in store, we assume it's ACL protected and not allowed
-
-      if (resources && !app.actions?.length) return true; // If app has no actions defined, we assume it's not ACL protected and allow it
-
-      return resources?.some(userResource => {
-        // Matching by Business ID
-        // IMPORTANT: app.data must have key, name of this key is in confAcl
+      return resources?.some((userResource) => {
         const appBusId = app.data?.[confAcl.businessIdKey];
         const matchBusId = userResource.resourceBusinessId === appBusId;
 
         if (!matchBusId) return false;
 
-        // Matching by Resource ID
         return userResource.resources.some(res => {
           const appResId = app.data?.[confAcl.resourceIdKey];
           const matchResId = res.resourceId === appResId;
@@ -85,36 +76,34 @@ export class AppsService {
         });
       });
     });
-  }
+  });
 
-  get currentAppAclInfo() {
-    const app = this.currentApp;
+  readonly currentApp = this.store.selectSignal((state: BaseState) => state[appContextFeatureKey].currentApp);
+
+  readonly currentAppId = computed(() => this.currentApp()?.id);
+
+  readonly currentAppAclInfo = computed(() => {
+    const app = this.currentApp();
     if (!app || !app.data || !this.confAcl) return null;
 
     return {
       busId: app.data[this.confAcl.businessIdKey],
       resId: app.data[this.confAcl.resourceIdKey],
     };
-  }
-
-  get currentApp() {
-    const app = this.store.selectSignal(state => state[appContextFeatureKey].currentApp)();
-    this.logger.log('Current app from store:', app);
-    return app;
-  }
+  });
 
   isAppSelected(appId: string) {
     return this.getStoredAppId() === appId;
   }
 
   checkPermissionInCurrentApp(action?: string): boolean {
-    const info = this.currentAppAclInfo;
+    const info = this.currentAppAclInfo();
     if (!info) return false;
     return this.aclStore.hasPermission(info.busId, info.resId, action);
   }
 
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
-    const currentApp = this.currentApp;
+    const currentApp = this.currentApp();
     if (!app) {
       this.logger.warn('Deselecting app (null).');
       this.store.dispatch(AppContextActions.setCurrentApp({ app: null }));
@@ -128,7 +117,8 @@ export class AppsService {
     this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 
-  private initAuthProviders(store: Store<BaseState>, confAuth?: AuthConfiguration) {
+  private initAuthProviders() {
+    const confAuth = this.confAuth;
     const currentProviderInStore = this.store.selectSignal(
       state => state[authsFeatureKey].currentProvider,
     )();
@@ -147,7 +137,7 @@ export class AppsService {
 
     if (confAuth?.providers && confAuth.providers.length === 1) {
       this.logger.info('Single auth provider detected:', confAuth.providers[0]);
-      store.dispatch(
+      this.store.dispatch(
         AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }),
       );
       return;
@@ -161,7 +151,7 @@ export class AppsService {
 
     if (authProvidersMatched && authProvidersMatched.length === 1) {
       this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
-      store.dispatch(
+      this.store.dispatch(
         AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }),
       );
     } else if (authProvidersMatched && authProvidersMatched.length > 1) {
@@ -187,56 +177,49 @@ export class AppsService {
 
   private resolveRouteAndApps(): Observable<AppConfig | null> {
     const route = this.findDeepestChild(this.activatedRoute);
-
-    // 1. Get abstract route template (LIKE ".../:id")
     const configPath = this.getConfigPath(route);
-
-    // 2. Get REAL url path (LIKE ".../abc-123")
     const actualPath = this.getActualPath(route);
 
     this.logger.info(`Resolving. ConfigPath: '${configPath}', ActualPath: '${actualPath}'`);
 
-    const appRoutes: AppInfo[] | undefined = this.apps?.map(app => ({
+    const appRoutes: AppInfo[] = this.apps()?.map((app: AppInfo) => ({
       type: app.type,
       routes: app.routes || [],
       viewMode: app.viewMode,
       enabled: app.enabled,
       core: app.core,
-    }));
+    })) || [];
 
     let appRoutesMatched: AppInfo[] = [];
 
     if (configPath && !this.isDefaultRoute(configPath)) {
-      appRoutesMatched =
-        appRoutes?.filter(app => app.routes?.some(r => r.includes(configPath))) ?? [];
+      appRoutesMatched = appRoutes.filter((app: AppInfo) => app.routes?.some(r => r.includes(configPath)));
     }
 
     this.logger.info('Matched appRoute:', appRoutesMatched);
 
-    return this.store
-      .select(state => state[appContextFeatureKey].apps)
-      .pipe(
-        // waiting for all "finalizeApp" dispatches
-        filter(apps => {
-          if (!apps || apps.length === 0) return true;
-          const allFinalized = !apps.some(app => !app.id);
-          if (!allFinalized) {
-            this.logger.info('Waiting for apps initialization (finalizeApp)...');
-          }
-          return allFinalized;
-        }),
-        map(apps => {
-          if (appRoutesMatched.length > 0 || actualPath === '') {
-            return {
-              route,
-              appsConfig: appRoutesMatched,
-              apps,
-              fullPath: actualPath,
-            } as AppConfig;
-          }
-          return null;
-        }),
-      );
+    return toObservable(this.store.selectSignal(state => state[appContextFeatureKey].apps)).pipe(
+      filter((apps: AppInfo[]) => {
+        if (!apps || apps.length === 0) return true;
+        const allFinalized = !apps.some((app: AppInfo) => !app.id);
+        if (!allFinalized) {
+          this.logger.info('Waiting for apps initialization (finalizeApp)...');
+        }
+        return allFinalized;
+      }),
+      take(1),
+      map(apps => {
+        if (appRoutesMatched.length > 0 || actualPath === '') {
+          return {
+            route,
+            appsConfig: appRoutesMatched,
+            apps,
+            fullPath: actualPath,
+          } as AppConfig;
+        }
+        return null;
+      }),
+    );
   }
 
   private handleResolvedApps(data: AppConfig | null) {
@@ -323,7 +306,7 @@ export class AppsService {
     // CASE 3: Standard logic to get app (Deep linking) ---
     // Here we go only if route not empty  !="" and not root !="/"
     const configPath = this.getConfigPath(route);
-    const matchedApps = domainApps.filter(app => {
+    const matchedApps = domainApps.filter((app: AppInfo) => {
       if (!configPath || configPath === '') {
         return false;
       }

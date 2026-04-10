@@ -15,9 +15,7 @@ import { AuthenticationService } from '../../../auth/services/auth.service';
 export class AppSelectorComponent {
   private readonly _location = inject(Location);
   private readonly appsService = inject(AppsService);
-  private readonly authService = inject(AuthenticationService);
-
-  readonly apps = computed(() => this.appsService.apps);
+  private readonly authService = inject(AuthenticationService);  readonly apps = this.appsService.apps;
   readonly auth$ = this.authService.isAuthenticated$;
 
   backClicked() {

@@ -49,7 +49,7 @@ export class AppTemplateComponent implements OnDestroy {
   readonly mobileSettingsMenu = viewChild<SettingsDropdownSelectorComponent>('mobileSettingsMenu');
 
   readonly theme = this.store.selectSignal(state => state[appContextFeatureKey].theme);
-  readonly apps = computed(() => this.appsService.apps.filter(app => app.enabled && app.id));
+  readonly apps = computed(() => this.appsService.apps().filter((app: AppInfo) => app.enabled && app.id));
 
   constructor(
     @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
@@ -58,7 +58,7 @@ export class AppTemplateComponent implements OnDestroy {
     private readonly authService: AuthenticationService,
     private readonly router: Router,
   ) {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+    this.router.events.pipe(filter((event: any) => event instanceof NavigationEnd)).subscribe(() => {
       this.closeMobileMenu();
     });
   }
@@ -70,19 +70,19 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get sidebarVisible$() {
-    return this.store.select(state => state[sidebarsFeatureKey].visible);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].visible);
   }
 
   get sidearHasLogin$() {
-    return this.store.select(state => state[sidebarsFeatureKey].loginVisible);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].loginVisible);
   }
 
   get sidearHasSearch$() {
-    return this.store.select(state => state[sidebarsFeatureKey].searchVisible);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].searchVisible);
   }
 
   get sidebarItems$() {
-    return this.store.select(state => state[sidebarsFeatureKey].items);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].items);
   }
 
   setSidearSearchText(text: string | null) {
@@ -94,23 +94,23 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get sidearHasSettings$() {
-    return this.store.select(state => state[sidebarsFeatureKey].settingsVisible);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].settingsVisible);
   }
 
   get sidearAppsVisible$() {
-    return this.store.select(state => state[sidebarsFeatureKey].appsVisible);
+    return this.store.select((state: BaseState) => state[sidebarsFeatureKey].appsVisible);
   }
 
   get navVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].visible);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].visible);
   }
 
   get navSearchVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].searchVisible);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].searchVisible);
   }
 
   get navHeader$() {
-    return this.store.select(state => state[navbarsFeatureKey].header);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].header);
   }
 
   get isAuthenticated$() {
@@ -122,19 +122,19 @@ export class AppTemplateComponent implements OnDestroy {
   }
 
   get navLeftItems$() {
-    return this.store.select(state => state[navbarsFeatureKey].leftItems);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].leftItems);
   }
 
   get navRightItems$() {
-    return this.store.select(state => state[navbarsFeatureKey].rightItems);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].rightItems);
   }
 
   get navbarHasLogin$() {
-    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].loginVisible);
   }
 
   get navbarHasSettings$() {
-    return this.store.select(state => state[navbarsFeatureKey].settingsVisible);
+    return this.store.select((state: BaseState) => state[navbarsFeatureKey].settingsVisible);
   }
 
   get navbarHasApps$() {

@@ -17,7 +17,7 @@ export class AppDropdownSelectorComponent {
 
   private appsService: AppsService = inject(AppsService);
 
-  readonly currentAppId = computed(() => this.appsService.currentApp?.id);
+  readonly currentAppId = computed(() => this.appsService.currentApp()?.id);
 
   selectApp(app: AppInfo): void {
     this.appSelected.emit(app);

@@ -64,7 +64,7 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
     () => this.store.selectSignal(o => o[appContextFeatureKey].theme)() === 'dark',
   );
 
-  readonly currentAppId = computed(() => this.appsService.currentApp?.id);
+  readonly currentAppId = computed(() => this.appsService.currentApp()?.id);
 
   constructor() {
     this.router.events.pipe(takeUntilDestroyed()).subscribe(() => this.close());

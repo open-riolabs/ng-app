@@ -31,7 +31,7 @@ export const initialNavbarState: Navbar = {
   settingsVisible: false,
   appsVisible: false,
   separatorVisible: true,
-  actionsLayout: 'default',
+  actionsLayout: 'dropdown',
 };
 
 export interface NavbarState {
