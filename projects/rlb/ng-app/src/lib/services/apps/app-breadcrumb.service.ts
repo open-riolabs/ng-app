@@ -1,10 +1,10 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { BreadcrumbItem, UniqueIdService } from "@open-rlb/ng-bootstrap";
-import { filter } from "rxjs";
-import { AppLoggerService, LoggerContext } from "./app-logger.service";
-import { LanguageService } from "../i18n/language.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BreadcrumbItem, UniqueIdService } from '@open-rlb/ng-bootstrap';
+import { filter } from 'rxjs';
+import { AppLoggerService, LoggerContext } from './app-logger.service';
+import { LanguageService } from '../i18n/language.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppBreadcrumbService {
@@ -16,7 +16,11 @@ export class AppBreadcrumbService {
 
   private readonly _breadcrumbs = signal<BreadcrumbItem[]>([]);
   readonly breadcrumbs = this._breadcrumbs.asReadonly();
-  
+  /**
+   * @deprecated Use `breadcrumbs` (signal-based) instead.
+   */
+  readonly breadcrumbs$ = toObservable(this._breadcrumbs);
+
   private logger: LoggerContext;
 
   constructor() {
@@ -26,7 +30,7 @@ export class AppBreadcrumbService {
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe(() => this.updateBreadcrumbs());
 
@@ -58,7 +62,7 @@ export class AppBreadcrumbService {
         breadcrumbs.push({
           label: this.languageService.translate(label),
           link: accumulatedLink || '/',
-          id: `breadcrumb${this.idService.id}`
+          id: `breadcrumb${this.idService.id}`,
         });
         this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
       }
@@ -70,4 +74,3 @@ export class AppBreadcrumbService {
     return breadcrumbs;
   }
 }
-
