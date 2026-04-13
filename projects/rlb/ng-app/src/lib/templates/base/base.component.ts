@@ -12,7 +12,7 @@ import { map, of } from 'rxjs';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BaseComponent implements OnInit {
+export class BaseComponent {
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -28,11 +28,6 @@ export class BaseComponent implements OnInit {
       : this.breakpointObserver.observe(Breakpoints.Handset).pipe(map(result => result.matches)),
     { initialValue: true }
   );
-
-  constructor() { }
-
-  ngOnInit() { }
-
 }
 
 

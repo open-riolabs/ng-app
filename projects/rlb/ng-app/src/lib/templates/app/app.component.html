@@ -1,7 +1,7 @@
 <div class="rlb-app">
-  @if (navVisible$ | async) {
-    <rlb-navbar [dark]="theme() === 'dark'" [showSideBarToggler]="(sidebarVisible$ | async)"  expand="lg" class="border-bottom py-1 rlb-navbar">
-      @if (navHeader$ | async; as header) {
+  @if (navVisible()) {
+    <rlb-navbar [dark]="theme() === 'dark'" [showSideBarToggler]="sidebarVisible()"  expand="lg" class="border-bottom py-1 rlb-navbar">
+      @if (navHeader(); as header) {
         <a rlb-navbar-brand href="#">
 
           @if (header.type === 'text') {
@@ -17,7 +17,7 @@
           }
         </a>
       }
-      @if (navSearchVisible$ | async) {
+      @if (navSearchVisible()) {
         <rlb-navbar-form>
           <rlb-input-group class="my-1 mx-3" validate>
             <rlb-input type="search" class="search-input" placeholder="Search" [(ngModel)]="navSearchText"
@@ -32,7 +32,7 @@
 
       <!-- MOBILE VIEWS -->
       <div rlb-custom-navbar-items class="d-flex d-lg-none">
-        @if (isAuthenticated$ | async) {
+        @if (isAuthenticated()) {
           <rlb-fab size="sm" outline toggle="offcanvas" toggle-target="mobileMenuOffcanvas">
             <i class="bi bi-three-dots-vertical"></i>
           </rlb-fab>
@@ -50,25 +50,25 @@
             <rlb-offcanvas-body class="p-0 overflow-x-hidden">
 
               <!-- Mobile Apps Grid -->
-              @if ((navbarHasApps$ | async) && apps().length > 1) {
+              @if (navbarHasApps() && apps().length > 1) {
                 <div class="border-bottom pb-2">
                   <rlb-app-dropdown-selector
                     mode="mobile"
                     [apps]="apps()"
-                    [isAuthenticated]="isAuthenticated$ | async"
+                    [isAuthenticated]="isAuthenticated()"
                     (appSelected)="selectApp($event, 'app')"
                   />
                 </div>
               }
 
               <!-- Mobile Settings Carousel -->
-              @if (((isAuthenticated$ | async)) || (navbarHasSettings$ | async)) {
+              @if (isAuthenticated() || navbarHasSettings()) {
                 <div class="pt-2">
                   <rlb-settings-dropdown-selector
                     mode="mobile"
                     #mobileSettingsMenu
                     [apps]="apps()"
-                    [isAuthenticated]="isAuthenticated$ | async"
+                    [isAuthenticated]="isAuthenticated()"
                     (appSelected)="selectApp($event, 'settings')"
                   />
                 </div>
@@ -85,7 +85,7 @@
       </div>
 
       <rlb-navbar-items>
-        @for (navComponent of navLeftItems$ | async; track navComponent) {
+        @for (navComponent of navLeftItems(); track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | leftComponent"></ng-container>
           </ng-container>
@@ -93,18 +93,18 @@
       </rlb-navbar-items>
 
       <rlb-navbar-items class="ms-auto align-items-center">
-        @for (navComponent of navRightItems$ | async; track navComponent) {
+        @for (navComponent of navRightItems(); track navComponent) {
           <ng-container ngProjectAs="rlb-navbar-item">
             <ng-container *ngComponentOutlet="navComponent | rightComponent"></ng-container>
           </ng-container>
         }
-        @if ((separatorVisible$ | async) && (isAuthenticated$ | async)) {
+        @if (separatorVisible() && isAuthenticated()) {
           <rlb-navbar-separator />
         }
 
         <ng-container ngProjectAs="rlb-navbar-item">
-          @if ((navbarLayout$ | async) == 'default') {
-            @if ((navbarHasLogin$ | async) && !(isAuthenticated$ | async)) {
+          @if (navbarLayout() == 'default') {
+            @if (navbarHasLogin() && !isAuthenticated()) {
               <rlb-navbar-item (click)="loginNav($event)">
                 <span tooltip-placement="bottom" [tooltip]="('core.account.login') |translate">
                   <i class=" bi bi-box-arrow-in-left"></i>
@@ -113,7 +113,7 @@
               </rlb-navbar-item>
             }
 
-            @if ((navbarHasLogin$ | async) && (isAuthenticated$ | async)) {
+            @if (navbarHasLogin() && isAuthenticated()) {
               <rlb-navbar-item [router-link]="'/profile'">
               <span tooltip-placement="bottom" [tooltip]="('core.account.title') |translate">
                 <i class="bi bi-person"></i>
@@ -122,7 +122,7 @@
               </rlb-navbar-item>
             }
 
-            @if (navbarHasSettings$ | async) {
+            @if (navbarHasSettings()) {
               <rlb-navbar-item [router-link]="'/settings'">
               <span tooltip-placement="bottom" [tooltip]="('core.settings.title') |translate">
                 <i class="bi bi-gear"></i>
@@ -131,7 +131,7 @@
               </rlb-navbar-item>
             }
 
-            @if ((navbarHasApps$ | async) && apps().length > 1) {
+            @if (navbarHasApps() && apps().length > 1) {
               <rlb-navbar-item [router-link]="'/apps'">
               <span tooltip-placement="bottom" [tooltip]="('core.apps.button') |translate">
                 <i class="bi bi-grid-3x3-gap-fill"></i>
@@ -140,11 +140,11 @@
               </rlb-navbar-item>
             }
 
-          } @else if ((navbarLayout$ | async) == 'dropdown') {
+          } @else if (navbarLayout() == 'dropdown') {
             <!-- MODERN DROPDOWN MODE -->
 
             <!--Unauthenticated Login -->
-            @if ((navbarHasLogin$ | async) && !(isAuthenticated$ | async)) {
+            @if (navbarHasLogin() && !isAuthenticated()) {
               <rlb-navbar-item (click)="loginNav($event)">
                 <span tooltip-placement="bottom" [tooltip]="('core.account.login') | translate">
                   <i class="bi bi-box-arrow-in-left fs-5"></i>
@@ -154,19 +154,19 @@
             }
 
             <!-- Profile & Settings Account Card -->
-            @if (((navbarHasSettings$ | async) && (isAuthenticated$ | async))) {
+            @if (navbarHasSettings() && isAuthenticated()) {
               <rlb-settings-dropdown-selector
                 [apps]="apps()"
-                [isAuthenticated]="isAuthenticated$ | async"
+                [isAuthenticated]="isAuthenticated()"
                 (appSelected)="selectApp($event, 'settings')"
               />
             }
 
             <!-- Apps Launcher -->
-            @if ((navbarHasApps$ | async) && (isAuthenticated$ | async) && apps().length > 1) {
+            @if (navbarHasApps() && isAuthenticated() && apps().length > 1) {
               <rlb-app-dropdown-selector
                 [apps]="apps()"
-                [isAuthenticated]="isAuthenticated$ | async"
+                [isAuthenticated]="isAuthenticated()"
                 (appSelected)="selectApp($event, 'app')"
               />
             }
@@ -176,9 +176,9 @@
     </rlb-navbar>
   }
   <div class="rlb-main-wrapper">
-    @if ((sidebarVisible$ | async)) {
+    @if (sidebarVisible()) {
       <rlb-sidebar [dark]="theme() === 'dark'" id="sidebar" class="rlb-sidebar">
-        @for (item of  (sidebarItems$ | async); track $index) {
+        @for (item of sidebarItems(); track $index) {
           <rlb-sidebar-item
             *roles="item.action"
             [icon]="item.icon" [link]="item.url"

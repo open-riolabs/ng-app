@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Inject, input, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BreadcrumbItem } from '@open-rlb/ng-bootstrap';
 import { combineLatest, EMPTY, startWith, switchMap } from 'rxjs';
@@ -13,6 +13,10 @@ import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CmsComponent {
+  private readonly strapiService = inject(StrapiService);
+  private readonly languageService = inject(LanguageService);
+  private readonly cmsOptions = inject(RLB_CFG_CMS, { optional: true });
+  private readonly mdService = inject(AbstractMdService, { optional: true });
 
   readonly contentId = input<string | undefined>();
   readonly breadcrumbInput = input<BreadcrumbItem[] | undefined>(undefined, { alias: 'breadcrumb' });
@@ -24,32 +28,25 @@ export class CmsComponent {
       toObservable(this.contentId)
     ]).pipe(
       switchMap(([_, id]) => {
-        const lang = this.cmsOptions.useAppLanguage ? this.languageService.language() : this.languageService.contentLanguage();
+        const lang = this.cmsOptions?.useAppLanguage ? this.languageService.language() : this.languageService.contentLanguage();
         if (id === undefined) return EMPTY;
         return this.strapiService.fetchPage(lang || this.languageService.defaultLanguage, id);
       })
     )
   );
 
-  constructor(
-    private strapiService: StrapiService,
-    private languageService: LanguageService,
-    @Inject(RLB_CFG_CMS) @Optional() private cmsOptions: CmsConfiguration,
-    @Optional() private mdService?: AbstractMdService
-  ) { }
-
   public md(md: string): string {
-    if (this.cmsOptions.markdown === 'ignore') {
+    if (this.cmsOptions?.markdown === 'ignore') {
       return md;
     }
     else {
       if (!this.mdService) {
         throw new Error('No MdService provided')
       }
-      else if (this.cmsOptions.markdown === 'text') {
+      else if (this.cmsOptions?.markdown === 'text') {
         return this.mdService.md2text(md)
       }
-      else if (this.cmsOptions.markdown === 'html') {
+      else if (this.cmsOptions?.markdown === 'html') {
         return this.mdService.md2html(md)
       }
     }
