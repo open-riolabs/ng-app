@@ -1,13 +1,8 @@
-import { computed, inject, Inject, Injectable, Optional, signal } from '@angular/core';
+import { computed, inject, Injectable, Injector } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, switchMap, take } from 'rxjs';
-import {
-  AclConfiguration,
-  AuthConfiguration,
-  RLB_CFG_ACL,
-  RLB_CFG_AUTH,
-} from '../../configuration';
+import { RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { AclStore } from '../../store/acl/acl.store';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
@@ -34,6 +29,7 @@ export class AppsService {
   private readonly confAuth = inject(RLB_CFG_AUTH, { optional: true });
   private readonly confAcl = inject(RLB_CFG_ACL, { optional: true });
   private readonly aclStore = inject(AclStore);
+  private readonly injector = inject(Injector);
 
   private logger: LoggerContext;
 
@@ -60,7 +56,7 @@ export class AppsService {
       if (!resources && app.actions?.length) return false;
       if (resources && !app.actions?.length) return true;
 
-      return resources?.some((userResource) => {
+      return resources?.some(userResource => {
         const appBusId = app.data?.[confAcl.businessIdKey];
         const matchBusId = userResource.resourceBusinessId === appBusId;
 
@@ -78,7 +74,9 @@ export class AppsService {
     });
   });
 
-  readonly currentApp = this.store.selectSignal((state: BaseState) => state[appContextFeatureKey].currentApp);
+  readonly currentApp = this.store.selectSignal(
+    (state: BaseState) => state[appContextFeatureKey].currentApp,
+  );
 
   readonly currentAppId = computed(() => this.currentApp()?.id);
 
@@ -182,23 +180,30 @@ export class AppsService {
 
     this.logger.info(`Resolving. ConfigPath: '${configPath}', ActualPath: '${actualPath}'`);
 
-    const appRoutes: AppInfo[] = this.apps()?.map((app: AppInfo) => ({
-      type: app.type,
-      routes: app.routes || [],
-      viewMode: app.viewMode,
-      enabled: app.enabled,
-      core: app.core,
-    })) || [];
+    const appRoutes: AppInfo[] =
+      this.apps()?.map((app: AppInfo) => ({
+        type: app.type,
+        routes: app.routes || [],
+        viewMode: app.viewMode,
+        enabled: app.enabled,
+        core: app.core,
+      })) || [];
 
     let appRoutesMatched: AppInfo[] = [];
 
     if (configPath && !this.isDefaultRoute(configPath)) {
-      appRoutesMatched = appRoutes.filter((app: AppInfo) => app.routes?.some(r => r.includes(configPath)));
+      appRoutesMatched = appRoutes.filter((app: AppInfo) =>
+        app.routes?.some(r => r.includes(configPath)),
+      );
     }
 
     this.logger.info('Matched appRoute:', appRoutesMatched);
 
-    return toObservable(this.store.selectSignal(state => state[appContextFeatureKey].apps)).pipe(
+    return toObservable(
+      this.store.selectSignal(state => state[appContextFeatureKey].apps),
+      // fix init load error
+      { injector: this.injector },
+    ).pipe(
       filter((apps: AppInfo[]) => {
         if (!apps || apps.length === 0) return true;
         const allFinalized = !apps.some((app: AppInfo) => !app.id);
