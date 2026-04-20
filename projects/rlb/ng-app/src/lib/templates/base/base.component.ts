@@ -5,11 +5,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BreadcrumbItem } from '@open-rlb/ng-bootstrap';
 import { map, of } from 'rxjs';
 
+import { NgTemplateOutlet } from '@angular/common';
+import { BreadcrumbComponent } from '@open-rlb/ng-bootstrap';
+
 @Component({
   selector: 'rlb-base-template',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
-  standalone: false,
+  imports: [NgTemplateOutlet, BreadcrumbComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BaseComponent {

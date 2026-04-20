@@ -2,8 +2,7 @@ import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from 
 import { AppsService } from '../../services';
 
 @Directive({
-  selector: '[roles]',
-  standalone: false,
+  selector: '[roles]'
 })
 export class RlbRole {
   private appsService = inject(AppsService);

@@ -9,18 +9,49 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NavbarDropdownItemComponent, ToastService } from '@open-rlb/ng-bootstrap';
-import { Router } from '@angular/router';
+import {
+  CarouselComponent,
+  CarouselSlideComponent,
+  DropdownContainerComponent,
+  ListComponent,
+  ListItemComponent,
+  NavbarDropdownItemComponent,
+  OptionComponent,
+  SelectComponent,
+  SwitchComponent,
+  ToastService,
+  TooltipDirective,
+} from '@open-rlb/ng-bootstrap';
+import { Router, RouterModule } from '@angular/router';
 import { AppInfo, AppsService, LanguageService } from '../../../services';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 import { AppContextActions, appContextFeatureKey, AuthActions, BaseState } from '../../../store';
 import { Store } from '@ngrx/store';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'rlb-settings-dropdown-selector',
-  standalone: false,
   templateUrl: './settings-dropdown-selector.component.html',
   styleUrl: './settings-dropdown-selector.component.scss',
+  imports: [
+    NavbarDropdownItemComponent,
+    DropdownContainerComponent,
+    CarouselComponent,
+    CarouselSlideComponent,
+    TooltipDirective,
+    ListComponent,
+    ListItemComponent,
+    SwitchComponent,
+    SelectComponent,
+    OptionComponent,
+    NgClass,
+    NgTemplateOutlet,
+    TranslateModule,
+    FormsModule,
+    RouterModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsDropdownSelectorComponent implements OnDestroy {

@@ -3,7 +3,7 @@ import { RlbAppModule } from '../rlb-app.module';
 import { IModal, ModalData, ModalDirective } from '@open-rlb/ng-bootstrap';
 
 @Component({
-  imports: [RlbAppModule],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="modal-header">

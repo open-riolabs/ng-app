@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'rlb-forbidden',
-  standalone: false,
+  imports: [TranslateModule],
   template: `<div class="container" style="height:calc(100vh - 58px);">
   <div class="align-center">
     <div class="text-center">

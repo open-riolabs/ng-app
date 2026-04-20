@@ -27,34 +27,7 @@ import { AppDropdownSelectorComponent } from './pages/apps/app-dropdown-selector
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 
 @NgModule({
-  declarations: [
-    // pages
-    CmsContentComponent,
-    CookiesComponent,
-    NotFoundComponent,
-    PrivacyComponent,
-    SupportComponent,
-    TermsAndConditionsComponent,
-    ForbiddenComponent,
-    // pipes
-    CmsPipe,
-    AsMultiPipe,
-    AsSinglePipe,
-    LeftComponentPipe,
-    RightComponentPipe,
-    TruncatePipe,
-    AutolinkPipe,
-    // templates
-    BaseComponent,
-    CmsComponent,
-    ContentComponent,
-    AppTemplateComponent,
-    AppContainerComponent,
-    SettingsDropdownSelectorComponent,
-    AppDropdownSelectorComponent,
-    // directives
-    RlbRole,
-  ],
+  declarations: [],
   exports: [
     // pipes
     CmsPipe,
@@ -85,6 +58,29 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
     TranslateModule,
     RlbBootstrapModule,
     RouterModule,
+    // standalone
+    CmsContentComponent,
+    CookiesComponent,
+    NotFoundComponent,
+    PrivacyComponent,
+    SupportComponent,
+    TermsAndConditionsComponent,
+    ForbiddenComponent,
+    CmsPipe,
+    AsMultiPipe,
+    AsSinglePipe,
+    LeftComponentPipe,
+    RightComponentPipe,
+    TruncatePipe,
+    AutolinkPipe,
+    BaseComponent,
+    CmsComponent,
+    ContentComponent,
+    AppTemplateComponent,
+    AppContainerComponent,
+    SettingsDropdownSelectorComponent,
+    AppDropdownSelectorComponent,
+    RlbRole,
   ],
 })
 export class RlbAppModule {}

@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'asMulti',
-    standalone: false
+    name: 'asMulti'
 })
 export class AsMultiPipe implements PipeTransform {
 
@@ -15,8 +14,7 @@ export class AsMultiPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'asSingle',
-    standalone: false
+    name: 'asSingle'
 })
 export class AsSinglePipe implements PipeTransform {
 

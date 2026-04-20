@@ -1,11 +1,28 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { AppInfo, AppsService } from '../../../services';
 
+import {
+  ButtonComponent,
+  DropdownContainerComponent,
+  NavbarDropdownItemComponent,
+  TooltipDirective,
+} from '@open-rlb/ng-bootstrap';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'rlb-app-dropdown-selector',
-  standalone: false,
   templateUrl: './app-dropdown-selector.component.html',
   styleUrls: ['./app-dropdown-selector.component.scss'],
+  imports: [
+    NavbarDropdownItemComponent,
+    DropdownContainerComponent,
+    ButtonComponent,
+    TooltipDirective,
+    NgClass,
+    NgTemplateOutlet,
+    TranslateModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDropdownSelectorComponent {
@@ -27,4 +44,3 @@ export class AppDropdownSelectorComponent {
     return this.currentAppId() === appId;
   }
 }
-

@@ -4,11 +4,13 @@ import { ChangeDetectionStrategy, Component, inject, Inject, OnInit, PLATFORM_ID
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, of } from 'rxjs';
 
+import { NgTemplateOutlet } from '@angular/common';
+
 @Component({
     selector: 'rlb-content-template',
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    standalone: false,
+    imports: [NgTemplateOutlet],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentComponent {

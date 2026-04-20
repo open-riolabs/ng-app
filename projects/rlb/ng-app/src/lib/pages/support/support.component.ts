@@ -3,11 +3,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AbstractSupportService } from '../../services/abstraction/abstract-support.service';
 import { Location } from '@angular/common';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { ListComponent, ListItemComponent, InputComponent, SwitchComponent } from '@open-rlb/ng-bootstrap';
+
 @Component({
     selector: 'rlb-support',
     templateUrl: './support.component.html',
     styleUrl: './support.component.scss',
-    standalone: false,
+    imports: [ReactiveFormsModule, TranslateModule, ListComponent, ListItemComponent, InputComponent, SwitchComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportComponent implements OnInit {

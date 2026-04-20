@@ -16,10 +16,16 @@ import {
 import { AppLoggerService, LoggerContext } from "../../services";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { AppTemplateComponent } from '../app/app.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ModalContainerComponent, ToastContainerComponent } from '@open-rlb/ng-bootstrap';
+import { AsMultiPipe, AsSinglePipe } from '../../pipes/as/as.pipe';
+
 @Component({
   selector: 'rlb-app-container',
   templateUrl: './app-container.component.html',
-  standalone: false,
+  imports: [AppTemplateComponent, CommonModule, RouterModule, ModalContainerComponent, ToastContainerComponent, AsMultiPipe, AsSinglePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppContainerComponent {

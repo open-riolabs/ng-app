@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
-import { IModal, ModalData, ModalDirective } from '@open-rlb/ng-bootstrap';
+import { IModal, ModalData, ModalDirective, TooltipDirective } from '@open-rlb/ng-bootstrap';
 import { AppInfo } from '../services/apps/app';
 import { RlbAppModule } from '../rlb-app.module';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  imports: [RlbAppModule, CommonModule],
+  imports: [TranslateModule, CommonModule, TooltipDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="modal-header">
