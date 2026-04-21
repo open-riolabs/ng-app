@@ -1,37 +1,37 @@
 <div>
-  @if (page) {
+  @if (page(); as p) {
     <div class="container">
-      @if (breadcrumb) {
+      @if (breadcrumb()) {
         <div class="row my-4">
           <div class="col-12">
-            <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+            <rlb-breadcrumb [items]="breadcrumb()"></rlb-breadcrumb>
           </div>
         </div>
       }
       <div class="row my-4">
         <div class="col-12">
-          <h1 class="text-center">{{page.Title}}</h1>
+          <h1 class="text-center">{{p.Title}}</h1>
         </div>
       </div>
-      @if (page.Content) {
+      @if (p.Content) {
         <div class="row my-4">
           <div class="col-12">
-            <div [innerHTML]="page.Content "></div>
+            <div [innerHTML]="p.Content "></div>
           </div>
         </div>
       }
-      @if (page.page_tabs.length>0) {
+      @if (p.page_tabs.length>0) {
         <div class="row my-4">
           <div class="col-12">
             <rlb-tabs>
-              @for (tab of page.page_tabs; track tab.id; let i = $index) {
+              @for (tab of p.page_tabs; track tab.id; let i = $index) {
                 <rlb-tab [target]="'cms-tab-'+i">
                   {{tab.Title}}
                 </rlb-tab>
               }
             </rlb-tabs>
             <rlb-tab-content>
-              @for (tab of page.page_tabs; track tab.id; let i = $index) {
+              @for (tab of p.page_tabs; track tab.id; let i = $index) {
                 <rlb-tab-pane [id]="'cms-tab-'+i">
                   <div class="container-fluid">
                     @if (tab.Content) {
@@ -102,9 +102,9 @@
                         </span>
                       </div>
                     </div>
-                    @if (page.topics.length>0) {
+                    @if (p.topics.length>0) {
                       <div class="row my-4" style="padding: 4px">
-                        @for (topic of page.topics; track topic.ContentId) {
+                        @for (topic of p.topics; track topic.ContentId) {
                           <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <a [routerLink]="'/informations/'+topic.page.ContentId" style="color: inherit;text-decoration: none;">
                               <div class="card mb-4" style="min-height: 230px;">
@@ -123,10 +123,11 @@
                     </div>
                   </rlb-tab-pane>
                 }
-              </rlb-tab-content>
-            </div>
+            </rlb-tab-content>
           </div>
-        }
-      </div>
-    }
-  </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+

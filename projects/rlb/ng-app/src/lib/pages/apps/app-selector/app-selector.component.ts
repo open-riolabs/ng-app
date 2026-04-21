@@ -1,30 +1,22 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RlbAppModule } from '../../../rlb-app.module';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
-import { BaseState } from '../../../store';
 import { AuthenticationService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'rlb-app-selector',
   imports: [RlbAppModule, CommonModule],
   templateUrl: './app-selector.component.html',
-  styleUrl: './app-selector.component.scss'
+  styleUrl: './app-selector.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppSelectorComponent {
-
-  constructor(
-    private readonly _location: Location,
-    private readonly appsService: AppsService,
-    private readonly authService: AuthenticationService,
-
-  ) { }
-
-  get apps() {
-    return this.appsService.apps;
-  }
+  private readonly _location = inject(Location);
+  private readonly appsService = inject(AppsService);
+  private readonly authService = inject(AuthenticationService);  readonly apps = this.appsService.apps;
+  readonly auth$ = this.authService.isAuthenticated$;
 
   backClicked() {
     this._location.back();
@@ -33,8 +25,5 @@ export class AppSelectorComponent {
   selectApp(app: AppInfo) {
     this.appsService.selectApp(app, 'app');
   }
-
-  get auth$() {
-    return this.authService.isAuthenticated$;
-  }
 }
+

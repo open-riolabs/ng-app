@@ -5,7 +5,7 @@
     style="font-size: 25px;font-weight: 600;" (click)="backClicked()"></i>
   </div>
   <rlb-list>
-    @for (app of apps; track app.id) {
+    @for (app of apps(); track app.id) {
       <ng-container ngProjectAs="rlb-list-item-image">
         @if (app.core) {
           <ng-container ngProjectAs="rlb-list-item-image">
@@ -20,3 +20,4 @@
     }
   </rlb-list>
 </div>
+

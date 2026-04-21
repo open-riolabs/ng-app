@@ -1,66 +1,76 @@
-import { Injectable } from "@angular/core";
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { BreadcrumbItem, UniqueIdService } from "@open-rlb/ng-bootstrap";
-import { BehaviorSubject, filter } from "rxjs";
-import { AppLoggerService, LoggerContext } from "./app-logger.service";
-import { LanguageService } from "../i18n/language.service";
+import { inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BreadcrumbItem, UniqueIdService } from '@open-rlb/ng-bootstrap';
+import { filter } from 'rxjs';
+import { AppLoggerService, LoggerContext } from './app-logger.service';
+import { LanguageService } from '../i18n/language.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppBreadcrumbService {
-	private readonly _breadcrumbs$ = new BehaviorSubject<BreadcrumbItem[]>([]);
-	public readonly breadcrumbs$ = this._breadcrumbs$.asObservable();
-	private logger: LoggerContext;
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly loggerService = inject(AppLoggerService);
+  private readonly languageService = inject(LanguageService);
+  private readonly idService = inject(UniqueIdService);
 
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private loggerService: AppLoggerService,
-		private languageService: LanguageService,
-    private idService: UniqueIdService
-	) {
-		this.logger = this.loggerService.for(this.constructor.name);
-		this.logger.info('Service initialized');
+  private readonly _breadcrumbs = signal<BreadcrumbItem[]>([]);
+  readonly breadcrumbs = this._breadcrumbs.asReadonly();
+  /**
+   * @deprecated Use `breadcrumbs` (signal-based) instead.
+   */
+  readonly breadcrumbs$ = toObservable(this._breadcrumbs);
 
-		this.router.events
-			.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-			.subscribe(() => this.updateBreadcrumbs());
+  private logger: LoggerContext;
 
-		this.languageService.languageChanged$
-			.subscribe(() => this.updateBreadcrumbs());
+  constructor() {
+    this.logger = this.loggerService.for(this.constructor.name);
+    this.logger.info('Service initialized');
 
-		// init construct
-		this.updateBreadcrumbs();
-	}
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.updateBreadcrumbs());
 
-	private updateBreadcrumbs() {
-		const crumbs = this.buildBreadcrumbFromRoot(this.route);
-		this._breadcrumbs$.next(crumbs);
-		this.logger.info('Breadcrumbs updated', crumbs);
-	}
+    this.languageService.languageChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.updateBreadcrumbs());
 
-	private buildBreadcrumbFromRoot(route: ActivatedRoute): BreadcrumbItem[] {
-		const breadcrumbs: BreadcrumbItem[] = [];
-		let accumulatedLink = '';
-		let currentRoute: ActivatedRoute | null = route.root;
+    // init construct
+    this.updateBreadcrumbs();
+  }
 
-		while (currentRoute) {
-			const urlPart = currentRoute.snapshot.url.map(s => s.path).join('/');
-			if (urlPart) accumulatedLink += `/${urlPart}`;
+  private updateBreadcrumbs() {
+    const crumbs = this.buildBreadcrumbFromRoot(this.route);
+    this._breadcrumbs.set(crumbs);
+    this.logger.info('Breadcrumbs updated', crumbs);
+  }
 
-			const label = currentRoute.snapshot.data['breadcrumb'];
-			if (label && (urlPart || breadcrumbs.length === 0)) {
-				breadcrumbs.push({
-					label: this.languageService.translate(label),
-					link: accumulatedLink || '/',
-          id: `breadcrumb${this.idService.id}`
-				});
-				this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
-			}
+  private buildBreadcrumbFromRoot(route: ActivatedRoute): BreadcrumbItem[] {
+    const breadcrumbs: BreadcrumbItem[] = [];
+    let accumulatedLink = '';
+    let currentRoute: ActivatedRoute | null = route.root;
 
-			if (!currentRoute.firstChild) break;
-			currentRoute = currentRoute.firstChild;
-		}
+    while (currentRoute) {
+      const urlPart = currentRoute.snapshot.url.map(s => s.path).join('/');
+      if (urlPart) accumulatedLink += `/${urlPart}`;
 
-		return breadcrumbs;
-	}
+      const label = currentRoute.snapshot.data['breadcrumb'];
+      if (label && (urlPart || breadcrumbs.length === 0)) {
+        breadcrumbs.push({
+          label: this.languageService.translate(label),
+          link: accumulatedLink || '/',
+          id: `breadcrumb${this.idService.id}`,
+        });
+        this.logger.debug('Pushed breadcrumb', { label, link: accumulatedLink });
+      }
+
+      if (!currentRoute.firstChild) break;
+      currentRoute = currentRoute.firstChild;
+    }
+
+    return breadcrumbs;
+  }
 }

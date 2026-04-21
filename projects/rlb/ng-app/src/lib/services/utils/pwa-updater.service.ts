@@ -1,28 +1,31 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter, map, switchMap } from 'rxjs';
 import { ModalService } from '@open-rlb/ng-bootstrap';
 import { LanguageService } from '../i18n/language.service';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PwaUpdaterService {
+  private readonly updates = inject(SwUpdate);
+  private readonly modalService = inject(ModalService);
+  private readonly languageService = inject(LanguageService);
 
-  private _newVersionAvailable$ = new EventEmitter<void>();
+  private readonly _newVersionAvailable = signal(false);
+  readonly newVersionAvailable = this._newVersionAvailable.asReadonly();
 
   get newVersionAvailable$() {
-    return this._newVersionAvailable$.asObservable();
+    return toObservable(this._newVersionAvailable);
   }
 
-  constructor(
-    private readonly updates: SwUpdate,
-    private readonly modalService: ModalService,
-    private readonly languageService: LanguageService) {
+  constructor() {
     this.updates.versionUpdates
       .pipe(
-        filter((evt): evt is VersionReadyEvent => (evt.type === 'VERSION_READY'))
-      ).subscribe(() => this._newVersionAvailable$.emit());
+        filter((evt): evt is VersionReadyEvent => (evt.type === 'VERSION_READY')),
+        takeUntilDestroyed()
+      ).subscribe(() => this._newVersionAvailable.set(true));
   }
 
   update() {
@@ -49,9 +52,10 @@ export class PwaUpdaterService {
             this.languageService.translate('core.pwa.update'),
             this.languageService.translate('core.pwa.later'))
         ),
-        filter((res) => res?.reason === 'ok'), //si ferma se l'evento non è una action
+        filter((res) => res?.reason === 'ok'),
         map(() => this.updates.activateUpdate().then(() => location.reload()))
-      )
+      );
   }
 }
+
 
