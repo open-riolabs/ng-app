@@ -1,69 +1,54 @@
 <div class="container mt-4 mb-5">
-
   <div class="d-flex align-items-center justify-content-between">
-    <h3 class="m-0">{{"Account settings"|translate|uppercase}}</h3>
-    <rlb-breadcrumb [cssClasses]="'p-0 px-md-1 py-md-2 m-0'" [items]="[{ label: 'Home', link: '/', id: '1' },{ label: 'Account settings', id: '2' }]" class="d-block"></rlb-breadcrumb>
+    <h3 class="m-0">{{ "Account settings" | translate | uppercase }}</h3>
+    <rlb-breadcrumb [cssClasses]="'p-0 px-md-1 py-md-2 m-0'" [items]="breadcrumbItems" class="d-block"></rlb-breadcrumb>
   </div>
 
-  <!-- ACCOUNT DETAILS CARD  -->
+  <!-- ACCOUNT DETAILS CARD -->
   <rlb-card class="mt-3">
     <rlb-card-header class="d-flex justify-content-between align-items-center py-3 px-4">
-      <h5 class="m-0">{{"Account" | translate}}</h5>
+      <h5 class="m-0">{{ "Account" | translate }}</h5>
     </rlb-card-header>
 
-    <rlb-card-body class="px-4 py-4">
+    <rlb-card-body class="px-4 py-4" [formGroup]="profileForm">
       <div class="row mb-3 align-items-center">
-        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.username' | translate}}</label>
+        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.username' | translate }}</label>
         <div class="col-md-9">
-          @if (keyCloakUser()) {
-            <rlb-input class="w-100"  type="text" [ngModel]="keyCloakUser()?.username" disabled />
-          }
+          <rlb-input class="w-100" type="text" formControlName="username" />
         </div>
       </div>
 
       <div class="row mb-3 align-items-center">
-        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.email' | translate}}</label>
+        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.email' | translate }}</label>
         <div class="col-md-9">
-          @if (keyCloakUser()) {
-            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser()!.email" />
-          } @else {
-            <rlb-input class="w-100"  type="text" readonly />
-          }
+          <rlb-input class="w-100" type="text" formControlName="email" />
         </div>
       </div>
 
       <div class="row mb-3 align-items-center">
-        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.firstName' | translate}}</label>
+        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.firstName' | translate }}</label>
         <div class="col-md-9">
-          @if (keyCloakUser()) {
-            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser()!.firstName" />
-          } @else {
-            <rlb-input class="w-100"  type="text" readonly />
-          }
+          <rlb-input class="w-100" type="text" formControlName="firstName" />
         </div>
       </div>
 
       <div class="row align-items-center">
-        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.lastName' | translate}}</label>
+        <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.lastName' | translate }}</label>
         <div class="col-md-9">
-          @if (keyCloakUser()) {
-            <rlb-input class="w-100" type="text" [(ngModel)]="keyCloakUser()!.lastName" />
-          } @else {
-            <rlb-input class="w-100" type="text" readonly />
-          }
+          <rlb-input class="w-100" type="text" formControlName="lastName" />
         </div>
       </div>
     </rlb-card-body>
 
     <rlb-card-footer>
       <div class="d-flex align-items-center justify-content-end gap-2">
-        <button rlb-button outline (click)="updateProfile()">
+        <button rlb-button outline (click)="updateProfile()" [disabled]="profileForm.invalid || !keyCloakUser()">
           <i class="bi bi-floppy"></i>
-          {{'common.save' | translate}}
+          {{ 'common.save' | translate }}
         </button>
         <button rlb-button outline color="danger" (click)="logout()">
           <i class="bi bi-box-arrow-right"></i>
-          {{'core.account.logout' | translate}}
+          {{ 'core.account.logout' | translate }}
         </button>
       </div>
     </rlb-card-footer>
@@ -71,13 +56,12 @@
 
   <!-- CREDENTIALS SECTION -->
   @if (keyCloakUser()) {
-    <h3 class="mb-4 text-center mt-5">{{ 'core.account.credentials.title' | translate}}</h3>
+    <h3 class="mb-4 text-center mt-5">{{ 'core.account.credentials.title' | translate }}</h3>
 
-    @for (type of keycloakCredentials(); track type) {
+    @for (type of keycloakCredentials(); track type.type) {
       <rlb-card class="mb-4">
-
         <rlb-card-header class="d-flex justify-content-between align-items-center py-3 px-4">
-          <h6 class="mb-0 fw-bold">{{ ('core.account.credentials.'+type?.type) | translate }}</h6>
+          <h6 class="mb-0 fw-bold">{{ ('core.account.credentials.' + type?.type) | translate }}</h6>
           @if (type.type === 'otp') {
             <rlb-fab (click)="configureOTP()" size="sm" [tooltip]="'core.account.credentials.addOTP' | translate">
               <i class="bi bi-plus-circle"></i>
@@ -95,20 +79,20 @@
                   </div>
                   <div class="col-md-5 mb-2 mb-md-0">
                     <span class="text-muted small d-block">{{ 'core.account.credentials.name' | translate }}</span>
-                    <span class="fw-semibold">{{cred.credential.userLabel || cred.credential.type}}</span>
+                    <span class="fw-semibold">{{ cred.credential.userLabel || cred.credential.type }}</span>
                   </div>
                   <div class="col-md-4 mb-3 mb-md-0">
-                    <span class="text-muted small d-block">{{'core.account.credentials.created' | translate}}</span>
-                    <span>{{cred.credential.createdDate | date:'dd:MM:yyyy HH:mm' }}</span>
+                    <span class="text-muted small d-block">{{ 'core.account.credentials.created' | translate }}</span>
+                    <span>{{ cred.credential.createdDate | date: 'dd:MM:yyyy HH:mm' }}</span>
                   </div>
                   <div class="col-md-2 text-md-end">
                     @if (type.removeable) {
                       <button rlb-button class="w-100" color="danger" (click)="removeCredential(type.type, cred.credential.id)">
-                        <i class="bi bi-trash"></i> {{ 'core.account.credentials.delete' | translate}}
+                        <i class="bi bi-trash"></i> {{ 'core.account.credentials.delete' | translate }}
                       </button>
                     } @else {
                       <button rlb-button class="w-100" outline (click)="updatePassword()">
-                        <i class="bi bi-pencil-square"></i> {{ 'core.account.credentials.update' | translate}}
+                        <i class="bi bi-pencil-square"></i> {{ 'core.account.credentials.update' | translate }}
                       </button>
                     }
                   </div>
@@ -119,7 +103,7 @@
             @if (type.userCredentialMetadatas.length === 0) {
               <rlb-list-item>
                 <div class="py-4 text-center text-muted">
-                  {{ 'core.account.credentials.noCredentials' | translate}}
+                  {{ 'core.account.credentials.noCredentials' | translate }}
                 </div>
               </rlb-list-item>
             }
@@ -128,22 +112,21 @@
       </rlb-card>
     }
 
-      <!-- SESSION SECTION -->
-    <h3 class="mb-4 text-center mt-5">{{ 'core.account.session.title' | translate}}</h3>
+    <!-- SESSION SECTION -->
+    <h3 class="mb-4 text-center mt-5">{{ 'core.account.session.title' | translate }}</h3>
 
     <rlb-card border="secondary" class="mb-5">
       <rlb-card-body class="p-0">
         <rlb-list class="settings m-0">
           @for (d of keyCloakDevices(); track d.id) {
             <rlb-list-item class="settings-item px-4 py-4">
-
               <!-- Session Top Row (Device Info) -->
               <div class="d-flex align-items-center pb-3 mb-3">
                 <i class="bi bi-laptop text-secondary me-3" style="font-size: 2rem;"></i>
-                <h6 class="mb-0 fw-bold">{{d.os}} {{d.osVersion}} - {{d.browser}}</h6>
+                <h6 class="mb-0 fw-bold">{{ d.os }} {{ d.osVersion }} - {{ d.browser }}</h6>
                 @if (d.current) {
                   <span class="badge bg-success ms-3 rounded-pill px-3 py-2">
-                    {{ 'core.account.session.current' | translate}}
+                    {{ 'core.account.session.current' | translate }}
                   </span>
                 }
               </div>
@@ -151,23 +134,23 @@
               <div class="row text-center text-md-start gy-3">
                 <div class="col-sm-6 col-md-3">
                   <span class="text-muted small d-block">{{ 'core.account.session.ip' | translate }}</span>
-                  <span class="fw-medium">{{d.ipAddress}}</span>
+                  <span class="fw-medium">{{ d.ipAddress }}</span>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                  <span class="text-muted small d-block">{{'core.account.session.lastAccess' | translate}}</span>
-                  <span>{{d.lastAccess*1000 | date:'dd/MM/yyyy - HH:mm'}}</span>
+                  <span class="text-muted small d-block">{{ 'core.account.session.lastAccess' | translate }}</span>
+                  <span>{{ d.lastAccess * 1000 | date: 'dd/MM/yyyy - HH:mm' }}</span>
                 </div>
                 <div class="col-sm-6 col-md-2">
-                  <span class="text-muted small d-block">{{'core.account.session.applications' | translate}}</span>
-                  <span>{{d.clientslist }} </span>
+                  <span class="text-muted small d-block">{{ 'core.account.session.applications' | translate }}</span>
+                  <span>{{ d.clientslist }}</span>
                 </div>
                 <div class="col-sm-6 col-md-2">
-                  <span class="text-muted small d-block">{{'core.account.session.started' | translate}}</span>
-                  <span>{{d.started*1000 | date:'dd/MM/yyyy - HH:mm'}}</span>
+                  <span class="text-muted small d-block">{{ 'core.account.session.started' | translate }}</span>
+                  <span>{{ d.started * 1000 | date: 'dd/MM/yyyy - HH:mm' }}</span>
                 </div>
                 <div class="col-sm-6 col-md-2">
-                  <span class="text-muted small d-block">{{'core.account.session.expires' | translate}}</span>
-                  <span>{{d.expires*1000 | date:'dd/MM/yyyy - HH:mm'}}</span>
+                  <span class="text-muted small d-block">{{ 'core.account.session.expires' | translate }}</span>
+                  <span>{{ d.expires * 1000 | date: 'dd/MM/yyyy - HH:mm' }}</span>
                 </div>
               </div>
             </rlb-list-item>
@@ -177,4 +160,3 @@
     </rlb-card>
   }
 </div>
-
