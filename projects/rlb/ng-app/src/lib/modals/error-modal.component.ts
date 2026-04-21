@@ -1,9 +1,10 @@
-import { Component, input, model, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, OnInit } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
 import { IModal, ModalData, ModalDirective } from '@open-rlb/ng-bootstrap';
 
 @Component({
-  imports: [RlbAppModule],
+  imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="modal-header">
       <h5 class="modal-title">{{ data().title }}</h5>

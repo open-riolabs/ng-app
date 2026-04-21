@@ -1,152 +1,165 @@
-import { Component, Inject, Input, OnDestroy, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, viewChild, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  NavigableItem,
+  BreadcrumbItem,
+  ButtonComponent,
+  InputComponent,
+  InputGroupComponent,
+  NavbarBrandDirective,
+  NavbarComponent,
+  NavbarFormComponent,
+  NavbarItemComponent,
+  NavbarItemsComponent,
+  NavbarSeparatorComponent,
+  OffcanvasBodyComponent,
   OffcanvasComponent,
+  OffcanvasHeaderComponent,
+  RlbFabComponent,
+  SidebarComponent,
+  SidebarItemComponent,
   SidebarNavigableItem,
+  ToggleDirective,
+  TooltipDirective,
   VisibilityEvent,
 } from '@open-rlb/ng-bootstrap';
-import { filter, Subscription } from 'rxjs';
-import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
+import { filter } from 'rxjs';
+import { RLB_CFG_ENV } from '../../configuration';
 import { AppInfo, AppsService } from '../../services';
-import {
-  appContextFeatureKey,
-  AuthActions,
-  BaseState,
-  NavbarActions,
-  SidebarActions,
-} from '../../store';
+import { appContextFeatureKey, AuthActions, BaseState, NavbarActions, SidebarActions, } from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { AuthenticationService } from '../../auth/services/auth.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { SettingsDropdownSelectorComponent } from '../../pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import {
+  SettingsDropdownSelectorComponent
+} from '../../pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { CommonModule, NgComponentOutlet } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { LeftComponentPipe } from '../../pipes/left-component/left-component.pipe';
+import { RightComponentPipe } from '../../pipes/right-component/right-component.pipe';
+import { RlbRole } from '../../auth/directives/role.directive';
+import { AppDropdownSelectorComponent } from '../../pages/apps/app-dropdown-selector/app-dropdown-selector.component';
 
 @Component({
   selector: 'rlb-app-template',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  standalone: false,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    TranslateModule,
+    NgComponentOutlet,
+    NavbarComponent,
+    NavbarBrandDirective,
+    NavbarFormComponent,
+    NavbarItemsComponent,
+    NavbarItemComponent,
+    NavbarSeparatorComponent,
+    SidebarComponent,
+    SidebarItemComponent,
+    OffcanvasComponent,
+    OffcanvasHeaderComponent,
+    OffcanvasBodyComponent,
+    RlbFabComponent,
+    InputGroupComponent,
+    InputComponent,
+    TooltipDirective,
+    LeftComponentPipe,
+    RightComponentPipe,
+    RlbRole,
+    AppDropdownSelectorComponent,
+    SettingsDropdownSelectorComponent,
+    ButtonComponent,
+    ToggleDirective,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppTemplateComponent implements OnDestroy {
-  private navbarItemsSubscription: Subscription | undefined;
-  private sidebarItemsSubscription: Subscription | undefined;
-  private sidebarFooterItemsSubscription: Subscription | undefined;
+export class AppTemplateComponent {
+  protected readonly Array = Array;
   public navSearchText: string | null = null;
-  public navbarItems: NavigableItem[] = [];
-  public sidebarItems: NavigableItem[] = [];
-  public sidebarFooterItems: NavigableItem[] = [];
 
-  @Input('modal-container-id') modalContainerId!: string;
-  @Input('toast-container-ids') toastContainerIds!: string | string[];
+  readonly modalContainerId = input.required<string>({ alias: 'modal-container-id' });
+  readonly breadcrumbInput = input<BreadcrumbItem[] | undefined>(undefined, {
+    alias: 'breadcrumb',
+  });
+  readonly breadcrumb = computed(() => this.breadcrumbInput() ?? []);
+  readonly toastContainerIds = input.required<string | string[]>({ alias: 'toast-container-ids' });
 
   readonly mobileOffcanvas = viewChild<OffcanvasComponent>('mobileOffcanvas');
   readonly mobileSettingsMenu = viewChild<SettingsDropdownSelectorComponent>('mobileSettingsMenu');
 
-  constructor(
-    @Inject(RLB_CFG_ENV) public env: EnvironmentConfiguration,
-    public store: Store<BaseState>,
-    public appsService: AppsService,
-    private readonly authService: AuthenticationService,
-    private readonly router: Router,
-  ) {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      this.closeMobileMenu();
-    });
-  }
+  public readonly env = inject(RLB_CFG_ENV);
+  public readonly store = inject(Store<BaseState>);
+  public readonly appsService = inject(AppsService);
+  private readonly authService = inject(AuthenticationService);
+  private readonly router = inject(Router);
 
-  ngOnDestroy(): void {
-    this.navbarItemsSubscription?.unsubscribe();
-    this.sidebarItemsSubscription?.unsubscribe();
-    this.sidebarFooterItemsSubscription?.unsubscribe();
-  }
+  readonly sidebarVisible = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].visible,
+  );
+  readonly sidearHasLogin = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].loginVisible,
+  );
+  readonly sidearHasSearch = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].searchVisible,
+  );
+  readonly sidebarItems = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].items,
+  );
+  readonly sidearHasSettings = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].settingsVisible,
+  );
+  readonly sidearAppsVisible = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].appsVisible,
+  );
 
-  get sidebarVisible$() {
-    return this.store.select(state => state[sidebarsFeatureKey].visible);
-  }
+  readonly navVisible = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].visible,
+  );
+  readonly navSearchVisible = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].searchVisible,
+  );
+  readonly navHeader = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].header,
+  );
+  readonly navLeftItems = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].leftItems,
+  );
+  readonly navRightItems = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].rightItems,
+  );
+  readonly navbarHasLogin = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].loginVisible,
+  );
+  readonly navbarHasSettings = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].settingsVisible,
+  );
+  readonly navbarHasApps = this.store.selectSignal(state => state[navbarsFeatureKey].appsVisible);
+  readonly navbarLayout = this.store.selectSignal(state => state[navbarsFeatureKey].actionsLayout);
+  readonly separatorVisible = this.store.selectSignal(
+    state => state[navbarsFeatureKey].separatorVisible,
+  );
 
-  get sidearHasLogin$() {
-    return this.store.select(state => state[sidebarsFeatureKey].loginVisible);
-  }
+  readonly isAuthenticated = toSignal(this.authService.isAuthenticated$, { initialValue: false });
+  readonly userInfo = toSignal(this.authService.userInfo$, { initialValue: null });
 
-  get sidearHasSearch$() {
-    return this.store.select(state => state[sidebarsFeatureKey].searchVisible);
-  }
+  readonly theme = this.store.selectSignal(state => state[appContextFeatureKey].theme);
+  readonly apps = computed(() =>
+    this.appsService.apps().filter((app: AppInfo) => app.enabled && app.id),
+  );
 
-  get sidebarItems$() {
-    return this.store.select(state => state[sidebarsFeatureKey].items);
-  }
-
-  setSidearSearchText(text: string | null) {
-    this.store.dispatch(SidebarActions.setSearchText({ text }));
-  }
-
-  setNavbarSearchText(text: string | null) {
-    this.store.dispatch(NavbarActions.setSearchText({ text }));
-  }
-
-  get sidearHasSettings$() {
-    return this.store.select(state => state[sidebarsFeatureKey].settingsVisible);
-  }
-
-  get sidearAppsVisible$() {
-    return this.store.select(state => state[sidebarsFeatureKey].appsVisible);
-  }
-
-  get navVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].visible);
-  }
-
-  get navSearchVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].searchVisible);
-  }
-
-  get navHeader$() {
-    return this.store.select(state => state[navbarsFeatureKey].header);
-  }
-
-  get isAuthenticated$() {
-    return this.authService.isAuthenticated$;
-  }
-
-  get user$() {
-    return this.authService.userInfo$;
-  }
-
-  get navLeftItems$() {
-    return this.store.select(state => state[navbarsFeatureKey].leftItems);
-  }
-
-  get navRightItems$() {
-    return this.store.select(state => state[navbarsFeatureKey].rightItems);
-  }
-
-  get theme() {
-    return this.store.selectSignal(state => state[appContextFeatureKey].theme)();
-  }
-
-  get navbarHasLogin$() {
-    return this.store.select(state => state[navbarsFeatureKey].loginVisible);
-  }
-
-  get navbarHasSettings$() {
-    return this.store.select(state => state[navbarsFeatureKey].settingsVisible);
-  }
-
-  get navbarHasApps$() {
-    return this.store.select(state => state[navbarsFeatureKey].appsVisible);
-  }
-
-  get navbarLayout$() {
-    return this.store.select(state => state[navbarsFeatureKey].actionsLayout);
-  }
-
-  get apps() {
-    return this.appsService.apps.filter(app => app.enabled && app.id); // Only enabled and initialized apps (with id). 
-  }
-
-  get separatorVisible$() {
-    return this.store.select(state => state[navbarsFeatureKey].separatorVisible);
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event: any) => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => {
+        this.closeMobileMenu();
+      });
   }
 
   loginNav(event: MouseEvent) {
@@ -170,6 +183,14 @@ export class AppTemplateComponent implements OnDestroy {
     if (event === 'hidden') {
       this.mobileSettingsMenu()?.goToFirstSlide();
     }
+  }
+
+  setSidearSearchText(text: string | null) {
+    this.store.dispatch(SidebarActions.setSearchText({ text }));
+  }
+
+  setNavbarSearchText(text: string | null) {
+    this.store.dispatch(NavbarActions.setSearchText({ text }));
   }
 
   private closeMobileMenu() {

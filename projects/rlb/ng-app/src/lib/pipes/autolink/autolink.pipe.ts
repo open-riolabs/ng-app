@@ -4,8 +4,7 @@ const pattern =
   /(^|[\s\n]|<[A-Za-z]*\/?>)((?:https?|ftp):\/\/[\-A-Z0-9+\u0026\u2019@#\/%?=()~_|!:,.;]*[\-A-Z0-9+\u0026@#\/%=~()_|])/gi;
 
 @Pipe({
-    name: 'autolink',
-    standalone: false
+    name: 'autolink'
 })
 export class AutolinkPipe implements PipeTransform {
   transform(

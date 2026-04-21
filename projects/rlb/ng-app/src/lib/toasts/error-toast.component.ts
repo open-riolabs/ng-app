@@ -1,9 +1,10 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RlbAppModule } from '../rlb-app.module';
 import { IToast, ToastData, ToastDirective } from '@open-rlb/ng-bootstrap';
 
 @Component({
   imports: [RlbAppModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="toast-header">
       <strong class="me-auto">

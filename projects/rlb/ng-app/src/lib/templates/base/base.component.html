@@ -1,23 +1,23 @@
 <div class=" mb-3">
-  @if (!(isHandset$ | async)) {
+  @if (!isHandset()) {
     <div class="container-fluid">
       <div class="row mt-1">
         <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12 mx-auto">
           <div class="row">
             <div class="col-12 pb-0">
-              @if (breadcrumb) {
-                <rlb-breadcrumb [items]="breadcrumb"></rlb-breadcrumb>
+              @if (breadcrumb()) {
+                <rlb-breadcrumb [items]="breadcrumb()"></rlb-breadcrumb>
               }
               <h1 class="pt-5 pb-0 text-center">
-                {{title}}
+                {{title()}}
               </h1>
             </div>
           </div>
-          @if (subtitle) {
+          @if (subtitle()) {
             <div class="row">
               <div class="col-12 pb-12">
                 <span class="d-block text-h6 text-center">
-                  {{subtitle}}
+                  {{subtitle()}}
                 </span>
               </div>
             </div>
@@ -32,15 +32,15 @@
     <div class="row">
       <div class="col-12 pb-0">
         <h1 class="pt-5 pb-0 text-center">
-          {{title}}
+          {{title()}}
         </h1>
       </div>
     </div>
-    @if (subtitle) {
+    @if (subtitle()) {
       <div class="row">
         <div class="col-12 pb-7">
           <div class="d-block text-h6 text-center">
-            {{subtitle}}
+            {{subtitle()}}
           </div>
         </div>
       </div>
@@ -49,6 +49,7 @@
     <ng-container [ngTemplateOutlet]="mobile"></ng-container>
   }
 </div>
+
 
 <ng-template #all>
   <ng-content select="[all]"></ng-content>

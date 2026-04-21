@@ -1,5 +1,5 @@
 @if ((template$ | async) === 'app') {
-  <rlb-app-template>
+  <rlb-app-template [modal-container-id]="modalContainerId()" [toast-container-ids]="toastContainerIds()">
     <router-outlet />
   </rlb-app-template>
 }
@@ -8,16 +8,16 @@
 }
 
 
-@if (modalContainerId) {
-  <rlb-modal-container [id]="modalContainerId" />
+@if (modalContainerId()) {
+  <rlb-modal-container [id]="modalContainerId()" />
 }
 
-@if (toastContainerIds) {
-  @if (toastContainerIds.constructor.name === 'Array') {
-    @for (toastContainerId of toastContainerIds | asMulti; track toastContainerId) {
+@if (toastContainerIds()) {
+  @if (Array.isArray(toastContainerIds())) {
+    @for (toastContainerId of toastContainerIds() | asMulti; track toastContainerId) {
       <rlb-toast-container [id]="toastContainerId" />
     }
   } @else {
-    <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds | asSingle" />
+    <rlb-toast-container class="position-fixed bottom-0 end-0 p-3" [id]="toastContainerIds() | asSingle" />
   }
 }

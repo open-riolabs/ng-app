@@ -15,8 +15,8 @@
       <div class="row mb-3 align-items-center">
         <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.username' | translate}}</label>
         <div class="col-md-9">
-          @if (keyCloakUser) {
-            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser.username" disabled />
+          @if (keyCloakUser()) {
+            <rlb-input class="w-100"  type="text" [ngModel]="keyCloakUser()?.username" disabled />
           }
         </div>
       </div>
@@ -24,8 +24,8 @@
       <div class="row mb-3 align-items-center">
         <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.email' | translate}}</label>
         <div class="col-md-9">
-          @if (keyCloakUser) {
-            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser.email" />
+          @if (keyCloakUser()) {
+            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser()!.email" />
           } @else {
             <rlb-input class="w-100"  type="text" readonly />
           }
@@ -35,8 +35,8 @@
       <div class="row mb-3 align-items-center">
         <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.firstName' | translate}}</label>
         <div class="col-md-9">
-          @if (keyCloakUser) {
-            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser.firstName" />
+          @if (keyCloakUser()) {
+            <rlb-input class="w-100"  type="text" [(ngModel)]="keyCloakUser()!.firstName" />
           } @else {
             <rlb-input class="w-100"  type="text" readonly />
           }
@@ -46,8 +46,8 @@
       <div class="row align-items-center">
         <label class="col-md-3 col-form-label fw-semibold">{{ 'core.account.lastName' | translate}}</label>
         <div class="col-md-9">
-          @if (keyCloakUser) {
-            <rlb-input class="w-100" type="text" [(ngModel)]="keyCloakUser.lastName" />
+          @if (keyCloakUser()) {
+            <rlb-input class="w-100" type="text" [(ngModel)]="keyCloakUser()!.lastName" />
           } @else {
             <rlb-input class="w-100" type="text" readonly />
           }
@@ -70,10 +70,10 @@
   </rlb-card>
 
   <!-- CREDENTIALS SECTION -->
-  @if (keyCloakUser) {
+  @if (keyCloakUser()) {
     <h3 class="mb-4 text-center mt-5">{{ 'core.account.credentials.title' | translate}}</h3>
 
-    @for (type of keycloakCredentials; track type) {
+    @for (type of keycloakCredentials(); track type) {
       <rlb-card class="mb-4">
 
         <rlb-card-header class="d-flex justify-content-between align-items-center py-3 px-4">
@@ -134,7 +134,7 @@
     <rlb-card border="secondary" class="mb-5">
       <rlb-card-body class="p-0">
         <rlb-list class="settings m-0">
-          @for (d of keyCloakDevices; track d.id) {
+          @for (d of keyCloakDevices(); track d.id) {
             <rlb-list-item class="settings-item px-4 py-4">
 
               <!-- Session Top Row (Device Info) -->
@@ -177,3 +177,4 @@
     </rlb-card>
   }
 </div>
+

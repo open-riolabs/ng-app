@@ -1,5 +1,5 @@
 <div class=" mb-3">
-  @if (!(isHandset$ | async)) {
+  @if (!isHandset()) {
     <div class="container-fluid">
       <div class="row mt-1">
         <div class="mx-auto col-sm-12 col-md-8 col-lg-9 col-xl-8">
@@ -13,6 +13,7 @@
     <ng-container [ngTemplateOutlet]="mobile"></ng-container>
   }
 </div>
+
 
 <ng-template #all>
   <ng-content select="[all]"></ng-content>

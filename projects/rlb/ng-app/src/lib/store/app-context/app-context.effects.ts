@@ -19,7 +19,7 @@ export class AppContextEffects {
 	setLanguage$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AppContextActions.setLanguage),
-      tap(({ language }) => this.languageService.language = language),
+      tap(({ language }) => this.languageService.setLanguage(language)),
       tap(({ language }) => {
         this.renderer.setAttribute(document.documentElement, 'lang', language);
       }),
