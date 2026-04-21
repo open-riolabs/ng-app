@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
+  ButtonComponent,
   CarouselComponent,
   CarouselSlideComponent,
   DropdownContainerComponent,
@@ -51,6 +52,7 @@ import { FormsModule } from '@angular/forms';
     TranslateModule,
     FormsModule,
     RouterModule,
+    ButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
