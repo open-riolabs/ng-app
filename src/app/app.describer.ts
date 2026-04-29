@@ -6,8 +6,21 @@ import { NavbarItemDemoComponent } from './nav-item.component';
 export const appDescriber: AppDescriber = {
   info: {
     type: 'chat',
-    enabled: false,
-    actions: ['write-customer', 'role-management', 'read-agency', 'read-customer'],
+    enabled: true,
+    actions: [
+      'catalog-editor',
+      'bot-manager',
+      'prompteng-write',
+      'sysadmin',
+      'concierge-write',
+      'business',
+      'whatsapp-admin',
+      'concierge-read',
+      'whatsapp-manager',
+      'company',
+      'users',
+      'prompteng-read',
+    ],
     core: {
       title: 'Chat',
       description: 'Chat with other users',

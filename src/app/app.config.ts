@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core
 import { provideApp, provideRlbConfig, RLB_INIT_PROVIDER } from '@open-rlb/ng-app';
 import { environment } from '~/environments/environment';
 import { appDescriber } from './app.describer';
-import { AppInitProvider } from '@/app-init.provider';
+import { AppInitAclProvider } from '@/app-init-acl.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideApp(appDescriber),
     {
       provide: RLB_INIT_PROVIDER,
-      useClass: AppInitProvider,
+      useClass: AppInitAclProvider,
     },
     provideZonelessChangeDetection(),
   ],

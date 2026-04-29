@@ -100,6 +100,26 @@ export class AppsService {
     return this.aclStore.hasPermission(info.busId, info.resId, action);
   }
 
+  /**
+   * Finds the app that owns a given route path string (e.g. 'some-page/sub-page').
+   * Used by permissionGuard on initial deep-link navigation, before NavigationEnd has
+   * fired and currentApp has been selected by the router listener.
+   */
+  findAppForPath(path: string): AppInfo | undefined {
+    return this.apps().find((app: AppInfo) =>
+      app.routes?.some((r: string) => r === path || path.startsWith(r + '/') || r.startsWith(path + '/')) ||
+      app.core?.url === '/' + path ||
+      (app.core?.url && path.startsWith(app.core.url.replace(/^\//, '')))
+    );
+  }
+
+  checkPermissionForApp(app: AppInfo, action?: string): boolean {
+    if (!app?.data || !this.confAcl) return false;
+    const busId = app.data[this.confAcl.businessIdKey];
+    const resId = app.data[this.confAcl.resourceIdKey];
+    return this.aclStore.hasPermission(busId, resId, action);
+  }
+
   selectApp(app?: AppInfo, viewMode?: 'app' | 'settings', url?: string) {
     const currentApp = this.currentApp();
     if (!app) {

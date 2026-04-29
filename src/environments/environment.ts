@@ -37,10 +37,10 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
         clientId: 'riolabs',
         scope: 'openid profile offline_access',
         logLevel: 2,
-        // acl: {
-        //   endpointKey: 'http-gateway',
-        //   path: 'admin/acl/resources',
-        // },
+        acl: {
+          endpointKey: 'http-gateway',
+          path: 'admin/acl/resources',
+        },
       },
     ],
   },
@@ -69,14 +69,14 @@ export const environment: ProjectConfiguration & { payment: { stripe: { key: str
       wss: true,
     },
   },
-  // acl: {
-  //   businessIdKey: 'businessId',
-  //   resourceIdKey: 'resourceId',
-  //   interceptorMapping: {
-  //     companyId: 'companyId',
-  //     chatId: 'productId',
-  //   },
-  // },
+  acl: {
+    businessIdKey: 'businessId',
+    resourceIdKey: 'resourceId',
+    interceptorMapping: {
+      companyId: 'companyId',
+      chatId: 'productId',
+    },
+  },
   payment: {
     stripe: {
       key: '',
