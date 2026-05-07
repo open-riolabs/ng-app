@@ -2,7 +2,7 @@ import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, switchMap, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, ReplaySubject, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   AuthUrlHandler,
@@ -26,6 +26,8 @@ export class AuthenticationService {
   modal!: Window | null;
   private logger: LoggerContext;
   private readonly aclStore = inject(AclStore);
+  private readonly _authReady$ = new ReplaySubject<void>(1);
+  public readonly authReady$ = this._authReady$.asObservable();
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -80,6 +82,10 @@ export class AuthenticationService {
           // GUEST/ANONYMOUS USER: Trigger loadACL with undefined.
           return this.aclStore.loadACL(undefined).pipe(map(() => responses));
         }
+      }),
+      tap({
+        next: () => this._authReady$.next(),
+        error: () => this._authReady$.next(),
       }),
     );
   }
