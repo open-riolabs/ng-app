@@ -91,8 +91,12 @@ export class AuthenticationService {
           if (responses.some(r => r.isAuthenticated)) {
             this._authenticated$.next();
           }
+          this._authenticated$.complete();
         },
-        error: () => this._authReady$.next(),
+        error: () => {
+          this._authReady$.next();
+          this._authenticated$.complete();
+        },
       }),
     );
   }
