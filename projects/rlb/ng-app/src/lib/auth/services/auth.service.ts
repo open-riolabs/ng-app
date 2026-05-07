@@ -28,6 +28,8 @@ export class AuthenticationService {
   private readonly aclStore = inject(AclStore);
   private readonly _authReady$ = new ReplaySubject<void>(1);
   public readonly authReady$ = this._authReady$.asObservable();
+  private readonly _authenticated$ = new ReplaySubject<void>(1);
+  public readonly authenticated$ = this._authenticated$.asObservable();
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -84,7 +86,12 @@ export class AuthenticationService {
         }
       }),
       tap({
-        next: () => this._authReady$.next(),
+        next: (responses) => {
+          this._authReady$.next();
+          if (responses.some(r => r.isAuthenticated)) {
+            this._authenticated$.next();
+          }
+        },
         error: () => this._authReady$.next(),
       }),
     );
