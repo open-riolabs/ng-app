@@ -23,7 +23,7 @@ export interface Navbar {
 export const initialNavbarState: Navbar = {
   visible: true,
   header: null,
-  searchVisible: true,
+  searchVisible: false,
   searchText: null,
   leftItems: [],
   rightItems: [],
