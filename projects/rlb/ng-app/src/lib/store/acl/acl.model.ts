@@ -2,7 +2,7 @@ export const aclFeatureKey = 'acl';
 
 
 export interface UserResource {
-  businessId: string;
+  companyId: string;
   resources: Resource[];
 }
 

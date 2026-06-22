@@ -58,7 +58,7 @@ export class AppsService {
 
       return resources?.some(userResource => {
         const appBusId = app.data?.[confAcl.businessIdKey];
-        const matchBusId = userResource.businessId === appBusId;
+        const matchBusId = userResource.companyId === appBusId;
 
         if (!matchBusId) return false;
 

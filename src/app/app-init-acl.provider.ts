@@ -32,7 +32,7 @@ export class AppInitAclProvider implements RlbInitProvider {
           const appData = {
             title: res.friendlyName,
             appName: res.friendlyName,
-            [acl.businessIdKey]: company.businessId,
+            [acl.businessIdKey]: company.companyId,
             [acl.resourceIdKey]: res.resourceId,
           };
 
