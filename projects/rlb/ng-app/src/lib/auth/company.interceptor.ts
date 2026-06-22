@@ -11,6 +11,7 @@ export class CompanyInterceptor implements HttpInterceptor {
   private config = inject(RLB_CFG) as ProjectConfiguration;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('HttpInterceptor')
     const authConfig = this.config.auth;
     const isAllowed = authConfig?.allowedUrls?.some(url => req.url.includes(url));
     if (!isAllowed || !authConfig?.enableCompanyInterceptor) {
