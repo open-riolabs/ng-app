@@ -24,7 +24,7 @@ export const AclStore = signalStore(
         if (!resources) return false;
         return resources.some(
           company =>
-            company.resourceBusinessId === busId &&
+            company.businessId === busId &&
             company.resources.some(res => {
               const matchRes = res.resourceId === resId;
               return action ? matchRes && res.actions.includes(action) : matchRes;
