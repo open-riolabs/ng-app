@@ -1,0 +1,13 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RlbAppModule } from '@open-rlb/ng-app';
+
+@Component({
+  selector: 'app-home',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RlbAppModule],
+  templateUrl: './home.component.html',
+})
+export class HomeComponent {
+  title = 'Home';
+}

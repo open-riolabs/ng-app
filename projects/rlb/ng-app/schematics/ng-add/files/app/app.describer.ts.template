@@ -1,0 +1,30 @@
+import { AppDescriber } from '@open-rlb/ng-app';
+import { routes } from './app.routes';
+
+/**
+ * Describes this app's identity and capabilities to @open-rlb/ng-app.
+ * `actions` are the ACL action names this app understands (used by `permissionGuard`
+ * and the `*roles` directive). Adjust `info` and `actions` to match your app.
+ */
+export const appDescriber: AppDescriber = {
+  info: {
+    type: 'app',
+    enabled: true,
+    actions: ['sysadmin'],
+    core: {
+      title: 'Home',
+      description: 'Application home',
+      url: 'home',
+      icon: 'bi bi-house',
+      auth: true,
+    },
+    settings: {
+      title: 'Settings',
+      description: 'Application settings',
+      url: 'settings',
+      icon: 'bi bi-gear',
+      auth: true,
+    },
+  },
+  routes,
+};

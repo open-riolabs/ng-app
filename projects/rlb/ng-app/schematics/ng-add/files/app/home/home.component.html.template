@@ -1,0 +1,4 @@
+<div class="container py-4">
+  <h1>{{ title }}</h1>
+  <p>Your @open-rlb/ng-app shell is running. Edit <code>src/app/home/home.component.html</code> to get started.</p>
+</div>

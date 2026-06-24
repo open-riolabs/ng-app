@@ -25,5 +25,9 @@
     "@types/bootstrap": ">=5.2.10",
     "@types/node": ">=22.10.1"
   },
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
+  },
   "sideEffects": false
 }

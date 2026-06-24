@@ -1,0 +1,101 @@
+{
+  "common": {
+    "ok": "Ok",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "save": "Salva",
+    "delete": "Elimina",
+    "add": "Aggiungi",
+    "edit": "Modifica",
+    "name": "Nome",
+    "description": "Descrizione",
+    "search": "Cerca",
+    "searching": "Ricerca in corso...",
+    "noResults": "Nessun risultato",
+    "loading": "Caricamento...",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "core": {
+    "apps": {
+      "button": "Applicazioni",
+      "title": "App di Riolabs"
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "generalTitle": "Impostazioni generali",
+      "generalDescription": "Gestisci le impostazioni generali delle applicazioni",
+      "support": "Supporto",
+      "privacy": "Privacy",
+      "cookies": "Cookie",
+      "legal": "Legale",
+      "status": "Stato",
+      "logger": "Logger"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "changePassword": "Cambia password",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "login": "Accesso",
+      "logout": "Esci",
+      "username": "Nome utente",
+      "session": {
+        "title": "Sessioni",
+        "current": "Sessione corrente",
+        "ip": "IP",
+        "applications": "Applicazioni",
+        "lastAccess": "Ultimo accesso",
+        "started": "Iniziata",
+        "expires": "Scade il"
+      },
+      "credentials": {
+        "title": "Credenziali",
+        "password": "Password",
+        "otp": "Password monouso",
+        "name": "Nome",
+        "created": "Creato",
+        "actions": "Azioni",
+        "update": "Aggiorna",
+        "delete": "Elimina",
+        "noCredentials": "Nessuna credenziale trovata per questa sezione",
+        "addOTP": "Configura OTP",
+        "deleteTitle": "Elimina credenziale",
+        "deleteHeader": "Conferma eliminazione credenziale",
+        "deleteMessage": "Sei sicuro di voler eliminare questa credenziale?"
+      }
+    },
+    "pwa": {
+      "newVersionAvailable": "Nuova versione disponibile",
+      "updateNow": "Aggiorna ora",
+      "updateMessage": "È disponibile una nuova versione dell'applicazione. Vuoi aggiornarla ora?",
+      "later": "Dopo",
+      "update": "Aggiorna"
+    }
+  },
+  "pages": {
+    "notFound": {
+      "title": "Pagina non trovata",
+      "content": "La pagina che stai cercando non esiste.",
+      "button": "Vai alla home page"
+    },
+    "forbidden": {
+      "title": "Accesso negato",
+      "content": "Non hai i permessi necessari per accedere a questa pagina.",
+      "button": "Vai alla home page"
+    },
+    "support": {
+      "title": "Supporto",
+      "legal": "Legale",
+      "name": "Nome",
+      "email": "Email",
+      "subject": "Oggetto",
+      "message": "Messaggio",
+      "send": "Invia",
+      "success": "Il tuo messaggio è stato inviato con successo.",
+      "error": "Si è verificato un errore durante l'invio del messaggio.",
+      "infoPage": "Per maggiori informazioni, visita la nostra pagina legale"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "common": {
+    "ok": "Ok",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "edit": "Edit",
+    "name": "Name",
+    "description": "Description",
+    "search": "Search",
+    "searching": "Searching...",
+    "noResults": "No results",
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "core": {
+    "apps": {
+      "button": "Apps",
+      "title": "Riolabs Apps"
+    },
+    "settings": {
+      "title": "Settings",
+      "generalTitle": "General settings",
+      "generalDescription": "Manage general settings of applications",
+      "support": "Support",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "legal": "Legal",
+      "status": "Status",
+      "logger": "Logger"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "changePassword": "Change password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "login": "Login",
+      "logout": "Logout",
+      "username": "Username",
+      "session": {
+        "title": "Sessions",
+        "current": "Current session",
+        "ip": "IP",
+        "applications": "Applications",
+        "lastAccess": "Last access",
+        "started": "Started",
+        "expires": "Expires"
+      },
+      "credentials": {
+        "title": "Credentials",
+        "password": "Password",
+        "otp": "One-time password",
+        "name": "Name",
+        "created": "Created",
+        "actions": "Actions",
+        "update": "Update",
+        "delete": "Delete",
+        "noCredentials": "No credentials found for this section",
+        "addOTP": "Configure OTP",
+        "deleteTitle": "Delete credential",
+        "deleteHeader": "Delete credential confirmation",
+        "deleteMessage": "Are you sure you want to delete this credential?"
+      },
+      "settings": {
+        "title": "Account settings",
+        "showMore": "Show more"
+      }
+    },
+    "pwa": {
+      "newVersionAvailable": "New version available",
+      "updateNow": "Update now",
+      "updateMessage": "A new version of the application is available. Do you want to update it now?",
+      "later": "Later",
+      "update": "Update"
+    }
+  },
+  "pages": {
+    "notFound": {
+      "title": "Page not found",
+      "content": "The page you are looking for does not exist.",
+      "button": "Go to home page"
+    },
+    "forbidden": {
+      "title": "Access forbidden",
+      "content": "You do not have permission to access this page.",
+      "button": "Go to home page"
+    },
+
+    "support": {
+      "title": "Support",
+      "legal": "Legal",
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send",
+      "success": "Your message has been sent successfully.",
+      "error": "An error occurred while sending your message.",
+      "infoPage": "For more information, please visit our legal page"
+    }
+  }
+}

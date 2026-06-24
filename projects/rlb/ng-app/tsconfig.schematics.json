@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": false,
+    "sourceMap": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "rootDir": "schematics",
+    "outDir": "../../../dist/rlb/ng-app/schematics",
+    "types": ["node"]
+  },
+  "include": ["schematics/**/*.ts"],
+  "exclude": ["schematics/**/files/**/*"]
+}

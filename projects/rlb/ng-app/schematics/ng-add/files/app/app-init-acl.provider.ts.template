@@ -1,0 +1,54 @@
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import {
+  AclConfiguration,
+  AppContextActions,
+  appContextFeatureKey,
+  BaseState,
+  RlbInitProvider,
+  UserResource,
+} from '@open-rlb/ng-app';
+
+/**
+ * Runs once on startup after authentication: turns the user's ACL resources into
+ * app instances via `finalizeApp`. This is an example — adapt `appType`/`appId`
+ * and the data mapping to your domain.
+ */
+@Injectable()
+export class AppInitAclProvider implements RlbInitProvider {
+  async finalizeApps(
+    resources: UserResource[],
+    store: Store<BaseState>,
+    acl: AclConfiguration,
+  ): Promise<void> {
+    if (!resources || resources.length === 0) {
+      return;
+    }
+
+    const currentApps = store.selectSignal(state => state[appContextFeatureKey].apps)();
+
+    resources.forEach(company => {
+      company.resources.forEach(res => {
+        const appId = `app-${res.resourceId}`;
+        if (currentApps.findIndex(app => app.id === appId) === -1) {
+          const appData = {
+            title: res.friendlyName,
+            appName: res.friendlyName,
+            [acl.businessIdKey]: company.companyId,
+            [acl.resourceIdKey]: res.resourceId,
+          };
+
+          store.dispatch(
+            AppContextActions.finalizeApp({
+              appType: 'app',
+              appId,
+              data: appData,
+            }),
+          );
+        } else {
+          console.warn(`[AppInitAclProvider]: appId ${appId} exists already, skip finalize`);
+        }
+      });
+    });
+  }
+}

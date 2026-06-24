@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "OpenRlbNgAppNgAdd",
+  "title": "@open-rlb/ng-app ng-add schematic",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project to add the library to.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "skipShell": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not scaffold the application shell (environment, providers, app component, routes, home)."
+    },
+    "skipSkills": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not copy the bundled Claude skills into .claude/skills."
+    }
+  },
+  "required": []
+}
