@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
+import { ReplaySubject } from 'rxjs';
 import { CookiesService } from '..';
 import { RLB_CFG_I18N } from '../../configuration';
 
@@ -20,6 +21,12 @@ export class LanguageService {
   readonly languageChanged$ = this.translateService.onLangChange;
   readonly contentLanguageChanged = this._contentLanguage.asReadonly();
 
+  // Emits once the initial UI translation file has been loaded (or failed to load).
+  // Consumed by the i18n APP_INITIALIZER to block bootstrap until translations are
+  // available, so synchronous instant() calls during app/component init resolve keys.
+  private readonly _ready$ = new ReplaySubject<boolean>(1);
+  readonly ready$ = this._ready$.asObservable();
+
   constructor() {
     // Sync private signal with translate service changes
     this.translateService.onLangChange
@@ -30,8 +37,14 @@ export class LanguageService {
       this.translateService.addLangs(this.i18nOptions.availableLangs);
       const languageUI = this.cookiesService.getCookie('ui-locale') || this.defaultLanguage || this.browserLanguage;
       const languageContent = this.cookiesService.getCookie('content-locale') || this.defaultLanguage;
-      this.translateService.use(languageUI);
+      this.translateService.use(languageUI).subscribe({
+        next: () => this._ready$.next(true),
+        // Don't block bootstrap forever if the translation file fails to load.
+        error: () => this._ready$.next(true),
+      });
       this.setContentLanguage(languageContent);
+    } else {
+      this._ready$.next(true);
     }
   }
 
