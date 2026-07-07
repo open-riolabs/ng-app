@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { appContextFeatureKey, } from '../store/app-context/app-context.model';
+import { appContextFeatureKey } from '../store/app-context/app-context.model';
 import { ProjectConfiguration, RLB_CFG } from '../configuration';
 
 @Injectable()
@@ -11,7 +11,6 @@ export class CompanyInterceptor implements HttpInterceptor {
   private config = inject(RLB_CFG) as ProjectConfiguration;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('HttpInterceptor')
     const authConfig = this.config.auth;
     const isAllowed = authConfig?.allowedUrls?.some(url => req.url.includes(url));
     if (!isAllowed || !authConfig?.enableCompanyInterceptor) {
@@ -27,7 +26,7 @@ export class CompanyInterceptor implements HttpInterceptor {
       if (!!value) {
         params = params.set(storeKey, value);
       }
-    };
+    }
     const clonedReq = req.clone({ params });
     return next.handle(clonedReq);
   }
