@@ -202,6 +202,11 @@
             }
           </rlb-sidebar-item>
         }
+        @if (sidebarFooter(); as footerName) {
+          <div rlb-sidebar-footer class="mt-auto">
+            <ng-container *ngComponentOutlet="footerName | sidebarFooterComponent"></ng-container>
+          </div>
+        }
       </rlb-sidebar>
     }
     <div class="rlb-content">

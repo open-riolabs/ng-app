@@ -17,6 +17,7 @@ export const SidebarActions = createActionGroup({
     SetSearchVisible: props<{ visible: boolean }>(),
     SetSettingsVisible: props<{ visible: boolean }>(),
     SetSearchText: props<{ text: string | null }>(),
+    SetFooterComponent: props<{ name: string | null }>(),
   }
 });
 

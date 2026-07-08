@@ -10,6 +10,7 @@ export interface Sidebar {
   appsVisible: boolean;
   settingsVisible: boolean;
   searchText: string | null;
+  footerComponent: string | null;
 }
 
 export const initialSidebarState: Sidebar = {
@@ -19,7 +20,8 @@ export const initialSidebarState: Sidebar = {
   searchVisible: true,
   settingsVisible: true,
   appsVisible: true,
-  searchText: null
+  searchText: null,
+  footerComponent: null
 };
 
 export interface SidebarState { [sidebarsFeatureKey]: Sidebar; }

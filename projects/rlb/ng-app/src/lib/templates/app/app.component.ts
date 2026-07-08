@@ -39,6 +39,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { LeftComponentPipe } from '../../pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from '../../pipes/right-component/right-component.pipe';
+import { SidebarFooterComponentPipe } from '../../pipes/sidebar-footer-component/sidebar-footer-component.pipe';
 import { RlbRole } from '../../auth/directives/role.directive';
 import { AppDropdownSelectorComponent } from '../../pages/apps/app-dropdown-selector/app-dropdown-selector.component';
 
@@ -69,6 +70,7 @@ import { AppDropdownSelectorComponent } from '../../pages/apps/app-dropdown-sele
     TooltipDirective,
     LeftComponentPipe,
     RightComponentPipe,
+    SidebarFooterComponentPipe,
     RlbRole,
     AppDropdownSelectorComponent,
     SettingsDropdownSelectorComponent,
@@ -108,6 +110,9 @@ export class AppTemplateComponent {
   );
   readonly sidebarItems = this.store.selectSignal(
     (state: BaseState) => state[sidebarsFeatureKey].items,
+  );
+  readonly sidebarFooter = this.store.selectSignal(
+    (state: BaseState) => state[sidebarsFeatureKey].footerComponent,
   );
   readonly sidearHasSettings = this.store.selectSignal(
     (state: BaseState) => state[sidebarsFeatureKey].settingsVisible,
