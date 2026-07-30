@@ -19,6 +19,7 @@ import { ContentComponent } from './templates/content/content.component';
 
 import { AutolinkPipe, TruncatePipe } from './pipes';
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
+import { MobileComponentPipe } from './pipes/mobile-component/mobile-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';
 import { AppContainerComponent } from './templates/app-container/app-container.component';
 import { RlbRole } from './auth/directives/role.directive';
@@ -34,6 +35,7 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
     AsMultiPipe,
     AsSinglePipe,
     LeftComponentPipe,
+    MobileComponentPipe,
     RightComponentPipe,
     TruncatePipe,
     AutolinkPipe,
@@ -70,6 +72,7 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
     AsMultiPipe,
     AsSinglePipe,
     LeftComponentPipe,
+    MobileComponentPipe,
     RightComponentPipe,
     TruncatePipe,
     AutolinkPipe,

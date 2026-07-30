@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, viewChild, } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Injector,
+  input,
+  viewChild,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   BreadcrumbItem,
@@ -23,22 +31,27 @@ import {
   VisibilityEvent,
 } from '@open-rlb/ng-bootstrap';
 import { filter } from 'rxjs';
-import { RLB_CFG_ENV } from '../../configuration';
+import { RLB_CFG_ENV, RLB_NAV_SURFACE } from '../../configuration';
 import { AppInfo, AppsService } from '../../services';
-import { appContextFeatureKey, AuthActions, BaseState, NavbarActions, SidebarActions, } from '../../store';
+import {
+  appContextFeatureKey,
+  AuthActions,
+  BaseState,
+  NavbarActions,
+  SidebarActions,
+} from '../../store';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { AuthenticationService } from '../../auth/services/auth.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import {
-  SettingsDropdownSelectorComponent
-} from '../../pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
+import { SettingsDropdownSelectorComponent } from '../../pages/settings/settings-dropdown-selector/settings-dropdown-selector.component';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { LeftComponentPipe } from '../../pipes/left-component/left-component.pipe';
 import { RightComponentPipe } from '../../pipes/right-component/right-component.pipe';
+import { MobileComponentPipe } from '../../pipes/mobile-component/mobile-component.pipe';
 import { SidebarFooterComponentPipe } from '../../pipes/sidebar-footer-component/sidebar-footer-component.pipe';
 import { RlbRole } from '../../auth/directives/role.directive';
 import { AppDropdownSelectorComponent } from '../../pages/apps/app-dropdown-selector/app-dropdown-selector.component';
@@ -69,6 +82,7 @@ import { AppDropdownSelectorComponent } from '../../pages/apps/app-dropdown-sele
     InputComponent,
     TooltipDirective,
     LeftComponentPipe,
+    MobileComponentPipe,
     RightComponentPipe,
     SidebarFooterComponentPipe,
     RlbRole,
@@ -98,6 +112,18 @@ export class AppTemplateComponent {
   public readonly appsService = inject(AppsService);
   private readonly authService = inject(AuthenticationService);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
+
+  // Lets one custom component serve both chrome surfaces: it injects RLB_NAV_SURFACE
+  // (optional) and lays itself out accordingly.
+  readonly navbarSurfaceInjector = Injector.create({
+    providers: [{ provide: RLB_NAV_SURFACE, useValue: 'navbar' }],
+    parent: this.injector,
+  });
+  readonly mobileSurfaceInjector = Injector.create({
+    providers: [{ provide: RLB_NAV_SURFACE, useValue: 'mobile-menu' }],
+    parent: this.injector,
+  });
 
   readonly sidebarVisible = this.store.selectSignal(
     (state: BaseState) => state[sidebarsFeatureKey].visible,
@@ -136,6 +162,9 @@ export class AppTemplateComponent {
   readonly navRightItems = this.store.selectSignal(
     (state: BaseState) => state[navbarsFeatureKey].rightItems,
   );
+  readonly navMobileItems = this.store.selectSignal(
+    (state: BaseState) => state[navbarsFeatureKey].mobileItems,
+  );
   readonly navbarHasLogin = this.store.selectSignal(
     (state: BaseState) => state[navbarsFeatureKey].loginVisible,
   );
@@ -154,6 +183,14 @@ export class AppTemplateComponent {
   readonly theme = this.store.selectSignal(state => state[appContextFeatureKey].theme);
   readonly apps = computed(() =>
     this.appsService.apps().filter((app: AppInfo) => app.enabled && app.id),
+  );
+
+  /** Mirrors the mobile offcanvas body: false means the panel would render empty. */
+  readonly mobileMenuHasContent = computed(
+    () =>
+      this.navMobileItems().length > 0 ||
+      (this.navbarHasApps() && this.apps().length > 1) ||
+      this.navbarHasSettings(),
   );
 
   constructor() {

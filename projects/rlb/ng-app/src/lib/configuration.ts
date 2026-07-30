@@ -15,6 +15,15 @@ export const RLB_APP_NAVCOMP = new InjectionToken<NavbarComponents>(`rlb.app.nav
 export const RLB_APP_SIDEBARCOMP = new InjectionToken<SidebarComponents>(`rlb.app.sidebarcomp`);
 export const RLB_CFG_ACL = new InjectionToken<AclConfiguration>(`${RLB_CFG}:acl`);
 
+/**
+ * Which chrome surface a custom navbar component is currently rendered in.
+ * Provided by the shell around each component outlet. Inject it with
+ * `{ optional: true }` — components registered before this token existed
+ * simply don't see it.
+ */
+export type NavSurface = 'navbar' | 'mobile-menu';
+export const RLB_NAV_SURFACE = new InjectionToken<NavSurface>('rlb.nav.surface');
+
 export type AuthUrlHandler = (url: string) => void | Promise<void>;
 export const RLB_AUTH_URL_HANDLER = new InjectionToken<AuthUrlHandler>('rlb.auth.urlHandler');
 
@@ -44,15 +53,21 @@ export interface ProviderConfiguration extends OpenIdConfiguration {
   acl?: ProviderAclConfiguration;
 }
 
+export interface NavbarComponent {
+  component: Type<any>;
+  name: string;
+}
+
 export interface NavbarComponents {
-  left: {
-    component: Type<any>;
-    name: string;
-  }[];
-  right: {
-    component: Type<any>;
-    name: string;
-  }[];
+  left: NavbarComponent[];
+  right: NavbarComponent[];
+  /**
+   * Components available to the mobile menu (offcanvas below the `lg` breakpoint),
+   * activated with `NavbarActions.setMobileItems`. Falls back to `right` when omitted,
+   * so an app can register one component for both surfaces and branch on
+   * {@link RLB_NAV_SURFACE}.
+   */
+  mobile?: NavbarComponent[];
 }
 
 export interface SidebarComponents {

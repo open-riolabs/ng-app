@@ -15,6 +15,7 @@ export const NavbarActions = createActionGroup({
     SetSearchText: props<{ text: string | null }>(),
     SetLeftItems: props<{ items: string[] }>(),
     SetRightItems: props<{ items: string[] }>(),
+    SetMobileItems: props<{ items: string[] }>(),
     SetLoginVisible: props<{ visible: boolean }>(),
     SetSettingsVisible: props<{ visible: boolean }>(),
     SetAppsVisible: props<{ visible: boolean }>(),
