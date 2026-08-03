@@ -50,31 +50,39 @@ function check(label, condition, detail) {
   }
 }
 
-const angularJson = {
-  version: 1,
-  projects: {
-    demo: {
-      projectType: 'application',
-      root: '',
-      sourceRoot: 'src',
-      architect: {
-        build: {
-          builder: '@angular/build:application',
-          options: {
-            browser: 'src/main.ts',
-            tsConfig: 'tsconfig.app.json',
-            styles: ['src/styles.scss'],
+/** Mirrors what `ng new` writes, budgets included — those defaults are what ng-add has to raise. */
+function angularJson(
+  budgets = [{ type: 'initial', maximumWarning: '500kB', maximumError: '1MB' }],
+) {
+  return {
+    version: 1,
+    projects: {
+      demo: {
+        projectType: 'application',
+        root: '',
+        sourceRoot: 'src',
+        architect: {
+          build: {
+            builder: '@angular/build:application',
+            options: {
+              browser: 'src/main.ts',
+              tsConfig: 'tsconfig.app.json',
+              styles: ['src/styles.scss'],
+            },
+            configurations: {
+              production: { budgets },
+            },
           },
         },
       },
     },
-  },
-};
+  };
+}
 
-function appTree(packageJson) {
+function appTree(packageJson, workspace = angularJson()) {
   const tree = Tree.empty();
   tree.create('/package.json', JSON.stringify(packageJson, null, 2));
-  tree.create('/angular.json', JSON.stringify(angularJson, null, 2));
+  tree.create('/angular.json', JSON.stringify(workspace, null, 2));
   tree.create('/tsconfig.app.json', JSON.stringify({ compilerOptions: {} }, null, 2));
   tree.create('/src/styles.scss', '');
   tree.create(
@@ -187,6 +195,17 @@ async function testNgAdd() {
     bundledSkills.every(name => result.files.includes(`/.claude/skills/${name}/SKILL.md`)),
   );
 
+  // Caught by building a real `ng add`ed app: the shell starts at ~1.55 MB raw, over `ng new`'s
+  // 1 MB error ceiling, so without this the very first `ng build` fails.
+  const initial = JSON.parse(
+    result.readContent('/angular.json'),
+  ).projects.demo.architect.build.configurations.production.budgets.find(b => b.type === 'initial');
+  check(
+    'initial bundle budget raised so the scaffolded app builds',
+    initial.maximumError === '4MB' && initial.maximumWarning === '2MB',
+    `got: ${JSON.stringify(initial)}`,
+  );
+
   if (companionInstalled) {
     check(
       "ng add also delivered @open-rlb/ng-bootstrap's skills (fan-out)",
@@ -194,6 +213,56 @@ async function testNgAdd() {
       `expected ${companionSkills.join(', ')}`,
     );
   }
+}
+
+async function testBudgetIsOnlyEverRaised() {
+  console.log('\n=== ng-add never lowers a budget the consumer already widened ===');
+  const runner = new SchematicTestRunner('open-rlb', collection);
+  const tree = appTree(
+    { name: 'demo', version: '0.0.0', dependencies: {}, devDependencies: {} },
+    // Already roomier than ours, plus a percentage budget we must not try to interpret.
+    angularJson([
+      { type: 'initial', maximumWarning: '6MB', maximumError: '8MB' },
+      { type: 'bundle', name: 'lazy', maximumError: '20%' },
+    ]),
+  );
+
+  const result = await runner.runSchematic('ng-add', { project: 'demo' }, tree);
+  const budgets = JSON.parse(result.readContent('/angular.json')).projects.demo.architect.build
+    .configurations.production.budgets;
+  const initial = budgets.find(b => b.type === 'initial');
+
+  console.log(`  budgets: ${JSON.stringify(budgets)}`);
+  check(
+    'a larger existing budget is left alone',
+    initial.maximumWarning === '6MB' && initial.maximumError === '8MB',
+    `got: ${JSON.stringify(initial)}`,
+  );
+  check(
+    'an unparseable (percentage) budget is untouched',
+    budgets.find(b => b.name === 'lazy').maximumError === '20%',
+  );
+}
+
+async function testMissingBudgetsAreNotInvented() {
+  console.log('\n=== ng-add tolerates a workspace with no budgets ===');
+  const runner = new SchematicTestRunner('open-rlb', collection);
+  const workspace = angularJson();
+  delete workspace.projects.demo.architect.build.configurations;
+  const tree = appTree(
+    { name: 'demo', version: '0.0.0', dependencies: {}, devDependencies: {} },
+    workspace,
+  );
+
+  const result = await runner.runSchematic('ng-add', { project: 'demo' }, tree);
+  const build = JSON.parse(result.readContent('/angular.json')).projects.demo.architect.build;
+
+  check(
+    'no budgets fabricated where none were enforced',
+    build.configurations === undefined || build.configurations.production?.budgets === undefined,
+    `got: ${JSON.stringify(build.configurations)}`,
+  );
+  check('the rest of ng-add still ran', Boolean(build.options.stylePreprocessorOptions));
 }
 
 async function testAppendsToExistingPostinstall() {
@@ -553,6 +622,8 @@ async function testSyncSkillsRespectsSkipEnv() {
     `Companion skills (@open-rlb/ng-bootstrap): ${companionSkills.join(', ') || '(not installed)'}`,
   );
   await testNgAdd();
+  await testBudgetIsOnlyEverRaised();
+  await testMissingBudgetsAreNotInvented();
   await testAppendsToExistingPostinstall();
   await testAbsorbsCompanionPostinstall();
   await testGroupsExistingPostinstallWithOr();

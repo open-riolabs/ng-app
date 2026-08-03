@@ -56,6 +56,16 @@ const STYLE_INCLUDE_PATH = 'node_modules';
 /** Source folder for the scaffolded runtime assets (i18n JSON, logo), served at `/assets`. */
 const ASSETS_INPUT = 'src/assets';
 
+/**
+ * Initial-bundle budget the scaffolded shell needs.
+ *
+ * `ng new` writes a 1 MB error ceiling, but this library together with ng-bootstrap, Bootstrap,
+ * NgRx and the OIDC client starts at ~1.55 MB — so without this a fresh `ng add` produces an app
+ * that fails `ng build` before the consumer has written a line of code. Angular budgets measure
+ * raw bytes; the same bundle transfers at ~277 kB compressed.
+ */
+const INITIAL_BUDGET = { maximumWarning: '2MB', maximumError: '4MB' } as const;
+
 /** Keeps `.claude/skills` in step with the installed library version on every `npm install`. */
 const SYNC_SKILLS_COMMAND = 'ng g @open-rlb/ng-app:sync-skills';
 
@@ -74,13 +84,15 @@ export function ngAdd(options: Schema): Rule {
       ...DEPENDENCIES.map(dep => addDependency(dep.name, dep.version, { type: dep.type })),
       // 2. Register Bootstrap + ng-bootstrap global styles and the SCSS include path in angular.json.
       addBootstrapStyles(project),
-      // 3. Scaffold the runnable application shell (providers, environment, app component, routes).
+      // 3. Raise the initial-bundle budget so the scaffolded app builds out of the box.
+      raiseInitialBudget(project),
+      // 4. Scaffold the runnable application shell (providers, environment, app component, routes).
       options.skipShell ? noop : scaffoldShell(tree, project),
-      // 4. Optionally copy the bundled Claude skills into .claude/skills.
+      // 5. Optionally copy the bundled Claude skills into .claude/skills.
       options.skipSkills ? noop : schematic('sync-skills', {}),
-      // 5. Optionally keep them in sync on every future `npm install`.
+      // 6. Optionally keep them in sync on every future `npm install`.
       options.skipSkills || options.skipSkillsAutoSync ? noop : addSkillsPostinstall(),
-      // 6. Print next steps.
+      // 7. Print next steps.
       logNextSteps(project, options),
     ]);
   };
@@ -149,6 +161,57 @@ function addBootstrapStyles(project: string): Rule {
     }
     target.options['assets'] = assets;
   });
+}
+
+/**
+ * Raises the production `initial` bundle budget to fit the shell.
+ *
+ * Only ever raises. A consumer who already allowed more keeps their setting, and a value we cannot
+ * parse (a `%` budget, say) is left alone rather than guessed at — lowering someone's ceiling would
+ * be a far worse failure than leaving it high.
+ */
+function raiseInitialBudget(project: string): Rule {
+  return updateWorkspace(workspace => {
+    type Budget = { type?: string; maximumWarning?: string; maximumError?: string };
+
+    const target = workspace.projects.get(project)?.targets.get('build');
+    const production = target?.configurations?.['production'] as { budgets?: Budget[] } | undefined;
+    const budgets = production?.budgets;
+
+    // No budgets configured means nothing is being enforced — there is nothing to raise.
+    if (!production || !Array.isArray(budgets) || !budgets.some(b => b.type === 'initial')) {
+      return;
+    }
+
+    // Replace the array wholesale rather than mutating the entry in place: the workspace writer
+    // records changes per property, and cannot express an edit to an object nested in an array.
+    production.budgets = budgets.map(budget => {
+      if (budget.type !== 'initial') {
+        return budget;
+      }
+
+      const raised: Budget = { ...budget };
+      for (const key of ['maximumWarning', 'maximumError'] as const) {
+        const current = parseBudgetBytes(raised[key]);
+        const wanted = parseBudgetBytes(INITIAL_BUDGET[key]);
+        if (current !== null && wanted !== null && current < wanted) {
+          raised[key] = INITIAL_BUDGET[key];
+        }
+      }
+      return raised;
+    });
+  });
+}
+
+/** Bytes for an Angular budget string such as `500kB`, or null when it is not a plain size. */
+function parseBudgetBytes(value: string | undefined): number | null {
+  const match = /^(\d+(?:\.\d+)?)\s*(b|kb|mb|gb)?$/i.exec(value?.trim() ?? '');
+  if (!match) {
+    return null;
+  }
+
+  const units = { b: 1, kb: 1024, mb: 1024 ** 2, gb: 1024 ** 3 };
+  return Number(match[1]) * units[(match[2] ?? 'b').toLowerCase() as keyof typeof units];
 }
 
 function scaffoldShell(tree: Tree, project: string): Rule {
