@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "OpenRlbNgAppSyncSkills",
+  "title": "@open-rlb/ng-app sync-skills schematic",
+  "type": "object",
+  "properties": {
+    "prune": {
+      "type": "boolean",
+      "default": true,
+      "description": "Delete skills the library previously shipped but no longer does. Skills authored in the consumer are never touched."
+    },
+    "companions": {
+      "type": "boolean",
+      "default": true,
+      "description": "Also refresh skills from companion @open-rlb libraries that ship their own sync-skills schematic, so one command updates every skill. Each library still owns and prunes only its own."
+    }
+  },
+  "required": []
+}

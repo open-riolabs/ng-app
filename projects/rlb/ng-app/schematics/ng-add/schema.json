@@ -20,6 +20,11 @@
       "type": "boolean",
       "default": false,
       "description": "Do not copy the bundled Claude skills into .claude/skills."
+    },
+    "skipSkillsAutoSync": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not add a postinstall script that refreshes .claude/skills on future installs."
     }
   },
   "required": []

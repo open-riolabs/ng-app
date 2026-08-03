@@ -7,6 +7,7 @@ import {
   mergeWith,
   move,
   Rule,
+  schematic,
   SchematicContext,
   SchematicsException,
   Tree,
@@ -55,6 +56,15 @@ const STYLE_INCLUDE_PATH = 'node_modules';
 /** Source folder for the scaffolded runtime assets (i18n JSON, logo), served at `/assets`. */
 const ASSETS_INPUT = 'src/assets';
 
+/** Keeps `.claude/skills` in step with the installed library version on every `npm install`. */
+const SYNC_SKILLS_COMMAND = 'ng g @open-rlb/ng-app:sync-skills';
+
+/**
+ * The equivalent command from @open-rlb/ng-bootstrap. Our sync now delegates to it, so a
+ * `postinstall` consisting of just this command is replaced rather than appended to.
+ */
+const COMPANION_SYNC_COMMAND = 'ng g @open-rlb/ng-bootstrap:sync-skills';
+
 export function ngAdd(options: Schema): Rule {
   return async (tree: Tree, _context: SchematicContext) => {
     const project = await resolveProject(tree, options.project);
@@ -67,8 +77,10 @@ export function ngAdd(options: Schema): Rule {
       // 3. Scaffold the runnable application shell (providers, environment, app component, routes).
       options.skipShell ? noop : scaffoldShell(tree, project),
       // 4. Optionally copy the bundled Claude skills into .claude/skills.
-      options.skipSkills ? noop : copyClaudeSkills(),
-      // 5. Print next steps.
+      options.skipSkills ? noop : schematic('sync-skills', {}),
+      // 5. Optionally keep them in sync on every future `npm install`.
+      options.skipSkills || options.skipSkillsAutoSync ? noop : addSkillsPostinstall(),
+      // 6. Print next steps.
       logNextSteps(project, options),
     ]);
   };
@@ -145,10 +157,7 @@ function scaffoldShell(tree: Tree, project: string): Rule {
     const def = workspace.projects.get(project);
     const sourceRoot = def?.sourceRoot ?? (def ? `${def.root}/src` : 'src');
 
-    const templates = apply(url('./files'), [
-      applyTemplates({ ...strings }),
-      move(sourceRoot),
-    ]);
+    const templates = apply(url('./files'), [applyTemplates({ ...strings }), move(sourceRoot)]);
 
     // Overwrite the core shell files: ng add assumes a fresh/near-fresh app and the shell is the
     // deliverable. Existing files (e.g. the default app.config.ts from `ng new`) are replaced.
@@ -157,13 +166,59 @@ function scaffoldShell(tree: Tree, project: string): Rule {
 }
 
 /**
- * Copies the Claude skills bundled with the package into the consumer's
- * `.claude/skills` folder. Library-authored skills are authoritative, so existing
- * copies are overwritten to stay in sync with the installed version.
+ * Adds a `postinstall` script that re-runs the sync-skills schematic, so `npm install` alone
+ * refreshes `.claude/skills` to match the newly installed library version.
+ *
+ * The script deliberately lives in the consumer's package.json rather than the library's: a
+ * library-side install script is silently skipped under `--ignore-scripts`, has to guess the
+ * app root via INIT_CWD, and would fire in unrelated repos on transitive installs.
+ *
+ * npm allows only one `postinstall`, so an existing script is appended to, never dropped — with
+ * one exception: a script that is *only* @open-rlb/ng-bootstrap's sync is replaced, since our
+ * sync-skills already delegates to it and running it twice just makes `npm install` slower.
  */
-function copyClaudeSkills(): Rule {
-  const skills = apply(url('./claude-skills'), [move('.claude/skills')]);
-  return mergeWith(skills, MergeStrategy.Overwrite);
+function addSkillsPostinstall(): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    const raw = tree.read('/package.json');
+    if (!raw) {
+      return tree;
+    }
+
+    const pkg = JSON.parse(raw.toString('utf-8')) as { scripts?: Record<string, string> };
+    const existing = pkg.scripts?.['postinstall'];
+
+    if (existing?.includes(SYNC_SKILLS_COMMAND)) {
+      return tree;
+    }
+
+    // Left over from @open-rlb/ng-bootstrap's `ng add`. Our sync covers it now, so absorb it.
+    // Only an exact match is replaced — anything else may carry work we know nothing about.
+    const absorbsCompanion = existing?.trim() === COMPANION_SYNC_COMMAND;
+
+    // Windows `cmd.exe` parses `A || B && C` as `A || (B && C)` — not `(A || B) && C` as sh does.
+    // Appending to a script that already uses `||` (a fail-soft sync, say) would silently skip our
+    // command whenever theirs succeeded, so group it first.
+    const base = absorbsCompanion
+      ? undefined
+      : existing?.includes('||')
+        ? `(${existing})`
+        : existing;
+
+    pkg.scripts = {
+      ...pkg.scripts,
+      postinstall: base ? `${base} && ${SYNC_SKILLS_COMMAND}` : SYNC_SKILLS_COMMAND,
+    };
+    tree.overwrite('/package.json', JSON.stringify(pkg, null, 2) + '\n');
+
+    if (absorbsCompanion) {
+      context.logger.info(
+        `• Replaced the standalone "${COMPANION_SYNC_COMMAND}" postinstall — our sync delegates to it.`,
+      );
+    } else if (existing) {
+      context.logger.info(`• Appended the skill sync to the existing "postinstall" script.`);
+    }
+    return tree;
+  };
 }
 
 function logNextSteps(project: string, options: Schema): Rule {
@@ -176,13 +231,26 @@ function logNextSteps(project: string, options: Schema): Rule {
     if (!options.skipShell) {
       log.info(`   • Application shell scaffolded into the "${project}" app:`);
       log.info('     - src/main.ts bootstraps the AppComponent shell');
-      log.info('     - src/environments/environment.ts (config: auth, endpoints, i18n, pages, acl)');
+      log.info(
+        '     - src/environments/environment.ts (config: auth, endpoints, i18n, pages, acl)',
+      );
       log.info('     - src/app/app.config.ts (provideRlbConfig + provideApp + RLB_INIT_PROVIDER)');
-      log.info('     - src/app/app.component.ts (<rlb-app-container> shell), app.describer.ts, routes, home');
-      log.info('     A default root component from `ng new` (e.g. src/app/app.ts) is now unused and can be deleted.');
+      log.info(
+        '     - src/app/app.component.ts (<rlb-app-container> shell), app.describer.ts, routes, home',
+      );
+      log.info(
+        '     A default root component from `ng new` (e.g. src/app/app.ts) is now unused and can be deleted.',
+      );
     }
     if (!options.skipSkills) {
-      log.info('   • Claude skills copied to .claude/skills/ (rlb-app-* guides)');
+      log.info('   • Claude skills copied to .claude/skills/ (rlb-app-* guides, plus');
+      log.info("     @open-rlb/ng-bootstrap's — the sync delegates to its own schematic)");
+      if (!options.skipSkillsAutoSync) {
+        log.info(`   • "postinstall": "${SYNC_SKILLS_COMMAND}" wired into package.json`);
+        log.info("     One command refreshes every library's skills on `npm install`. Note");
+        log.info('     `npm update <pkg>` skips root lifecycle scripts — follow it with a');
+        log.info('     bare `npm install`.');
+      }
     }
     log.info('');
     log.info('⚠ Before running: edit src/environments/environment.ts and replace the placeholder');

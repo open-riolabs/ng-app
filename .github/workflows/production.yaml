@@ -43,6 +43,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
       - name: Install dependencies
+        # The root postinstall syncs @open-rlb/ng-bootstrap's Claude skills into .claude/skills for
+        # local development. CI never reads them (the library bundles from
+        # projects/rlb/ng-app/skills), so skip it.
+        env:
+          RLB_SKIP_SKILL_SYNC: '1'
         run: |
           npm install
       - name: Create node_modules TarGz

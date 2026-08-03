@@ -5,6 +5,11 @@
       "description": "Add @open-rlb/ng-app to an Angular project: install peer dependencies, register Bootstrap styles, and scaffold a runnable application shell (environment, providers, app shell, routes, i18n).",
       "factory": "./ng-add/index#ngAdd",
       "schema": "./ng-add/schema.json"
+    },
+    "sync-skills": {
+      "description": "Copy the Claude skills bundled with the installed version of @open-rlb/ng-app into .claude/skills. Re-runnable: this is how consumers pick up skill updates after npm update.",
+      "factory": "./sync-skills/index#syncSkills",
+      "schema": "./sync-skills/schema.json"
     }
   }
 }
