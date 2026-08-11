@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Injector } from '@angular/core';
+import { computed, inject, Injectable, Injector, isDevMode } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, map, Observable, switchMap, take } from 'rxjs';
@@ -10,6 +10,10 @@ import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from './app-logger.service';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { DEFAULT_ROUTES_CONFIG } from '../../pages/default-routes.config';
+import {
+  describeProviderResolutionFailure,
+  resolveProvider,
+} from '../../auth/services/provider-resolution';
 
 interface AppConfig {
   route: ActivatedRoute;
@@ -32,6 +36,11 @@ export class AppsService {
   private readonly injector = inject(Injector);
 
   private logger: LoggerContext;
+
+  /** A method rather than a field, so specs can override it to exercise the production branch. */
+  protected isDevelopmentMode(): boolean {
+    return isDevMode();
+  }
 
   constructor() {
     this.logger = this.loggerService.for(this.constructor.name);
@@ -135,6 +144,16 @@ export class AppsService {
     this.store.dispatch(AppContextActions.setCurrentApp({ app, mode: viewMode, url }));
   }
 
+  /**
+   * Settles which auth provider this domain uses, once, at startup.
+   *
+   * A domain no provider claims — or one that two claim — used to be a console warning, after which
+   * the app carried on permanently and silently unauthenticated: every guard bounced, and `login()`
+   * authorized against whichever configuration happened to be registered first. That is a
+   * deployment error, not a warning, so it now throws in dev and logs at error level in prod.
+   *
+   * Configuring no providers at all stays a warning: an app without auth is legitimate.
+   */
   private initAuthProviders() {
     const confAuth = this.confAuth;
     const currentProviderInStore = this.store.selectSignal(
@@ -148,37 +167,32 @@ export class AppsService {
       return;
     }
 
-    if (!confAuth?.providers?.length) {
+    const resolution = resolveProvider(
+      confAuth?.providers,
+      currentProviderInStore,
+      this.currentDomain,
+    );
+
+    if (resolution.provider) {
+      this.logger.info(`Auth provider resolved by ${resolution.reason}:`, resolution.provider);
+      this.store.dispatch(
+        AuthActions.setCurrentProvider({ currentProvider: resolution.provider.configId }),
+      );
+      return;
+    }
+
+    if (resolution.reason === 'no-providers') {
       this.logger.warn('No auth providers configured.');
       return;
     }
 
-    if (confAuth?.providers && confAuth.providers.length === 1) {
-      this.logger.info('Single auth provider detected:', confAuth.providers[0]);
-      this.store.dispatch(
-        AuthActions.setCurrentProvider({ currentProvider: confAuth.providers[0].configId }),
-      );
-      return;
-    }
-
-    this.logger.info('Multiple auth providers detected, checking by domain:', this.currentDomain);
-
-    const authProvidersMatched = confAuth.providers.filter(provider =>
-      provider.domains?.includes(this.currentDomain),
+    const message = describeProviderResolutionFailure(
+      resolution,
+      this.currentDomain,
+      confAuth?.providers,
     );
-
-    if (authProvidersMatched && authProvidersMatched.length === 1) {
-      this.logger.info('Auth provider matched by domain:', authProvidersMatched[0]);
-      this.store.dispatch(
-        AuthActions.setCurrentProvider({ currentProvider: authProvidersMatched[0].configId }),
-      );
-    } else if (authProvidersMatched && authProvidersMatched.length > 1) {
-      this.logger.warn(
-        `Multiple auth providers found for the current domain: ${this.currentDomain}. Please specify a single provider in the configuration.`,
-      );
-    } else {
-      this.logger.warn(`No auth provider found for the current domain: ${this.currentDomain}.`);
-    }
+    this.logger.error(message);
+    if (this.isDevelopmentMode()) throw new Error(message);
   }
 
   private initRouterListener() {

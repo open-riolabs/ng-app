@@ -23,6 +23,35 @@ export const appConfig: ApplicationConfig = {
 - `provideRlbConfig(environment)` is the only place the library config is read. It internally calls `provideRlbBootstrap()` (so do NOT call it again), registers the four NgRx feature slices, the default routes derived from `environment.pages`, OIDC auth (`provideRlbCodeBrowserOAuth(env.auth)`), i18n (`provideRlbI18n(env.i18n)`), `provideHttpClient(withInterceptorsFromDi())`, the service worker, and the built-in modal/toast registries.
 - `provideApp(appDescriber)` registers `RLB_APPS` (multi), adds `appDescriber.routes` via `provideRouter`, and spreads any `appDescriber.providers`. At runtime those registered apps are filtered and selected by `AppsService` — see [[rlb-app-apps]].
 
+### Describer providers are global — scope them yourself
+
+`appDescriber.providers` and `.routes` land in the **root injector on every domain**. `info.domains`
+gates what the shell shows and which app the router selects; it does not gate registration, and
+cannot — `AppsService` needs every `AppInfo` for the hub, for domain filtering and for
+`findAppForPath`.
+
+So a tenant-local interceptor or app initializer added to one app's describer silently joins the
+chain on every other tenant, where it was never tested. Wrap it:
+
+```typescript
+import { provideForDomains } from '@open-rlb/ng-app';
+
+const PARTNER_DOMAINS = ['partner.example.com', 'legacy.example.com'];
+
+export const partnerDescriber: AppDescriber = {
+  info: { /* ... */ domains: PARTNER_DOMAINS },
+  providers: [
+    ...provideForDomains(PARTNER_DOMAINS, [
+      { provide: HTTP_INTERCEPTORS, useClass: PartnerInterceptor, multi: true },
+    ]),
+  ],
+};
+```
+
+The check runs while the providers array is being built — before bootstrap — so the providers are
+genuinely never registered, not registered and then disabled. Pass a third `hostname` argument for
+SSR and in specs; without a `location` it registers nothing.
+
 ## environment.ts — ProjectConfiguration
 
 `ProjectConfiguration = IConfiguration & { production: boolean }`. Sections:

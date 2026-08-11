@@ -5,8 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class ParseJwtService {
 
+  // `atob` rather than Node's `Buffer`, which is not defined in a browser: decoding a JWT with it
+  // threw, taking `roles$` and `matchRoles` with it. Available in every browser and in Node >= 16.
   private _atob(string: string): string {
-    return Buffer.from(string, 'base64').toString("binary");// atob(string)
+    return atob(string);
   }
 
   public parseJwt(token?: string) {

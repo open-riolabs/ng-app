@@ -94,9 +94,25 @@ The `*roles` directive also reads `checkPermissionInCurrentApp` (re-runs reactiv
 
 ## Multi-provider auth by domain
 
-`AppsService.initAuthProviders()` picks the OIDC provider at startup: if one provider, use it; if
-several, match by `provider.domains` against the current hostname. Multiple matches (or none) log
-a warning and leave the provider unset — give each provider a distinct `domains` entry.
+`AppsService.initAuthProviders()` settles the OIDC provider once at startup, in this order:
+
+1. the id already in the store (set by an initializer or by `checkAuthMultiple`);
+2. the only provider, if a single one is configured;
+3. the provider whose `domains` contains the current hostname.
+
+Resolution is **by hostname, never by `configId`** — the domain identifies the portal, while
+`configId` is just the OIDC library's storage key and may differ between environments.
+
+**A hostname no provider claims — or one that two claim — is an error, not a warning.** It throws
+in dev (bootstrap fails, with the hostname and every configured provider in the message) and logs
+at error level in production. Give exactly one provider a `domains` entry containing the host.
+
+This used to be a console warning after which the app carried on permanently unauthenticated:
+every guard bounced, and `login()` authorized against whichever configuration was registered
+first — a *different realm*, holding none of that tenant's tokens. Because dev and staging often
+share a realm between tenants, that only ever surfaced in production.
+
+Configuring no providers at all stays a warning: an app without auth is legitimate.
 
 ## Gotchas
 
@@ -104,7 +120,11 @@ a warning and leave the provider unset — give each provider a distinct `domain
   hook; an empty `apps()` usually means ACL/finalize hasn't run yet.
 - **`currentApp()` is `null` at root** in multi-app (hub) mode — that's expected, not an error.
 - **Domain gating uses `window.location.hostname`** — `localhost` won't match production
-  `domains`; include `localhost` (or omit `domains`) for local dev.
+  `domains`; include `localhost` (or omit `domains`) for local dev. With several auth providers
+  configured, a hostname none of them claims now fails the dev bootstrap rather than warning.
+- **`AppInfo.domains` does not scope `AppDescriber.providers`.** Those go into the root injector on
+  every domain; wrap tenant-local ones in `provideForDomains(domains, providers)`. See
+  [[rlb-app-config]].
 - Don't re-run `selectApp` redundantly — it no-ops when the id + viewMode are unchanged.
 
 Related: [[rlb-app-config]], [[rlb-app-auth-acl]], [[rlb-app-shell]], [[rlb-app-store]].

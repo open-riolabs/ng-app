@@ -85,13 +85,66 @@ export interface CmsConfiguration {
   markdown: 'ignore' | 'html' | 'text';
 }
 
+/**
+ * Tuning for the `'oauth-code-ep-retry'` interceptor and the token watchdog behind it.
+ *
+ * The defaults are the ones this design was audited with; change them only with a reason.
+ */
+export interface TokenRenewalConfiguration {
+  /**
+   * How far ahead of expiry to renew, in seconds. Default 90.
+   *
+   * Deliberately well ahead of the 30s the OIDC library uses for its own periodic check: ours lands
+   * first, the library's check then finds a fresh token and stands down, and the two can never
+   * spend the same refresh token at once — which Keycloak, with rotation on, answers by killing the
+   * session.
+   */
+  renewLeadSeconds?: number;
+  /** Waits between the first failed attempts, in seconds. Default `[5, 20, 60]`. */
+  retryDelaysSeconds?: number[];
+  /** Cadence of the slow heartbeat once the ladder above is spent, in seconds. Default 120. */
+  transientRetrySeconds?: number;
+  /**
+   * How long to keep retrying one outage before standing down, in seconds. Default 1800.
+   *
+   * A dead refresh token is indistinguishable from an unreachable host by the time the failure
+   * arrives — the library replaces the provider's response body with its own `Error` — so this
+   * budget, not any classification of the error, is what stops a rejected token being retried
+   * forever. The interceptor still recovers on the next 401.
+   */
+  maxOutageSeconds?: number;
+  /** Start the watchdog once the user is authenticated. Default true. */
+  autoStart?: boolean;
+  /**
+   * Paths on authenticated endpoints that anonymous callers may legitimately reach, matched as
+   * substrings of the request URL (e.g. `['/register']`).
+   *
+   * The interceptor otherwise refuses to send a request to an authenticated endpoint without a
+   * token; registration and similar front-door calls happen before an account exists and would
+   * fail. Default `[]`.
+   */
+  publicPaths?: string[];
+}
+
 export interface AuthConfiguration {
   protocol: 'oauth';
   storage: 'cookies' | 'localStorage' | 'sessionStorage';
-  interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'none';
+  /**
+   * Which HTTP interceptor attaches the token.
+   *
+   * - `'oauth-code-all'` — the OIDC library's own, matching `allowedUrls`.
+   * - `'oauth-code-ep'` — attaches to the `endpoints` marked `auth`. Sends the request anyway when
+   *   there is no token, so the backend sees an anonymous call.
+   * - `'oauth-code-ep-retry'` — as above, plus: never sends an authenticated request without a
+   *   token, retries a 401 once with a fresh one, and keeps a watchdog renewing the token so a
+   *   single failed refresh cannot end renewal for the life of the page. Tune with {@link renewal}.
+   */
+  interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'oauth-code-ep-retry' | 'none';
   enableCompanyInterceptor?: boolean;
   allowedUrls: string[];
   providers: ProviderConfiguration[];
+  /** Only read when {@link interceptor} is `'oauth-code-ep-retry'`. */
+  renewal?: TokenRenewalConfiguration;
 }
 
 export interface InternationalizationConfiguration {

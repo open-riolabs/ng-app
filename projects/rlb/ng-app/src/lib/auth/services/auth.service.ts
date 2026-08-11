@@ -1,8 +1,9 @@
-import { inject, Inject, Injectable, Optional } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { inject, Inject, Injectable, isDevMode, Optional, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { lastValueFrom, map, Observable, ReplaySubject, switchMap, tap } from 'rxjs';
+import { EMPTY, lastValueFrom, map, Observable, of, ReplaySubject, switchMap, tap } from 'rxjs';
 import {
   AuthConfiguration,
   AuthUrlHandler,
@@ -18,6 +19,11 @@ import { AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { ParseJwtService } from './parse-jwt.service';
 import { AdminApiService } from '../../services/acl/user-resources.service';
 import { AclStore } from '../../store/acl/acl.store';
+import {
+  describeProviderResolutionFailure,
+  ProviderResolution,
+  resolveProvider,
+} from './provider-resolution';
 
 @Injectable({
   providedIn: 'root',
@@ -26,10 +32,16 @@ export class AuthenticationService {
   modal!: Window | null;
   private logger: LoggerContext;
   private readonly aclStore = inject(AclStore);
+  private readonly document = inject(DOCUMENT);
   private readonly _authReady$ = new ReplaySubject<void>(1);
   public readonly authReady$ = this._authReady$.asObservable();
   private readonly _authenticated$ = new ReplaySubject<void>(1);
   public readonly authenticated$ = this._authenticated$.asObservable();
+
+  /** Reasons already reported, so a broken configuration logs once instead of once per call. */
+  private readonly reportedFailures = new Set<string>();
+
+  private storedProviderId!: Signal<string | null | undefined>;
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
@@ -46,6 +58,9 @@ export class AuthenticationService {
     @Optional() @Inject(RLB_AUTH_URL_HANDLER) private authUrlHandler: AuthUrlHandler | null,
   ) {
     this.logger = this.log.for(this.constructor.name);
+    this.storedProviderId = this.store.selectSignal(
+      state => state[authsFeatureKey].currentProvider,
+    );
     this.logger.log('AuthenticationService initialized');
   }
 
@@ -57,11 +72,59 @@ export class AuthenticationService {
     return this.authConfig;
   }
 
+  private get hostname(): string {
+    return this.document.defaultView?.location.hostname ?? '';
+  }
+
+  /** A method rather than a field, so specs can override it to exercise the production branch. */
+  protected isDevelopmentMode(): boolean {
+    return isDevMode();
+  }
+
+  private resolve(): ProviderResolution {
+    return resolveProvider(this.authConfig?.providers, this.storedProviderId(), this.hostname);
+  }
+
+  /**
+   * The provider this page is using, or undefined when none resolves.
+   *
+   * Read speculatively — from templates, and from `KeycloakProfileService` for its base URL — so it
+   * stays quiet and never throws. {@link resolvedConfigId} is the loud path.
+   */
   get currentProvider() {
-    const currentProvider = this.store.selectSignal(
-      state => state[authsFeatureKey].currentProvider,
-    )();
-    return this.authConfig?.providers.find(provider => provider.configId === currentProvider);
+    return this.resolve().provider;
+  }
+
+  /**
+   * The configId to hand the OIDC library, or undefined when none resolves.
+   *
+   * Never returns undefined *to the library*: callers must skip the call instead. Passing undefined
+   * makes `getConfig` fall back to the first registered configuration, so on a domain whose
+   * provider failed to resolve every token read, login and logout would silently target a different
+   * realm — one holding none of this tenant's tokens. That is invisible wherever environments share
+   * a realm (dev, staging) and only bites in production, which is exactly how it reached production.
+   *
+   * A misconfigured domain throws in dev and logs at error level in prod. Having no providers at
+   * all is not a misconfiguration — it is an app without auth — so that stays silent.
+   */
+  private resolvedConfigId(operation: string): string | undefined {
+    const resolution = this.resolve();
+    if (resolution.provider) return resolution.provider.configId;
+    if (resolution.reason === 'no-providers') return undefined;
+
+    const message = describeProviderResolutionFailure(
+      resolution,
+      this.hostname,
+      this.authConfig?.providers,
+      operation,
+    );
+    if (this.isDevelopmentMode()) throw new Error(message);
+
+    if (!this.reportedFailures.has(resolution.reason)) {
+      this.reportedFailures.add(resolution.reason);
+      this.logger.error(message);
+    }
+    return undefined;
   }
 
   public checkAuthMultiple(url?: string | undefined): Observable<LoginResponse[]> {
@@ -102,15 +165,21 @@ export class AuthenticationService {
   }
 
   public login(targetUrl?: string) {
+    const configId = this.resolvedConfigId('login');
+    // No provider means no realm to send the user to. Authorizing anyway would use whichever
+    // configuration is registered first and bring them back still unauthenticated, which reads as
+    // an endless login loop rather than as the configuration error it is.
+    if (!configId) return;
+
     const returnUrl = targetUrl || this.router.url || '/';
     this.localStorage.writeLocal('loginRedirectUrl', returnUrl);
     this.logger.log(`call login method, loginRedirectUrl: ${returnUrl}`);
 
     const urlHandler = this.electronUrlHandler ?? this.authUrlHandler;
     if (urlHandler) {
-      return this.oidc.authorize(this.currentProvider?.configId, { urlHandler });
+      return this.oidc.authorize(configId, { urlHandler });
     }
-    return this.oidc.authorize(this.currentProvider?.configId);
+    return this.oidc.authorize(configId);
   }
 
   private get electronUrlHandler(): AuthUrlHandler | null {
@@ -124,45 +193,56 @@ export class AuthenticationService {
   }
 
   async logout() {
-    await lastValueFrom(this.oidc.logoff(this.currentProvider?.configId));
+    const configId = this.resolvedConfigId('logout');
+    // Guarded before lastValueFrom: an EMPTY logoff would reject with EmptyError.
+    if (!configId) return;
+    await lastValueFrom(this.oidc.logoff(configId));
   }
 
   logout$() {
-    return this.oidc.logoff(this.currentProvider?.configId);
+    const configId = this.resolvedConfigId('logout');
+    if (!configId) return EMPTY;
+    return this.oidc.logoff(configId);
   }
 
   public get userInfo$(): Observable<any> {
+    const configId = this.resolvedConfigId('userInfo$');
+    if (!configId) return of(null);
+
     return this.oidc.userData$.pipe(
       map(userData => {
-        const user = userData.allUserData.find(o => o.configId === this.currentProvider?.configId);
+        const user = userData.allUserData.find(o => o.configId === configId);
         return user ? user.userData : null;
       }),
     );
   }
 
   public get isAuthenticated$(): Observable<boolean> {
+    const configId = this.resolvedConfigId('isAuthenticated$');
+    if (!configId) return of(false);
+
     return this.oidc.isAuthenticated$.pipe(
-      map(isAuthenticated => {
-        // this.logger.log(`oidc isAuthenticated$ check, response: ${JSON.stringify(isAuthenticated)}; looking for isAuthenticated of ${this.currentProvider?.configId} configId`);
-        return (
-          isAuthenticated.allConfigsAuthenticated.find(
-            o => o.configId === this.currentProvider?.configId,
-          )?.isAuthenticated || false
-        );
-      }),
+      map(
+        isAuthenticated =>
+          isAuthenticated.allConfigsAuthenticated.find(o => o.configId === configId)
+            ?.isAuthenticated || false,
+      ),
     );
   }
 
   public get accessToken$(): Observable<string | undefined> {
-    return this.oidc.getAccessToken(this.currentProvider?.configId);
+    const configId = this.resolvedConfigId('accessToken$');
+    return configId ? this.oidc.getAccessToken(configId) : of(undefined);
   }
 
   public get idToken$(): Observable<string | undefined> {
-    return this.oidc.getIdToken(this.currentProvider?.configId);
+    const configId = this.resolvedConfigId('idToken$');
+    return configId ? this.oidc.getIdToken(configId) : of(undefined);
   }
 
   public get refreshToken$(): Observable<string | undefined> {
-    return this.oidc.getRefreshToken(this.currentProvider?.configId);
+    const configId = this.resolvedConfigId('refreshToken$');
+    return configId ? this.oidc.getRefreshToken(configId) : of(undefined);
   }
 
   public get roles$(): Observable<string[]> {

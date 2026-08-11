@@ -12,8 +12,8 @@ describe('SupportComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SupportComponent ],
       imports: [
+        SupportComponent,
         RlbAppModule,
         TranslateModule.forRoot()
       ],

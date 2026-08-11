@@ -31,7 +31,12 @@ export const environment: ProjectConfiguration = {
   auth: {
     protocol: 'oauth',
     storage: 'localStorage',
+    // 'oauth-code-ep-retry' additionally survives a login-host outage: it never sends an
+    // authenticated request without a token, retries a 401 once, and keeps renewing the token
+    // after a failed refresh (which otherwise ends renewal for the life of the page). Set
+    // `renewal.publicPaths` first for any call anonymous visitors make, e.g. registration.
     interceptor: 'oauth-code-ep',
+    // renewal: { publicPaths: ['/register'] },
     allowedUrls: ['https://api.example.com'],
     enableCompanyInterceptor: true,
     providers: [

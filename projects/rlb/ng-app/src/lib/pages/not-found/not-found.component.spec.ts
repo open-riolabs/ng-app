@@ -9,10 +9,8 @@ describe('NotFoundComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        NotFoundComponent
-      ],
       imports: [
+        NotFoundComponent,
         RlbAppModule,
         TranslateModule.forRoot()
       ],

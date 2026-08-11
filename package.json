@@ -10,7 +10,7 @@
     "lib:build": "ng build @open-rlb/ng-app && npm run lib:build:schematics",
     "lib:build:schematics": "node scripts/build-schematics.mjs",
     "lib:test": "ng test @open-rlb/ng-app",
-    "lib:test-ci": "ng test --karma-config=./karma.conf.js --no-watch --no-progress --browsers=ChromeHeadless @open-rlb/ng-app",
+    "lib:test-ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless @open-rlb/ng-app",
     "lib:test:ng-add": "node scripts/test-ng-add.cjs",
     "lib:lint": "ng lint @open-rlb/ng-app",
     "lib:pack": "npm run lib:build && npm pack ./dist/rlb/ng-app/ && node scripts/verify-pack.cjs",

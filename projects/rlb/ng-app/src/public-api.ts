@@ -111,6 +111,18 @@ export function provideRlbConfig<T = { [k: string]: any }>(
   ];
 }
 
+/**
+ * Registers an app with the shell: its `AppInfo`, its routes and its providers.
+ *
+ * **`app.providers` and `app.routes` land in the root injector on every domain.** `AppInfo.domains`
+ * gates what the shell shows and which app the router selects — it does not gate registration, and
+ * cannot: `AppsService` needs every `AppInfo` for the app hub, for domain filtering and for
+ * `findAppForPath`, and unregistering routes would turn a cross-tenant deep link into a shell 404
+ * instead of letting the guards answer it.
+ *
+ * So anything in `providers` that must only run on some domains — an HTTP interceptor, an app
+ * initializer — has to say so itself. Wrap it in {@link provideForDomains}.
+ */
 export function provideApp(app: AppDescriber): (EnvironmentProviders | Provider)[] {
   const routesPaths = app.routes ? flattenRoutes(app.routes) : [];
 

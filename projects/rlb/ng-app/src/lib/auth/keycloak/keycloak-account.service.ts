@@ -6,6 +6,18 @@ import { ErrorManagementService } from "../../services/errors/error-management.s
 import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } from "./";
 import { AuthenticationService } from "..";
 
+/**
+ * The Keycloak account API, with failures shown as a modal.
+ *
+ * Every method here is gated behind `filter(isAuthenticated)` and ends in
+ * `manageUI('error', 'dialog')`, so a failure — or a token renewal that has stalled — completes the
+ * stream without emitting and without erroring. That is fine for a single call bound straight to a
+ * template, and unusable anywhere the caller needs to know what happened: it cannot distinguish
+ * failure from an empty result, and inside a `forkJoin` it silently aborts every sibling call.
+ *
+ * Prefer `KeycloakAccountService` for anything composed. This service is kept as-is for the
+ * existing callers, and for `configureOTP`/`updatePassword`, which are redirects rather than HTTP.
+ */
 @Injectable({
   providedIn: 'root',
 })

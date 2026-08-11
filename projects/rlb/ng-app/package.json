@@ -13,7 +13,7 @@
     "@ngrx/signals": ">=21.0.0 <22.0.0",
     "ngx-cookie-service": ">=21.0.0 <22.0.0",
     "ngx-cookie-service-ssr": ">=21.0.0 <22.0.0",
-    "angular-auth-oidc-client": ">=19.0.0",
+    "angular-auth-oidc-client": ">=19.0.0 <22.0.0",
     "@ngx-translate/core": ">=16.0.0 <18.0.0",
     "@ngx-translate/http-loader": ">=16.0.0 <18.0.0",
     "@open-rlb/ng-bootstrap": "^3.0.1"

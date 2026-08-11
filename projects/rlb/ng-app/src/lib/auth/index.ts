@@ -5,7 +5,9 @@ export * from './guards/oauth-password.guard';
 export * from './services/parse-jwt.service';
 export * from './services/oauth-password.service';
 export * from './services/auth.service';
+export * from './services/provider-resolution';
 export * from './token-oauth-interceptor';
+export * from './renewal'
 export * from './user-claims'
 export * from './user-info'
 export * from './auth.provider'
