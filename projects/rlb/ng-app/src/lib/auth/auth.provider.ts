@@ -5,6 +5,7 @@ import {
   AbstractSecurityStorage,
   AuthInterceptor,
   AuthModule,
+  OpenIdConfiguration,
   provideAuth
 } from "angular-auth-oidc-client";
 import { AuthConfiguration, RLB_CFG_AUTH } from "../configuration";
@@ -18,25 +19,42 @@ import { TokenOauthRetryInterceptor } from "./renewal/token-oauth-retry.intercep
 import { TokenRenewalService } from "./renewal/token-renewal.service";
 import { AuthenticationService } from "./services/auth.service";
 
+/**
+ * The OIDC library configuration each provider is registered with. Exported for its spec — the
+ * providers this file returns are opaque `EnvironmentProviders`, so nothing else can read them back.
+ *
+ * Everything here is written after the spread, so a provider cannot override it — except
+ * `silentRenew`, which a host may need to set explicitly. See below.
+ */
+export function oidcConfigsFor(auth: AuthConfiguration): OpenIdConfiguration[] {
+  // Under 'oauth-code-ep-retry' the watchdog owns renewal, so the library's own periodic check is
+  // switched off. Leaving it on means two renewers spending one refresh token, and only the
+  // watchdog's attempts are snapshot-protected: on a non-network failure the library's check ends in
+  // resetAuthorizationData, which erases the refresh token nothing then puts back. Through an outage
+  // that costs the session about a minute after the watchdog's first failed attempt.
+  const librarySilentRenew = auth.interceptor !== 'oauth-code-ep-retry';
+
+  return auth.providers.map((_auth) => ({
+    ..._auth,
+    secureRoutes: auth.allowedUrls,
+    responseType: 'code',
+    useRefreshToken: true,
+    autoUserInfo: true,
+    renewUserInfoAfterTokenRenew: true,
+    ignoreNonceAfterRefresh: true,
+    renewTimeBeforeTokenExpiresInSeconds: 30,
+    // Read back off the provider so a host can put the library's check back if it has a reason to.
+    silentRenew: _auth.silentRenew ?? librarySilentRenew,
+  }));
+}
+
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
   const providers: (Provider | EnvironmentProviders)[] = [
     { provide: RLB_CFG_AUTH, useValue: auth },
     { provide: AbstractLoggerService, useClass: AppLoggerService },
     AuthModule,
-    provideAuth({
-      config: auth.providers.map((_auth) => ({
-        ..._auth,
-        secureRoutes: auth.allowedUrls,
-        responseType: 'code',
-        silentRenew: true,
-        useRefreshToken: true,
-        autoUserInfo: true,
-        renewUserInfoAfterTokenRenew: true,
-        ignoreNonceAfterRefresh: true,
-        renewTimeBeforeTokenExpiresInSeconds: 30,
-      }))
-    }),
+    provideAuth({ config: oidcConfigsFor(auth) }),
   ];
   if (auth.interceptor === 'oauth-code-all') {
     providers.push({ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true });

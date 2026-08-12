@@ -94,10 +94,14 @@ export interface TokenRenewalConfiguration {
   /**
    * How far ahead of expiry to renew, in seconds. Default 90.
    *
-   * Deliberately well ahead of the 30s the OIDC library uses for its own periodic check: ours lands
-   * first, the library's check then finds a fresh token and stands down, and the two can never
-   * spend the same refresh token at once — which Keycloak, with rotation on, answers by killing the
-   * session.
+   * Wide enough that the retry ladder below has room to run before the token actually expires: at
+   * the defaults the first three retries all land with time to spare.
+   *
+   * This used to be justified as staying ahead of the 30s the OIDC library uses for its own periodic
+   * check, on the reasoning that ours would land first and the library's would then find a fresh
+   * token and stand down. That only held while ours succeeded — through an outage it never does, and
+   * the library's unguarded check went on to destroy the refresh token. The library's check is
+   * switched off under this interceptor now, so there is no second renewer to stay ahead of.
    */
   renewLeadSeconds?: number;
   /** Waits between the first failed attempts, in seconds. Default `[5, 20, 60]`. */
@@ -138,6 +142,10 @@ export interface AuthConfiguration {
    * - `'oauth-code-ep-retry'` — as above, plus: never sends an authenticated request without a
    *   token, retries a 401 once with a fresh one, and keeps a watchdog renewing the token so a
    *   single failed refresh cannot end renewal for the life of the page. Tune with {@link renewal}.
+   *
+   * `'oauth-code-ep-retry'` also switches the OIDC library's own `silentRenew` off, because the
+   * watchdog owns renewal in that mode and two renewers spending one refresh token is how a session
+   * dies mid-outage. Set `silentRenew: true` on an individual provider to put it back.
    */
   interceptor?: 'oauth-code-all' | 'oauth-code-ep' | 'oauth-code-ep-retry' | 'none';
   enableCompanyInterceptor?: boolean;

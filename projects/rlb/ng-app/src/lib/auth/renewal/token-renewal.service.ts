@@ -78,7 +78,14 @@ interface RenewalState {
  * session is still perfectly alive on the provider's side; only the local copy of the refresh token
  * is gone, and with it any chance of recovering without a full login. So a snapshot of the stored
  * auth state is taken before every attempt and put back after a failure ({@link restoreIfWiped}),
- * so the next attempt has something to work with.
+ * so the next attempt has something to work with. A {@link lastKnownGood} copy is carried across
+ * attempts as well, so a wipe by something this service does not drive is recoverable too.
+ *
+ * It should not have to be: `'oauth-code-ep-retry'` switches the library's own periodic check off,
+ * so this is the only renewer running (`auth.provider.ts`). Both were live until 2026-08-11, and
+ * through an outage the library's unguarded check destroyed the refresh token about a minute after
+ * this one's first failed attempt. A host that deliberately puts the library's check back with a
+ * per-provider `silentRenew: true` gets the restore rather than the session loss.
  *
  * Retries follow a short ladder and then a slow heartbeat, for as long as a refresh token survives
  * in storage and the outage stays inside its budget. There is deliberately no attempt to tell a
@@ -116,6 +123,16 @@ export class TokenRenewalService {
    * are rejected — taking the session with them.
    */
   private inFlight?: Observable<string>;
+
+  /**
+   * The last stored state seen holding a refresh token, kept across attempts.
+   *
+   * A snapshot taken immediately before an attempt only covers a wipe by that attempt. Storage can
+   * also be emptied between attempts by something this service does not drive — the OIDC library's
+   * own periodic check is the case that cost a live session on 2026-08-11 — and by the time the next
+   * attempt reads storage there is nothing left to snapshot. This is what it falls back to.
+   */
+  private lastKnownGood?: string;
 
   private started = false;
 
@@ -157,7 +174,10 @@ export class TokenRenewalService {
           map(response => response?.accessToken ?? ''),
           // An empty token means the refresh resolved without one — the wipe still happened.
           tap(token => {
-            if (!token) this.restoreIfWiped(snapshot);
+            // Read for its side effect: a success rotated the refresh token, and reading it now
+            // keeps {@link lastKnownGood} from naming the one this attempt has just spent.
+            if (token) this.readStoredState();
+            else this.restoreIfWiped(snapshot);
           }),
           catchError((error: unknown) => {
             this.restoreIfWiped(snapshot);
@@ -260,27 +280,38 @@ export class TokenRenewalService {
     return this.authService.currentProvider?.configId;
   }
 
-  /** The library's whole stored state for this config, as the raw string it keeps in storage. */
+  /**
+   * The library's whole stored state for this config, as the raw string it keeps in storage.
+   *
+   * The single read point, so remembering a usable state here is enough to keep
+   * {@link lastKnownGood} current without a second code path to keep in step with this one.
+   */
   private readStoredState(): string | null {
     const configId = this.configId();
-    return configId ? ((this.storage.read(configId) as string | null) ?? null) : null;
+    const raw = configId ? ((this.storage.read(configId) as string | null) ?? null) : null;
+    if (hasRefreshToken(raw)) this.lastKnownGood = raw ?? undefined;
+    return raw;
   }
 
   /**
-   * Puts a pre-attempt snapshot back after the library wiped storage over a failed refresh.
+   * Puts a refresh token back after storage was wiped over a failed refresh.
    *
-   * Guarded twice: the snapshot must actually hold a refresh token, and the current storage must
-   * not — if another tab renewed in the meantime, its fresher tokens win and the snapshot is
-   * discarded. Restoring an already-rotated token would only earn a rejection next round.
+   * The pre-attempt snapshot is preferred, and {@link lastKnownGood} covers the case it cannot: a
+   * wipe by a renewer this service does not drive, which leaves the next attempt nothing to
+   * snapshot. Either way the write is guarded twice — the candidate must actually hold a refresh
+   * token, and the current storage must not. If another tab renewed in the meantime its fresher
+   * tokens win, since restoring an already-rotated token would only earn a rejection next round.
    *
-   * A token the provider has genuinely rejected does get restored here, because nothing in the
-   * error says it was rejected; the outage budget is what stops that becoming a loop.
+   * A token the provider has genuinely rejected does get restored here, whichever source it came
+   * from, because nothing in the error says it was rejected; the outage budget is what stops that
+   * becoming a loop.
    */
   private restoreIfWiped(snapshot: string | null): void {
-    if (!snapshot || !hasRefreshToken(snapshot) || hasRefreshToken(this.readStoredState())) return;
+    const candidate = hasRefreshToken(snapshot) ? snapshot : (this.lastKnownGood ?? null);
+    if (!candidate || hasRefreshToken(this.readStoredState())) return;
 
     const configId = this.configId();
-    if (configId) this.storage.write(configId, snapshot);
+    if (configId) this.storage.write(configId, candidate);
   }
 }
 

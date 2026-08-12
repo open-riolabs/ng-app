@@ -54,6 +54,12 @@ then a slow heartbeat until an outage budget runs out. Its interceptor never sen
 request without a token — failing locally with a 401 instead of letting the backend see a call it
 cannot attribute to anyone — and retries a 401 once with a fresh token.
 
+It also switches the library's own `silentRenew` off, so the watchdog is the **only** renewer. That
+matters more than it sounds: only the watchdog's own attempts restore a wiped refresh token, so a
+second renewer running beside it will eventually fail an attempt nothing puts right and end the
+session mid-outage. Put the library's check back on one provider with `silentRenew: true` if you have
+a reason to; nothing else about the OIDC configuration is overridable.
+
 ```typescript
 auth: {
   interceptor: 'oauth-code-ep-retry',
@@ -62,7 +68,7 @@ auth: {
     // fail locally with a 401 instead of going out. Matched as substrings of the URL.
     publicPaths: ['/register', '/check-vies'],
     // Everything below is optional; these are the defaults.
-    renewLeadSeconds: 90,        // must stay ahead of the library's own 30s check
+    renewLeadSeconds: 90,        // room for the retry ladder before the token actually expires
     retryDelaysSeconds: [5, 20, 60],
     transientRetrySeconds: 120,
     maxOutageSeconds: 1800,      // then stand down; the next 401 still recovers

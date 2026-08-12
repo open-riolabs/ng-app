@@ -203,6 +203,58 @@ describe('TokenRenewalService', () => {
     expect(oidc.forceCalls).toBe(8);
   });
 
+  it('survives the library renewing in parallel and wiping storage between attempts', () => {
+    // The watchdog is not the only renewer. `provideRlbCodeBrowserOAuth` configures every provider
+    // with `silentRenew: true` and `renewTimeBeforeTokenExpiresInSeconds: 30`
+    // (auth.provider.ts:32,37), and does so unconditionally — including under
+    // `interceptor: 'oauth-code-ep-retry'`, where this service is meant to own renewal. The two
+    // spread is deliberate (90s lead here, 30s there) so that in health ours lands first and the
+    // library's check then finds a fresh token and stands down.
+    //
+    // That reasoning only holds while ours SUCCEEDS. Through an outage it never does, so the
+    // library's own check still fires at expiry-30s, still fails against the same 504, and still
+    // ends in `resetAuthorizationData` — erasing the refresh token. Nothing wraps that call:
+    // `restoreIfWiped` only guards refreshes this service drives, so the erase is permanent.
+    //
+    // Observed on staging 2026-08-11 with a 300s token: the token survived the ladder, disappeared
+    // as expiry closed, and the partner was returned to the welcome page mid-outage — the very
+    // symptom this service exists to prevent. The session was alive on the provider throughout;
+    // only our local copy of the refresh token was destroyed, by a renewer we did not drive.
+    oidc.token = tokenExpiringIn(300);
+    storage.write(CONFIG_ID, storedState('still-good'));
+    oidc.failuresLeft = 99_999;
+    oidc.wipeOnFailure = storage;
+    service.start();
+
+    // The ladder: t=210s, then 5s, then 20s. Each attempt is wiped by the library and put back.
+    tick(211_000);
+    tick(5_000);
+    tick(20_000);
+    expect(oidc.forceCalls).toBe(3);
+    expect(storage.read(CONFIG_ID)).toBe(storedState('still-good'));
+
+    // t=270s — expiry-30s. The library's own silent renew fires, fails, and resets the auth state.
+    // Out of band as far as this service is concerned: no forceRefreshSession call of ours is in
+    // flight, so no snapshot is held and nothing restores it.
+    tick(34_000);
+    storage.remove(CONFIG_ID);
+
+    // t=295s, the last rung. Its snapshot is read from storage that is already empty, so the
+    // restore is a no-op and the attempt has nothing to spend.
+    tick(26_000);
+    expect(oidc.forceCalls).toBe(4);
+
+    // What the watchdog should be able to do: the provider still holds the session, so a refresh
+    // token it had a moment ago is still worth trying with. It should not be possible for a second,
+    // unguarded renewer to end the session while this one is mid-outage.
+    expect(storage.read(CONFIG_ID)).toBe(storedState('still-good'));
+
+    // And so the heartbeat should continue rather than the watchdog standing down for want of a
+    // token that only a parallel renewer took away.
+    tick(120_000);
+    expect(oidc.forceCalls).toBe(5);
+  });
+
   it('stops beating once the outage budget is spent', () => {
     oidc.token = tokenExpiringIn(300);
     storage.write(CONFIG_ID, storedState('rotated-away'));
@@ -254,6 +306,43 @@ describe('TokenRenewalService', () => {
 
     // The 504 said nothing about the token: it must survive for the next attempt.
     expect(storage.read(CONFIG_ID)).toBe(storedState('still-good'));
+  });
+
+  it('restores the token as last rotated, not the one it started with', () => {
+    // The fallback has to track storage rather than freeze on the first thing it ever saw. A token
+    // two rotations old is one the provider has already invalidated, and with rotation on, spending
+    // it is itself how a session gets revoked.
+    storage.write(CONFIG_ID, storedState('original'));
+
+    // A successful renewal, modelled the way the library does it: the rotated tokens are written to
+    // storage before the call emits.
+    oidc.gate = new Subject<{ accessToken: string }>();
+    service.refresh().subscribe();
+    storage.write(CONFIG_ID, storedState('rotated-by-the-provider'));
+    oidc.gate.next({ accessToken: tokenExpiringIn(300) });
+    oidc.gate.complete();
+    oidc.gate = undefined;
+
+    // Storage is emptied out of band, so the next attempt has nothing of its own to snapshot.
+    storage.remove(CONFIG_ID);
+    oidc.failuresLeft = 1;
+    service.refresh().subscribe({ error: () => undefined });
+
+    expect(storage.read(CONFIG_ID)).toBe(storedState('rotated-by-the-provider'));
+  });
+
+  it('still lets another tab win when the wipe happened out of band', () => {
+    // The fallback is guarded exactly as the snapshot is: it is only ever written into storage that
+    // holds no refresh token at all.
+    storage.write(CONFIG_ID, storedState('mine'));
+    service.refresh().subscribe();
+
+    storage.remove(CONFIG_ID);
+    oidc.failuresLeft = 1;
+    oidc.afterWipe = () => storage.write(CONFIG_ID, storedState('fresher-from-other-tab'));
+    service.refresh().subscribe({ error: () => undefined });
+
+    expect(storage.read(CONFIG_ID)).toBe(storedState('fresher-from-other-tab'));
   });
 
   it('leaves fresher tokens from another tab alone', () => {
@@ -346,7 +435,9 @@ describe('TokenRenewalService', () => {
       expect(secondsUntilExpiry('')).toBeUndefined();
       expect(secondsUntilExpiry('not-a-jwt')).toBeUndefined();
       expect(secondsUntilExpiry('header.!!!not-base64!!!.sig')).toBeUndefined();
-      expect(secondsUntilExpiry(`header.${btoa(JSON.stringify({ sub: 'x' }))}.sig`)).toBeUndefined();
+      expect(
+        secondsUntilExpiry(`header.${btoa(JSON.stringify({ sub: 'x' }))}.sig`),
+      ).toBeUndefined();
     });
   });
 });
