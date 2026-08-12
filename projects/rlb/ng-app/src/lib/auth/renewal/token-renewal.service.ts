@@ -162,6 +162,26 @@ export class TokenRenewalService {
     return this.oidc.getAccessToken(this.configId()).pipe(take(1));
   }
 
+  /**
+   * Whether a session the OIDC library reports as unauthenticated can still be expected to come
+   * back — because this watchdog is still working on it and storage still holds a refresh token.
+   *
+   * The library's `isAuthenticated$` is a `BehaviorSubject` that only moves when the library itself
+   * sets it, while `AuthStateService.isAuthenticated()` is a pure function of storage. A failed
+   * refresh calls `resetAuthorizationData`, which does both: it empties storage _and_ pushes
+   * `false`. {@link restoreIfWiped} then puts the whole storage blob back — so the storage-backed
+   * truth recovers and the subject does not, and there is no way to correct it: `AuthStateService`
+   * is not exported from the package.
+   *
+   * So a guard reading `isAuthenticated$` sees a signed-out user through an outage and sends them
+   * to a login host that is, by construction, the thing that is down. This is what {@link oauthGuard}
+   * consults instead of bouncing. Once the outage budget is spent the watchdog stands down, this
+   * turns false, and a genuinely dead session reaches the login page as it always did.
+   */
+  isRecoverable(): boolean {
+    return this.started && hasRefreshToken(this.readStoredState());
+  }
+
   /** Renews the token, joining the attempt already running rather than starting a second one. */
   refresh(): Observable<string> {
     if (!this.inFlight) {

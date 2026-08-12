@@ -80,6 +80,12 @@ auth: {
 Notes:
 
 - It **replaces** the `'oauth-code-ep'` interceptor rather than stacking on it.
+- `oauthGuard` stops bouncing while the watchdog is mid-outage. A failed refresh makes the OIDC
+  library publish `isAuthenticated$: false` even though the session is alive on the provider, so
+  without this a user who *clicks anything* during an outage is sent to the login host that is down —
+  the "infinite login loop" symptom. Routes render instead, requests keep their normal error
+  handling, and everything resumes when the host answers. Once `maxOutageSeconds` is spent the
+  watchdog stands down and a genuinely dead session reaches the login page as before.
 - Requests pass through untouched on any domain where no auth provider resolves, so a shell serving
   several tenants is unaffected on the ones this build has no provider for.
 - Set `publicPaths` before switching, or your front-door calls will start failing.

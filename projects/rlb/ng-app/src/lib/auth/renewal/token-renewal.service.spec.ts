@@ -407,6 +407,60 @@ describe('TokenRenewalService', () => {
     expect(oidc.forceCalls).toBe(5);
   });
 
+  describe('isRecoverable', () => {
+    it('is false before anything starts it', () => {
+      storage.write(CONFIG_ID, storedState('still-good'));
+
+      // A refresh token alone is not enough: nobody is working on this session.
+      expect(service.isRecoverable()).toBeFalse();
+    });
+
+    it('is true while the watchdog is mid-outage with a token to try', () => {
+      oidc.token = tokenExpiringIn(300);
+      storage.write(CONFIG_ID, storedState('still-good'));
+      oidc.failuresLeft = 99_999;
+      oidc.wipeOnFailure = storage;
+      service.start();
+
+      tick(211_000 + 5_000 + 20_000 + 60_000);
+      expect(oidc.forceCalls).toBe(4);
+
+      // The library would be publishing isAuthenticated$: false by now. The session is not lost.
+      expect(service.isRecoverable()).toBeTrue();
+    });
+
+    it('goes false once the outage budget stands the watchdog down', () => {
+      oidc.token = tokenExpiringIn(300);
+      storage.write(CONFIG_ID, storedState('rotated-away'));
+      oidc.failuresLeft = 99_999;
+      oidc.wipeOnFailure = storage;
+      service.start();
+
+      tick(211_000 + 5_000 + 20_000 + 60_000);
+      expect(service.isRecoverable()).toBeTrue();
+
+      // 30 minutes of failing is the point at which a rejected token stops being worth waiting for,
+      // and the point at which the user should be sent to the login page after all.
+      tick(30 * 60 * 1000);
+      expect(service.isRecoverable()).toBeFalse();
+    });
+
+    it('goes false when storage no longer holds a refresh token', () => {
+      oidc.token = tokenExpiringIn(300);
+      storage.write(CONFIG_ID, storedState('still-good'));
+      oidc.failuresLeft = 99_999;
+      oidc.wipeOnFailure = storage;
+      service.start();
+
+      tick(211_000);
+      expect(service.isRecoverable()).toBeTrue();
+
+      // A logout clears storage outright; there is nothing left to recover with.
+      storage.clear();
+      expect(service.isRecoverable()).toBeFalse();
+    });
+  });
+
   it('takes its timings from auth.renewal when the host configures them', () => {
     TestBed.resetTestingModule();
     configure({ renewLeadSeconds: 30, retryDelaysSeconds: [1], transientRetrySeconds: 10 });

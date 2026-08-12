@@ -115,6 +115,11 @@ export interface TokenRenewalConfiguration {
    * arrives — the library replaces the provider's response body with its own `Error` — so this
    * budget, not any classification of the error, is what stops a rejected token being retried
    * forever. The interceptor still recovers on the next 401.
+   *
+   * It also bounds how long `oauthGuard` will let a signed-out-looking session keep navigating: for
+   * as long as the watchdog is working on an outage the user stays in the app, and once it stands
+   * down they are sent to the login page. Lower this if you would rather a revoked session reached
+   * the login page sooner, at the cost of giving up on a long outage sooner too.
    */
   maxOutageSeconds?: number;
   /** Start the watchdog once the user is authenticated. Default true. */
