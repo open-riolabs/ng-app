@@ -16,6 +16,28 @@
     "yes": "Sì",
     "no": "No"
   },
+  "errors": {
+    "http": {
+      "0": {
+        "title": "Connessione assente",
+        "message": "Non è stato possibile contattare il server. Controlla la connessione e riprova."
+      },
+      "429": {
+        "title": "Troppe richieste",
+        "message": "Hai effettuato troppe richieste. Attendi qualche minuto prima di riprovare.",
+        "messageRetry": "Hai effettuato troppe richieste. Riprova tra circa {{minutes}} minuti."
+      },
+      "500": {
+        "title": "Errore del server",
+        "message": "Si è verificato un errore imprevisto. Riprova più tardi."
+      },
+      "503": {
+        "title": "Servizio non disponibile",
+        "message": "Il servizio è temporaneamente non disponibile. Riprova più tardi.",
+        "messageRetry": "Il servizio è temporaneamente non disponibile. Riprova tra circa {{minutes}} minuti."
+      }
+    }
+  },
   "core": {
     "apps": {
       "button": "Applicazioni",

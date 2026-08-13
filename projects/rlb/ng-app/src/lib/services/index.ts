@@ -7,6 +7,7 @@ export * from './cms/strapi.service';
 export * from './cms/strapi.service.models';
 export * from './errors/error-management.service';
 export * from './errors/errors';
+export * from './errors/http-error-description';
 export * from './i18n/i18n.provider';
 export * from './i18n/language.service';
 export * from './i18n/translate-browser.loader';

@@ -17,6 +17,14 @@ export const environment: ProjectConfiguration = {
     appTitle: 'My App',
     navbarDisabled: false,
     errorDialogName: 'error-modal-component',
+    // Per-status messages for failed HTTP calls, read from `errors.http.<status>` in your i18n
+    // files (assets/i18n/*.json ships 0, 429, 500 and 503). Add an `errors.http.default` group to
+    // stop showing the backend's own text for every other status.
+    httpErrors: {
+      // Used when the response has no `Retry-After` the browser can read; drop it and the 429
+      // message falls back to the vaguer "wait a few minutes".
+      defaultRetryMinutes: 10,
+    },
     pwaUpdateEnabled: true,
     errorDialogSize: 'md',
     logLevel: 'log',

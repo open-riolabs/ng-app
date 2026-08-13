@@ -192,6 +192,39 @@ export interface PagesConfiguration {
   };
 }
 
+/**
+ * Per-status messages `ErrorManagementService` renders for a failed HTTP call.
+ *
+ * For an `HttpErrorResponse` the lookup is, first group that resolves a message wins:
+ * `{keyPrefix}.{status}` → `{keyPrefix}.default` → the backend's own text
+ * (`"{status}: {message}"` under an `HttpErrorResponse` title), which is what the handler has
+ * always shown. A key ngx-translate cannot resolve counts as a miss, so a consumer opts in one
+ * status at a time just by adding keys to its i18n files — nothing has to be configured here.
+ *
+ * Each group holds `title`, `message` and an optional `messageRetry` used instead of `message`
+ * when the wait is known (see {@link defaultRetryMinutes}); `messageRetry` may interpolate
+ * `{{minutes}}`, `{{seconds}}` and `{{status}}`.
+ */
+export interface HttpErrorMessagesConfiguration {
+  /** i18n namespace holding the per-status groups. Default `'errors.http'`. */
+  keyPrefix?: string;
+  /**
+   * How long to say the caller must wait when the response carries no usable `Retry-After`.
+   *
+   * `Retry-After` is not a CORS-safelisted response header: a cross-origin gateway has to name it
+   * in `Access-Control-Expose-Headers` or the browser hides it and every 429 looks like it has
+   * none. Without either, only the `message` variant of a group can be used.
+   */
+  defaultRetryMinutes?: number;
+  /**
+   * Window in ms within which the same (output, title, message) is shown once.
+   *
+   * A rate limit rejects every request already in flight, so without this the user gets one modal
+   * per request instead of one modal. Default 1000; set `0` to show every error.
+   */
+  dedupeMs?: number;
+}
+
 export interface EnvironmentConfiguration {
   appLogo: string;
   appTitle: string;
@@ -203,6 +236,7 @@ export interface EnvironmentConfiguration {
   errorDialogSize?: 'sm' | 'lg' | 'xl' | 'md';
   errorToastName?: string;
   errorToastContainer?: string;
+  httpErrors?: HttpErrorMessagesConfiguration;
   pwaUpdateEnabled?: boolean;
   logLevel?: LogLevel;
 }

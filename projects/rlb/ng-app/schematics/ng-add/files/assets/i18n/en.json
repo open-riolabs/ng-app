@@ -16,6 +16,28 @@
     "yes": "Yes",
     "no": "No"
   },
+  "errors": {
+    "http": {
+      "0": {
+        "title": "No connection",
+        "message": "We could not reach the server. Check your connection and try again."
+      },
+      "429": {
+        "title": "Too many requests",
+        "message": "You have made too many requests. Please wait a few minutes before trying again.",
+        "messageRetry": "You have made too many requests. Please try again in about {{minutes}} minute(s)."
+      },
+      "500": {
+        "title": "Server error",
+        "message": "Something went wrong on our side. Please try again later."
+      },
+      "503": {
+        "title": "Service unavailable",
+        "message": "The service is temporarily unavailable. Please try again later.",
+        "messageRetry": "The service is temporarily unavailable. Please try again in about {{minutes}} minute(s)."
+      }
+    }
+  },
   "core": {
     "apps": {
       "button": "Apps",

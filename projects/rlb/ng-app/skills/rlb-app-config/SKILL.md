@@ -58,7 +58,7 @@ SSR and in specs; without a `location` it registers nothing.
 
 | Key | Purpose |
 |---|---|
-| `environment` | app metadata: `appTitle`, `appLogo`, `baseUrl`, `errorDialogName`, `logLevel`, `pwaUpdateEnabled`, `navbarDisabled` |
+| `environment` | app metadata: `appTitle`, `appLogo`, `baseUrl`, `errorDialogName`, `httpErrors`, `logLevel`, `pwaUpdateEnabled`, `navbarDisabled` |
 | `auth` | OIDC: `protocol: 'oauth'`, `storage`, `interceptor`, `allowedUrls`, `providers[]` (per-provider `authority`/`clientId`/`redirectUrl`/`acl`) |
 | `i18n` | `availableLangs`, `defaultLanguage`, `useLanguageBrowser`, `storeSelectedLanguage`, `cookieStoreName` |
 | `pages` | named route paths for standard pages (notFound, forbidden, support, …) |
@@ -66,6 +66,47 @@ SSR and in specs; without a `location` it registers nothing.
 | `acl` | `businessIdKey`, `resourceIdKey`, `interceptorMapping` |
 
 Inject any slice with the tokens: `RLB_CFG`, `RLB_CFG_ENV`, `RLB_CFG_I18N`, `RLB_CFG_PAGES`, `RLB_CFG_ACL`, `RLB_CFG_CMS`.
+
+## HTTP error messages
+
+`ErrorManagementService` (`manageUI`, `showError`) is the one place a failed call becomes words.
+For an `HttpErrorResponse` it looks up a translated group, first one resolving a `message` wins:
+
+```
+errors.http.<status>  →  errors.http.default  →  "<status>: <backend message>"
+```
+
+Never write an interceptor that rewrites an `HttpErrorResponse` into a plain `Error` just to get a
+readable message — add the i18n keys instead:
+
+```json
+"errors": {
+  "http": {
+    "429": {
+      "title": "Too many requests",
+      "message": "You have made too many requests. Please wait a few minutes.",
+      "messageRetry": "You have made too many requests. Try again in about {{minutes}} minute(s)."
+    }
+  }
+}
+```
+
+`messageRetry` is used instead of `message` whenever the wait is known: from the response's
+`Retry-After` header, else from `environment.httpErrors.defaultRetryMinutes`. **A cross-origin
+gateway must list `Retry-After` in `Access-Control-Expose-Headers`** or the browser hides it and
+only `message` is reachable. `{{status}}` and `{{seconds}}` interpolate too.
+
+`ng add` ships `0`, `429`, `500` and `503`. There is deliberately **no** `errors.http.default`
+group — without one, every unmapped status still shows the backend's own text, which is what you
+want while developing. Add the group when you want a generic message in front of users.
+
+`environment.httpErrors`: `keyPrefix` (default `'errors.http'`), `defaultRetryMinutes`, `dedupeMs`.
+`dedupeMs` (default 1000, `0` disables) collapses an identical (output, title, message) shown
+twice inside the window — one rate limit fails every request in flight, and each one arrives here.
+
+Interceptors still own what only they can know (a status that means something different on two
+specific routes). An error that reaches the handler as anything other than an `HttpErrorResponse`
+is passed through with its `name`/`message` untouched.
 
 ## AppDescriber
 
