@@ -73,6 +73,7 @@ auth: {
     transientRetrySeconds: 120,
     maxOutageSeconds: 1800,      // then stand down; the next 401 still recovers
     autoStart: true,             // false → call TokenRenewalService.start() yourself
+    restoreOnBoot: true,         // renew at startup from a refresh token that outlived the tab
   },
 }
 ```
@@ -89,6 +90,34 @@ Notes:
 - Requests pass through untouched on any domain where no auth provider resolves, so a shell serving
   several tenants is unaffected on the ones this build has no provider for.
 - Set `publicPaths` before switching, or your front-door calls will start failing.
+
+### Staying signed in after the browser is closed
+
+Three things have to be true, and the first two are yours to set:
+
+1. `scope` includes **`offline_access`**, so the provider issues a refresh token that outlives its
+   own SSO session (Keycloak calls it an offline token).
+2. `storage: 'localStorage'` — `sessionStorage` dies with the tab, and the cookie storage writes
+   session cookies, which die with the browser.
+3. `restoreOnBoot` (default **on** under `'oauth-code-ep-retry'`), which is what actually spends it.
+
+The third is easy to miss, because without it the other two look like they are working. The OIDC
+library decides at startup by *reading storage*: an expired access token means unauthenticated, and
+the refresh token beside it is never tried. The user is sent to the login host, which recognises its
+own SSO cookie and sends them back signed in — so closing a tab and reopening it seems to keep the
+session. Once that cookie expires, the same user gets a login form with a perfectly good refresh
+token still in storage. `restoreOnBoot` renews once before the startup concludes anybody is a guest,
+which is the difference between a session that lasts as long as the SSO cookie and one that lasts as
+long as the refresh token.
+
+The renewal goes through the watchdog, so a failure cannot cost you the refresh token: reloading
+during a login-host outage boots signed out, as it would anyway, and recovers on the next reload.
+Test it by deleting the provider's SSO cookies rather than by closing the tab — closing a tab only
+exercises the SSO cookie path, which works with or without any of this.
+
+> A **reload** during an outage still reaches the login host: the startup renewal is the only thing
+> that can re-establish the session, and it is the thing that is failing. In-app navigation is
+> protected (`oauthGuard` above); a reload is a boundary, not a bug.
 
 ### Failing loud on a misconfigured domain
 

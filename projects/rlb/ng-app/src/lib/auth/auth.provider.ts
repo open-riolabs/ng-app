@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
-import { EnvironmentProviders, inject, makeEnvironmentProviders, provideAppInitializer, Provider } from "@angular/core";
+import { EnvironmentProviders, inject, Injector, makeEnvironmentProviders, provideAppInitializer, Provider } from "@angular/core";
 import {
   AbstractLoggerService,
   AbstractSecurityStorage,
@@ -17,6 +17,7 @@ import { TokenOauthInterceptor } from "./token-oauth-interceptor";
 import { CompanyInterceptor } from "./company.interceptor";
 import { TokenOauthRetryInterceptor } from "./renewal/token-oauth-retry.interceptor";
 import { TokenRenewalService } from "./renewal/token-renewal.service";
+import { BootSessionRestorer, RLB_BOOT_SESSION_RESTORER } from "./renewal/boot-session-restore";
 import { AuthenticationService } from "./services/auth.service";
 
 /**
@@ -48,6 +49,24 @@ export function oidcConfigsFor(auth: AuthConfiguration): OpenIdConfiguration[] {
   }));
 }
 
+/**
+ * The startup renewal `AuthenticationService` runs before concluding nobody is signed in.
+ *
+ * Exported for its spec, like {@link oidcConfigsFor}. The `TokenRenewalService` lookups are
+ * deliberately inside the methods rather than in the factory: the factory runs while
+ * `AuthenticationService` is being constructed — it is the thing injecting this — and that service
+ * injects `AuthenticationService` right back, so resolving it here would be NG0200. By the time
+ * either method is called both exist.
+ */
+export function bootSessionRestorer(injector: Injector): BootSessionRestorer {
+  return {
+    canRestore: () => injector.get(TokenRenewalService).hasStoredRefreshToken(),
+    // The watchdog's own path, so a failure that wipes storage is restored rather than ending the
+    // session. Calling oidc.forceRefreshSession directly here would give up exactly that.
+    refresh: () => injector.get(TokenRenewalService).refresh(),
+  };
+}
+
 export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined): EnvironmentProviders {
   if (!auth || auth.protocol !== 'oauth') return makeEnvironmentProviders([]);
   const providers: (Provider | EnvironmentProviders)[] = [
@@ -65,6 +84,12 @@ export function provideRlbCodeBrowserOAuth(auth: AuthConfiguration | undefined):
   if (auth.interceptor === 'oauth-code-ep-retry') {
     // Replaces TokenOauthInterceptor rather than stacking on it: it attaches the token itself.
     providers.push({ provide: HTTP_INTERCEPTORS, useClass: TokenOauthRetryInterceptor, multi: true });
+    if (auth.renewal?.restoreOnBoot !== false) {
+      providers.push({
+        provide: RLB_BOOT_SESSION_RESTORER,
+        useFactory: () => bootSessionRestorer(inject(Injector)),
+      });
+    }
     if (auth.renewal?.autoStart !== false) {
       providers.push(
         provideAppInitializer(() => {

@@ -179,7 +179,20 @@ export class TokenRenewalService {
    * turns false, and a genuinely dead session reaches the login page as it always did.
    */
   isRecoverable(): boolean {
-    return this.started && hasRefreshToken(this.readStoredState());
+    return this.started && this.hasStoredRefreshToken();
+  }
+
+  /**
+   * Whether storage holds a refresh token to renew with, in either of the two slots the library
+   * keeps one in.
+   *
+   * Read at startup, before the watchdog is running, to decide whether a session the library calls
+   * unauthenticated is worth one renewal — see {@link BootSessionRestorer}. Deliberately not
+   * `oidc.getRefreshToken()`: that returns nothing unless the access and id tokens are also still
+   * in storage, which is precisely what has expired by then.
+   */
+  hasStoredRefreshToken(): boolean {
+    return hasRefreshToken(this.readStoredState());
   }
 
   /** Renews the token, joining the attempt already running rather than starting a second one. */

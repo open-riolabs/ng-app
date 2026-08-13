@@ -461,6 +461,35 @@ describe('TokenRenewalService', () => {
     });
   });
 
+  describe('hasStoredRefreshToken', () => {
+    it('finds a token in either slot the library uses', () => {
+      storage.write(CONFIG_ID, storedState('offline-token'));
+      expect(service.hasStoredRefreshToken()).toBeTrue();
+
+      storage.write(CONFIG_ID, JSON.stringify({ reusable_refresh_token: 'offline-token' }));
+      expect(service.hasStoredRefreshToken()).toBeTrue();
+    });
+
+    it('is false with nothing to renew from', () => {
+      // What a startup sees after a logout, and after the library wiped storage over a failure.
+      expect(service.hasStoredRefreshToken()).toBeFalse();
+
+      storage.write(CONFIG_ID, JSON.stringify({ authnResult: { access_token: 'no-refresh-here' } }));
+      expect(service.hasStoredRefreshToken()).toBeFalse();
+
+      storage.write(CONFIG_ID, 'not json at all');
+      expect(service.hasStoredRefreshToken()).toBeFalse();
+    });
+
+    it('does not need the watchdog to be running', () => {
+      // Unlike isRecoverable: this is read at startup, before anything has started it.
+      storage.write(CONFIG_ID, storedState('offline-token'));
+
+      expect(service.isRecoverable()).toBeFalse();
+      expect(service.hasStoredRefreshToken()).toBeTrue();
+    });
+  });
+
   it('takes its timings from auth.renewal when the host configures them', () => {
     TestBed.resetTestingModule();
     configure({ renewLeadSeconds: 30, retryDelaysSeconds: [1], transientRetrySeconds: 10 });

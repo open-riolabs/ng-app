@@ -125,6 +125,24 @@ export interface TokenRenewalConfiguration {
   /** Start the watchdog once the user is authenticated. Default true. */
   autoStart?: boolean;
   /**
+   * Renew once at bootstrap when the stored access token has expired but a refresh token outlived
+   * it. Default true.
+   *
+   * This is what makes a session survive the browser being closed. The OIDC library decides
+   * authentication at startup by reading storage — an expired access token means unauthenticated,
+   * and it never tries the refresh token it is holding. So a user coming back the next morning is
+   * sent to the login host, and only stays signed in for as long as the provider's own SSO cookie
+   * outlives the tab. Past that they get a login form, with a perfectly good refresh token still in
+   * storage. With `offline_access` in the provider's `scope` and `storage: 'localStorage'`, one
+   * renewal here is the difference between that and a session that lasts as long as the refresh
+   * token does.
+   *
+   * A failed attempt leaves the startup exactly as it is without this: unauthenticated, guards
+   * redirecting. The refresh token survives it — the renewal runs through the watchdog's
+   * snapshot-protected path — so reloading during an outage cannot destroy the stored session.
+   */
+  restoreOnBoot?: boolean;
+  /**
    * Paths on authenticated endpoints that anonymous callers may legitimately reach, matched as
    * substrings of the request URL (e.g. `['/register']`).
    *
