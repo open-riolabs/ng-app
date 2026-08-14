@@ -24,13 +24,14 @@ export class AuthEffects {
       ofType(AuthActions.logout),
       tap(() => this.logger.log('auth effects going to call logout$()')),
       switchMap(() => this.auth.logout$()),
-      map(() => AuthActionsInternal.reset()));
+      map(() => AuthActionsInternal.reset()),
+    );
   });
 
   setCurrentProvider$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.setCurrentProvider),
-      map(({ currentProvider }) => AuthActionsInternal.setCurrentProvider({ currentProvider }))
+      map(({ currentProvider }) => AuthActionsInternal.setCurrentProvider({ currentProvider })),
     );
   });
 
@@ -38,8 +39,9 @@ export class AuthEffects {
     private actions$: Actions,
     private auth: AuthenticationService,
     private loggerService: AppLoggerService,
-    @Inject(RLB_CFG_AUTH) @Optional() authConfig: AuthConfiguration) {
+    @Inject(RLB_CFG_AUTH) @Optional() authConfig: AuthConfiguration,
+  ) {
     this.logger = this.loggerService.for(this.constructor.name);
-    this.logger.log(`Initialized AuthEffects}`);
+    this.logger.log(`Initialized AuthEffects`);
   }
 }
