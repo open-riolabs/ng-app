@@ -25,6 +25,7 @@ import {
 } from '@open-rlb/ng-bootstrap';
 import { Router, RouterModule } from '@angular/router';
 import { AppInfo, AppsService, LanguageService } from '../../../services';
+import { isSettingsAppVisible } from '../../../services/apps/app-visibility';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
 import { AppContextActions, appContextFeatureKey, AuthActions, BaseState } from '../../../store';
 import { Store } from '@ngrx/store';
@@ -149,6 +150,16 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
 
   isAppSelected(appId: string | undefined): boolean {
     return this.currentAppId() === appId;
+  }
+
+  /**
+   * Whether this app's settings entry is offered to the current visitor.
+   *
+   * An app declaring `settings.auth: false` is public and is listed without a session — it used to
+   * be hidden in exactly that case, which made the flag mean the opposite of its name.
+   */
+  isAppVisible(app: AppInfo): boolean {
+    return isSettingsAppVisible(app, this.isAuthenticated());
   }
 
   private close() {

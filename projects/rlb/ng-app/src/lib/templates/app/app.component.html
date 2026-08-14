@@ -59,7 +59,9 @@
         rlb-custom-navbar-items
         class="d-flex d-lg-none"
       >
-        @if (isAuthenticated()) {
+        <!-- Anonymous visitors get the menu too when an app publishes settings that need no
+             session; otherwise this stays authenticated-only, as before. -->
+        @if (isAuthenticated() || hasPublicSettings()) {
           <!-- No toggler when the panel would render empty -->
           @if (mobileMenuHasContent()) {
             <rlb-fab
@@ -222,8 +224,9 @@
               </rlb-navbar-item>
             }
 
-            <!-- Profile & Settings Account Card -->
-            @if (navbarHasSettings() && isAuthenticated()) {
+            <!-- Profile & Settings Account Card. Also open to anonymous visitors when an app
+                 publishes settings that need no session — see hasPublicSettings(). -->
+            @if (navbarHasSettings() && (isAuthenticated() || hasPublicSettings())) {
               <rlb-settings-dropdown-selector
                 [apps]="apps()"
                 [isAuthenticated]="isAuthenticated()"

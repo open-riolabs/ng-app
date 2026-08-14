@@ -41,13 +41,14 @@
 
           <!-- Dynamic App Settings -->
           @for (app of apps(); track app.id) {
-            @if (app.settings && app.enabled && (app.settings.auth && (isAuthenticated()))) {
+            <!-- `app.settings &&` is redundant against isAppVisible(), but it is what narrows the
+                 optional `settings` for the bindings below under strictTemplates. -->
+            @if (app.settings && isAppVisible(app)) {
               <div class="col">
                 <button
                   rlb-button
                   outline
                   color="primary"
-                  [disabled]="!app.enabled && (app.settings.auth && !(isAuthenticated()))"
                   (click)="selectApp(app)"
                   [class.active]="isAppSelected(app.id)"
                   class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">

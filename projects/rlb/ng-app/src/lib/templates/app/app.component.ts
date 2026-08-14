@@ -33,6 +33,7 @@ import {
 import { filter } from 'rxjs';
 import { RLB_CFG_ENV, RLB_NAV_SURFACE } from '../../configuration';
 import { AppInfo, AppsService } from '../../services';
+import { hasPublicSettingsApps } from '../../services/apps/app-visibility';
 import {
   appContextFeatureKey,
   AuthActions,
@@ -184,6 +185,15 @@ export class AppTemplateComponent {
   readonly apps = computed(() =>
     this.appsService.apps().filter((app: AppInfo) => app.enabled && app.id),
   );
+
+  /**
+   * Whether any registered app exposes settings that need no session.
+   *
+   * The chrome below is otherwise authenticated-only by design. This keeps the anonymous case
+   * additive: with no public settings app — every consumer whose apps all declare `auth: true` —
+   * this is false and the gates reduce to `isAuthenticated()`, exactly as before.
+   */
+  readonly hasPublicSettings = computed(() => hasPublicSettingsApps(this.apps()));
 
   /** Mirrors the mobile offcanvas body: false means the panel would render empty. */
   readonly mobileMenuHasContent = computed(
