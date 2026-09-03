@@ -46,10 +46,18 @@ jobs:
         # The root postinstall syncs @open-rlb/ng-bootstrap's Claude skills into .claude/skills for
         # local development. CI never reads them (the library bundles from
         # projects/rlb/ng-app/skills), so skip it.
+        #
+        # `npm ci`, not `npm install`: the cache step above restores on a prefix `restore-keys`, so a
+        # lockfile change misses the exact key and hands us a node_modules built from a *different*
+        # lockfile. `npm install` then mutates that tree in place — keeping packages that merely
+        # satisfy the range instead of the locked version, and rewriting package-lock.json in the
+        # runner — which is how a release gets built from deps matching no committed lockfile.
+        # `npm ci` deletes node_modules first, installs the lockfile exactly, and fails loudly if
+        # package.json and the lock disagree.
         env:
           RLB_SKIP_SKILL_SYNC: '1'
         run: |
-          npm install
+          npm ci
       - name: Create node_modules TarGz
         run: tar -czf node_modules.tar.gz node_modules
       - name: Upload TarGz Artifact
@@ -74,9 +82,22 @@ jobs:
       - name: Extract node_modules
         run: tar -xzf node_modules.tar.gz
       - name: Build
+        # `npm install` here is not redundant: the node_modules artifact is built by the
+        # `dependencies` job on node:alpine (musl) and consumed here on node:lts-bullseye (glibc),
+        # so the platform-specific optional deps in the tarball are the wrong ones (@esbuild/*,
+        # @rollup/*, @rolldown/*, lmdb, @parcel/watcher — the lockfile carries both variants).
+        # This reify used to happen as a side effect of two `npm link` lines (husky, @nestjs/cli)
+        # that this repo never needed — neither package is a dependency of it. They broke when
+        # @nestjs/cli@12.0.0 (2026-08-27) added `prepare: "husky && node tools/postinstall.cjs"`,
+        # a script that only works inside Nest's own git checkout: npm runs `prepare` for
+        # link-installed packages, and `tools/` is not in the published tarball. 11.0.24 and
+        # earlier declared `prepare: "husky"`, which exits 0 outside a git repo — which is why this
+        # step passed for the 19 months before that release.
+        # --ignore-scripts keeps third-party lifecycle scripts out of the build (this runner's
+        # allowScripts policy already blocks them) and skips the root postinstall skill sync, which
+        # CI does not need — the library bundles skills from projects/rlb/ng-app/skills.
         run: |
-          npm link husky
-          npm link @nestjs/cli
+          npm install --ignore-scripts
           npm run lib:build
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
