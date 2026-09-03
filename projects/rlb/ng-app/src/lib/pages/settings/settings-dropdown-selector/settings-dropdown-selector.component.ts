@@ -162,6 +162,20 @@ export class SettingsDropdownSelectorComponent implements OnDestroy {
     return isSettingsAppVisible(app, this.isAuthenticated());
   }
 
+  /**
+   * Whether a `pages.*` chrome entry is offered to the current visitor.
+   *
+   * Configured-or-not is the original condition; `action` is the ACL one, and omitting it keeps the
+   * entry public. The route carries the same action (`getDefaultRoutes`), but a guard alone would
+   * leave the button visible and bouncing.
+   */
+  isPageVisible(key: string): boolean {
+    const page = this.pages()?.[key];
+    if (!page?.path) return false;
+    if (!page.action) return true;
+    return this.appsService.checkPermissionAnywhere(page.action);
+  }
+
   private close() {
     this.menu()?.close();
   }

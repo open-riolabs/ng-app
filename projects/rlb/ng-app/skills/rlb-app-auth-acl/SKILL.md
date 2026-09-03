@@ -142,24 +142,109 @@ every sibling in a `forkJoin`. Keep it for simple template bindings and for `con
 ## Guarding routes
 
 ```typescript
-import { oauthGuard, permissionGuard } from '@open-rlb/ng-app';
+import { oauthGuard, pagePermissionGuard, permissionGuard } from '@open-rlb/ng-app';
 
 { path: 'account', component: AccountComponent, canActivate: [oauthGuard] },
 { path: 'admin', component: AdminComponent, canActivate: [permissionGuard], data: { action: 'sysadmin' } },
+{ path: 'admin', component: AdminComponent, canActivate: [permissionGuard],
+  data: { action: ['manager', 'director'] } },        // any one of them grants
 ```
 
 - `oauthGuard` — requires an authenticated session.
-- `permissionGuard` — requires the ACL action named in `route.data.action`.
+- `permissionGuard` — requires the ACL action named in `route.data.action`, **in the app that owns
+  the route**. A list grants on any one of its actions.
+- `pagePermissionGuard(action)` — requires the action on *any* resource the user holds. For chrome
+  that no app owns; see [page entries](#gating-a-pages-entry) below.
+
+Both guards wait for the ACL resources to arrive before deciding, so a cold-start deep link is not
+denied for being early.
+
+A denial goes to `/forbidden`, which the kit **always registers** — it no longer depends on
+`pages.forbidden` being configured. Where it was not, the redirect used to fall through to the
+consumer's `**` route, so a permission denial presented as a redirect to some unrelated page with
+nothing logged. Configuring `pages.forbidden` still only decides whether the entry exists in your
+config; add the `pages.forbidden.{title,content,button}` i18n keys (the `ng add` scaffold ships
+them) so the page reads properly.
 
 ## Guarding UI
 
-The `*roles` structural directive shows content only if the user holds the action:
+The `*roles` structural directive shows content only if the user holds the action **in the current
+app**:
 
 ```html
 <button *roles="'sysadmin'">Admin only</button>
+
+<!-- OR-list: "management and superior" — any one of the actions grants -->
+<button *roles="[ACL_ACTIONS.manager, ACL_ACTIONS.director]">Approve</button>
+
+<!-- inverse: render only for a user who LACKS the action -->
+<span *roles="ACL_ACTIONS.editCatalog; not: true">Read-only — ask an editor to change this.</span>
+
+<!-- else: a fallback template, mirroring *ngIf -->
+<button *roles="ACL_ACTIONS.convert; else noConvert">Convert</button>
+<ng-template #noConvert><span class="text-muted">Not available on your plan</span></ng-template>
 ```
 
-(`RlbAppModule` provides the directive.)
+| Input | Microsyntax | Meaning |
+| --- | --- | --- |
+| `roles` | `*roles="x"` | the action, or a list the user only has to hold **one** of |
+| `rolesNot` | `; not: true` | invert — render when the user *lacks* it |
+| `rolesElse` | `; else tpl` | `TemplateRef` rendered instead when the check fails |
+
+No action — `undefined`, `''` or `[]` — is **public**. An empty array in particular is not a denial:
+a list computed from data arrives empty on the first render, and reading that as "deny" would blank
+the UI. `not: true` inverts whatever the decision was, so `*roles="[]; not: true"` renders nothing.
+
+`SidebarNavigableItem.action` is fed straight into this directive by the shell (at both nesting
+levels), so sidebar items accept a list too.
+
+(`RlbAppModule` provides the directive; it is standalone, so you can also `import` it directly.)
+
+The directive tracks which template is on screen and only touches the view when the decision
+actually changes — an unrelated ACL update will not remount the subtree and drop component state
+inside it.
+
+Hide/show only: it is a structural directive, so it cannot *disable* a control it never renders.
+Disabling instead of hiding is deliberately not supported.
+
+### Gating a `pages.*` entry
+
+The `pages` config entries — `status`, `logger`, `privacy`, `support`, … — render as buttons in the
+settings dropdown and the settings list. Give one an `action` and both the button and the route are
+gated:
+
+```typescript
+pages: {
+  status: { path: 'status', action: 'show-system-status' },
+  logger: { path: 'logger', action: ['sysadmin', 'director'] },  // any one grants
+  privacy: { path: 'privacy' },                                  // no action → everyone, as before
+}
+```
+
+- **Omitting `action` means visible to everyone.** Every config written before this existed omits
+  it, so upgrading hides nothing.
+- The check is "does the user hold it on **any** resource", not "in the current app": these pages
+  belong to no app, and while one is open `AppsService` has deselected the current app — a
+  resource-scoped check would deny whatever the user holds. That is why they use
+  `pagePermissionGuard`, not `permissionGuard`.
+- The kit puts the guard on the routes it registers itself. `status` and `logger` are **your**
+  routes, so gate them yourself with the same action, or the button hides while the URL still works:
+
+  ```typescript
+  { path: 'status', component: StatusComponent,
+    canActivate: [pagePermissionGuard('show-system-status')] }
+  ```
+
+- A guard alone is never enough for chrome: the button would stay visible and bounce.
+
+### What is gated where
+
+| Surface | Gate | Scope |
+| --- | --- | --- |
+| A whole app (shell nav, app hub, settings tile) | `AppInfo.actions` on the describer | that app's resource |
+| A route | `permissionGuard` + `data.action` | the app owning the route |
+| A control, a sidebar item | `*roles` | the current app |
+| A `pages.*` entry and its route | `pages.<key>.action` + `pagePermissionGuard` | any resource |
 
 ## ACL startup hook — RLB_INIT_PROVIDER
 

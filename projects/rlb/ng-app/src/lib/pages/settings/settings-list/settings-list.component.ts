@@ -26,6 +26,17 @@ export class SettingsListComponent {
   readonly apps = this.appsService.apps;
   readonly pages = computed(() => this.pageOptions);
 
+  /**
+   * Whether a `pages.*` chrome entry is offered to the current visitor — same rule as the settings
+   * dropdown, which lists the same pages: configured, and (if it declares one) the ACL action held.
+   */
+  isPageVisible(key: string): boolean {
+    const page = this.pages()?.[key];
+    if (!page?.path) return false;
+    if (!page.action) return true;
+    return this.appsService.checkPermissionAnywhere(page.action);
+  }
+
   backClicked() {
     this._location.back();
   }

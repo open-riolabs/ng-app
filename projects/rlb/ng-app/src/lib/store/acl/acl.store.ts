@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { AdminApiService } from '../../services/acl/user-resources.service';
-import { initialAclState } from './acl.model';
+import { AclAction, initialAclState, normalizeAclActions } from './acl.model';
 import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { RLB_INIT_PROVIDER } from '../../services/apps/rlb-init-provider';
 import { ProviderAclConfiguration, RLB_CFG_ACL } from '../../configuration';
@@ -19,16 +19,47 @@ export const AclStore = signalStore(
       rlbInitProvider = inject(RLB_INIT_PROVIDER, { optional: true }),
       aclConfiguration = inject(RLB_CFG_ACL, { optional: true }),
     ) => ({
-      hasPermission: (busId: string, resId: string, action?: string) => {
+      /**
+       * Whether the user holds `action` on the `(busId, resId)` resource.
+       *
+       * `action` may be a list, in which case **any** of them grants — this is the single
+       * implementation of that OR, shared by the `*roles` directive and the guards, so nobody
+       * re-implements the loop against a subset of the semantics.
+       *
+       * No action (or an empty list) keeps its original meaning: *any* grant on that resource.
+       */
+      hasPermission: (busId: string, resId: string, action?: AclAction) => {
         const resources = store.resources();
         if (!resources) return false;
+        const actions = normalizeAclActions(action);
         return resources.some(
           company =>
             company.companyId === busId &&
             company.resources.some(res => {
               const matchRes = res.resourceId === resId;
-              return action ? matchRes && res.actions.includes(action) : matchRes;
+              if (!matchRes) return false;
+              return actions.length === 0 || actions.some(a => res.actions.includes(a));
             }),
+        );
+      },
+
+      /**
+       * Whether the user holds `action` on **any** resource they have, ignoring which app is
+       * current.
+       *
+       * Chrome that is not owned by an app — the `pages.*` entries rendered in the settings
+       * dropdown and list — has no `(busId, resId)` to check against, and while one of those pages
+       * is open `AppsService` has deselected the current app anyway. Resource-scoped checks answer
+       * "no" there for the wrong reason, so those surfaces use this one.
+       */
+      hasPermissionAnywhere: (action?: AclAction) => {
+        const resources = store.resources();
+        if (!resources) return false;
+        const actions = normalizeAclActions(action);
+        return resources.some(company =>
+          company.resources.some(
+            res => actions.length === 0 || actions.some(a => res.actions.includes(a)),
+          ),
         );
       },
 

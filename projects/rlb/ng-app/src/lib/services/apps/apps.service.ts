@@ -5,6 +5,7 @@ import { filter, map, Observable, switchMap, take } from 'rxjs';
 import { RLB_CFG_ACL, RLB_CFG_AUTH } from '../../configuration';
 import { AppContextActions, AuthActions, authsFeatureKey, BaseState } from '../../store';
 import { AclStore } from '../../store/acl/acl.store';
+import { AclAction } from '../../store/acl/acl.model';
 import { appContextFeatureKey } from '../../store/app-context/app-context.model';
 import { AppInfo, AppViewMode } from './app';
 import { AppLoggerService, LoggerContext } from './app-logger.service';
@@ -103,10 +104,28 @@ export class AppsService {
     return this.getStoredAppId() === appId;
   }
 
-  checkPermissionInCurrentApp(action?: string): boolean {
+  /**
+   * Whether the user holds `action` in the app that is currently selected.
+   *
+   * `action` may be a list — any one of them grants. Note the asymmetry with
+   * {@link AclStore.hasPermission}, which is deliberate and load-bearing: with no current app this
+   * denies, while the store's no-action case means "any grant on the resource".
+   */
+  checkPermissionInCurrentApp(action?: AclAction): boolean {
     const info = this.currentAppAclInfo();
     if (!info) return false;
     return this.aclStore.hasPermission(info.busId, info.resId, action);
+  }
+
+  /**
+   * Whether the user holds `action` on any resource at all.
+   *
+   * For surfaces that no app owns — the `pages.*` chrome entries — where a resource-scoped check
+   * has nothing to scope to. With no ACL configured nothing is gated, matching {@link apps}.
+   */
+  checkPermissionAnywhere(action?: AclAction): boolean {
+    if (!this.confAcl) return true;
+    return this.aclStore.hasPermissionAnywhere(action);
   }
 
   /**
@@ -122,7 +141,7 @@ export class AppsService {
     );
   }
 
-  checkPermissionForApp(app: AppInfo, action?: string): boolean {
+  checkPermissionForApp(app: AppInfo, action?: AclAction): boolean {
     if (!app?.data || !this.confAcl) return false;
     const busId = app.data[this.confAcl.businessIdKey];
     const resId = app.data[this.confAcl.resourceIdKey];
