@@ -15,7 +15,9 @@ export const DEFAULT_ROUTES_CONFIG: DefaultRouteConfig[] = [
   { path: 'content', configKey: 'content' },
   { path: 'cookies', configKey: 'cookies' },
   { path: 'notFound', configKey: 'notFound' },
-  { path: 'forbidden', configKey: 'forbidden' },
+  // No configKey on purpose: this is where `permissionGuard` sends a denial, so it cannot be left
+  // to optional consumer config. Without it a denial fell through to the consumer's `**` route.
+  { path: 'forbidden' },
   { path: 'privacy', configKey: 'privacy' },
   { path: 'support', configKey: 'support' },
   { path: 'terms', configKey: 'terms' },

@@ -186,10 +186,24 @@ export interface InternationalizationConfiguration {
   cookieStoreName: string;
 }
 
+export interface PageConfiguration {
+  path: string;
+  /**
+   * ACL action required to see this page — the entry in the settings dropdown and list, and the
+   * route itself (guarded with `pagePermissionGuard`). A list grants on **any** of its actions.
+   *
+   * Omitted means visible to everyone, which is what every configuration written before this
+   * existed says. The check is "does the user hold it on any resource", not "in the current app":
+   * these pages belong to no app, and while one is open there is no current app to scope to.
+   *
+   * Routes the kit does not register — `status`, `logger`, anything else the consumer owns — get
+   * their button gated here, but you have to put `pagePermissionGuard` on the route yourself.
+   */
+  action?: string | string[];
+}
+
 export interface PagesConfiguration {
-  [key: string]: {
-    path: string;
-  };
+  [key: string]: PageConfiguration;
 }
 
 /**

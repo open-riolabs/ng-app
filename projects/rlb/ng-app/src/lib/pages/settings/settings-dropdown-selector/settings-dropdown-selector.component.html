@@ -62,7 +62,7 @@
           }
 
           <!-- System / Status -->
-          @if (pages()?.['status']?.path) {
+          @if (isPageVisible('status')) {
             <div class="col">
               <button rlb-button outline color="primary" routerLink="/status" routerLinkActive="active" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-2 text-decoration-none">
                 <i class="bi bi-check2-circle fs-4 mb-1"></i>
@@ -72,7 +72,7 @@
           }
 
           <!-- Logger -->
-          @if (pages()?.['logger']?.path) {
+          @if (isPageVisible('logger')) {
             <div class="col">
               <button
                 rlb-button
@@ -90,7 +90,7 @@
           }
 
           <!-- Privacy -->
-          @if (pages()?.['privacy']?.path) {
+          @if (isPageVisible('privacy')) {
             <div class="col">
               <button
                 rlb-button
@@ -108,7 +108,7 @@
           }
 
           <!-- Cookies -->
-          @if (pages()?.['cookies']?.path) {
+          @if (isPageVisible('cookies')) {
             <div class="col">
               <button
                 rlb-button
@@ -126,7 +126,7 @@
           }
 
           <!-- Terms -->
-          @if (pages()?.['terms']?.path) {
+          @if (isPageVisible('terms')) {
             <div class="col">
               <button
                 rlb-button
@@ -144,7 +144,7 @@
           }
 
           <!-- Support -->
-          @if (pages()?.['support']?.path) {
+          @if (isPageVisible('support')) {
             <div class="col">
               <button
                 rlb-button

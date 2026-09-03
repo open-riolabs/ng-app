@@ -61,7 +61,7 @@ SSR and in specs; without a `location` it registers nothing.
 | `environment` | app metadata: `appTitle`, `appLogo`, `baseUrl`, `errorDialogName`, `httpErrors`, `logLevel`, `pwaUpdateEnabled`, `navbarDisabled` |
 | `auth` | OIDC: `protocol: 'oauth'`, `storage`, `interceptor`, `allowedUrls`, `providers[]` (per-provider `authority`/`clientId`/`redirectUrl`/`acl`) |
 | `i18n` | `availableLangs`, `defaultLanguage`, `useLanguageBrowser`, `storeSelectedLanguage`, `cookieStoreName` |
-| `pages` | named route paths for standard pages (notFound, forbidden, support, …) |
+| `pages` | standard pages: `{ path, action? }` per key (notFound, forbidden, support, …); `action` ACL-gates the page and its settings entry — see [[rlb-app-auth-acl]] |
 | `endpoints` | named HTTP/WS backends (`{ baseUrl, healthPath, auth, wss }`) referenced by key (e.g. `http-gateway`) |
 | `acl` | `businessIdKey`, `resourceIdKey`, `interceptorMapping` |
 

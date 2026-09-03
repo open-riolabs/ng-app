@@ -23,14 +23,14 @@
     }
   </rlb-list>
 
-  @if (pages()?.['status']?.path || pages()?.['logger']?.path) {
+  @if (isPageVisible('status') || isPageVisible('logger')) {
     <rlb-list class="mt-5">
-      @if (pages()?.['status']?.path) {
+      @if (isPageVisible('status')) {
         <rlb-list-item-image icon="bi bi-check2-circle" [avatar-size]="18"
           [line-1]="'core.settings.status' | translate" [routerLink]="'/status'">
         </rlb-list-item-image>
       }
-      @if (pages()?.['logger']?.path) {
+      @if (isPageVisible('logger')) {
         <rlb-list-item-image icon="bi bi-file-text" [avatar-size]="18"
           [line-1]="'core.settings.logger' | translate" [routerLink]="'/logger'">
         </rlb-list-item-image>
@@ -38,25 +38,25 @@
     </rlb-list>
   }
 
-  @if (pages()?.['privacy']?.path || pages()?.['cookies']?.path || pages()?.['terms']?.path || pages()?.['support']?.path) {
+  @if (isPageVisible('privacy') || isPageVisible('cookies') || isPageVisible('terms') || isPageVisible('support')) {
     <rlb-list class="mt-4"
       >
-      @if (pages()?.['privacy']?.path) {
+      @if (isPageVisible('privacy')) {
         <rlb-list-item-image icon="bi bi-shield-check" [avatar-size]="18"
           [line-1]="'core.settings.privacy' | translate" [routerLink]="'/privacy'">
         </rlb-list-item-image>
       }
-      @if (pages()?.['cookies']?.path) {
+      @if (isPageVisible('cookies')) {
         <rlb-list-item-image icon="bi bi bi-cookie" [avatar-size]="18"
           [line-1]="'core.settings.cookies' | translate" [routerLink]="'/cookies'">
         </rlb-list-item-image>
       }
-      @if (pages()?.['terms']?.path) {
+      @if (isPageVisible('terms')) {
         <rlb-list-item-image icon="bi bi-vector-pen" [avatar-size]="18"
           [line-1]="'core.settings.legal' | translate" [routerLink]="'/terms'">
         </rlb-list-item-image>
       }
-      @if (pages()?.['support']?.path) {
+      @if (isPageVisible('support')) {
         <rlb-list-item-image icon="bi bi-chat-quote" [avatar-size]="18"
           [line-1]=" 'core.settings.support' | translate" [routerLink]="'/support'">
         </rlb-list-item-image>
