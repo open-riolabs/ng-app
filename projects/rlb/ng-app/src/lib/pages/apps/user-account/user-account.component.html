@@ -61,7 +61,7 @@
     @for (type of keycloakCredentials(); track type.type) {
       <rlb-card class="mb-4">
         <rlb-card-header class="d-flex justify-content-between align-items-center py-3 px-4">
-          <h6 class="mb-0 fw-bold">{{ ('core.account.credentials.' + type?.type) | translate }}</h6>
+          <h6 class="mb-0 fw-bold">{{ ('core.account.credentials.' + $safeNavigationMigration(type?.type)) | translate }}</h6>
           @if (type.type === 'otp') {
             <rlb-fab (click)="configureOTP()" size="sm" [tooltip]="'core.account.credentials.addOTP' | translate">
               <i class="bi bi-plus-circle"></i>

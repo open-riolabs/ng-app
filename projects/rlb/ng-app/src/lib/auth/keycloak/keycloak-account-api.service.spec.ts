@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
@@ -16,13 +16,15 @@ describe('KeycloakAccountService', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         {
           provide: AuthenticationService,
           useValue: {
             currentProvider:
-              options.authority === undefined ? { authority: AUTHORITY } : { authority: options.authority },
+              options.authority === undefined
+                ? { authority: AUTHORITY }
+                : { authority: options.authority },
             accessToken$: of(options.token === undefined ? 'access-token' : options.token),
           },
         },
