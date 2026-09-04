@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { ReplaySubject } from 'rxjs';
-import { CookiesService } from '..';
+import { CookiesService } from '../utils/cookies.service';
 import { RLB_CFG_I18N } from '../../configuration';
 
 

@@ -1,6 +1,6 @@
 import { InjectionToken, Type } from '@angular/core';
 import { OpenIdConfiguration } from 'angular-auth-oidc-client';
-import { LogLevel } from './services';
+import { LogLevel } from './services/apps/log-level';
 
 // export const RLB_CFG = 'rlb.options';
 export const RLB_CFG = new InjectionToken<ProjectConfiguration>('rlb.options');

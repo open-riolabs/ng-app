@@ -13,6 +13,7 @@
     "lib:test-ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless @open-rlb/ng-app",
     "lib:test:ng-add": "node scripts/test-ng-add.cjs",
     "lib:lint": "ng lint @open-rlb/ng-app",
+    "check:imports": "node scripts/check-imports.mjs",
     "lib:pack": "npm run lib:build && npm pack ./dist/rlb/ng-app/ && node scripts/verify-pack.cjs",
     "postinstall": "ng g @open-rlb/ng-bootstrap:sync-skills || echo Skipped ng-bootstrap skill sync"
   },

@@ -2,16 +2,18 @@ import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, Inject, Optional } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
-import { RlbAppModule } from '../../../rlb-app.module';
+import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { ListComponent, ListItemImageComponent } from '@open-rlb/ng-bootstrap';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
-import { BaseState } from '../../../store';
+import { BaseState } from '../../../store/base-state';
 import { AuthenticationService } from '../../../auth/services/auth.service';
 
 
 @Component({
   selector: 'rlb-settings-list',
-  imports: [RlbAppModule, CommonModule],
+  imports: [CommonModule, RouterModule, TranslateModule, ListComponent, ListItemImageComponent],
   templateUrl: './settings-list.component.html',
   styleUrl: './settings-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

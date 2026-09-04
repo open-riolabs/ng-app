@@ -24,8 +24,12 @@ import {
   RLB_CFG_AUTH,
   RLB_CFG_ENV,
 } from '../../configuration';
-import { AppLoggerService, AppStorageService, CookiesService, LoggerContext } from '../../services';
-import { AuthActions, authsFeatureKey, BaseState } from '../../store';
+import { AppLoggerService, LoggerContext } from '../../services/apps/app-logger.service';
+import { AppStorageService } from '../../services/utils/app-storage.service';
+import { CookiesService } from '../../services/utils/cookies.service';
+import { AuthActions } from '../../store/auth/auth.actions';
+import { authsFeatureKey } from '../../store/auth/auth.model';
+import { BaseState } from '../../store/base-state';
 import { ParseJwtService } from './parse-jwt.service';
 import { AdminApiService } from '../../services/acl/user-resources.service';
 import { AclStore } from '../../store/acl/acl.store';

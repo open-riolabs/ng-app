@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
-import { AppsService } from '../../services';
+import { AppsService } from '../../services/apps/apps.service';
 import { AppInfo } from '../../services/apps/app';
 import { AclAction, normalizeAclActions } from '../../store/acl/acl.model';
 import { AclStore } from '../../store/acl/acl.store';

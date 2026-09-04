@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { EnvironmentConfiguration, RLB_CFG_ENV } from "../../configuration";
 
-export type LogLevel = 'off' | 'error' | 'warn' | 'info' | 'debug' | 'log';
+import { LogLevel } from './log-level';
+export type { LogLevel };
 
 export type LoggerContext = {
 	error: (...args: any[]) => void;

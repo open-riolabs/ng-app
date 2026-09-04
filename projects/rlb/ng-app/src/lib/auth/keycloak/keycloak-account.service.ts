@@ -3,8 +3,10 @@ import { Injectable } from "@angular/core";
 import { OidcSecurityService } from "angular-auth-oidc-client";
 import {  filter, map, Observable, switchMap } from "rxjs";
 import { ErrorManagementService } from "../../services/errors/error-management.service";
-import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } from "./";
-import { AuthenticationService } from "..";
+import { KeycloakUser } from './keycloack-user';
+import { KeycloakCredential } from './keycloak-credential';
+import { KeycloakDevice, KeycloakSession } from './keycloak-device';
+import { AuthenticationService } from '../services/auth.service';
 
 /**
  * The Keycloak account API, with failures shown as a modal.

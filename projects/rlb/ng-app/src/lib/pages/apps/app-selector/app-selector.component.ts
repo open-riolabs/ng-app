@@ -1,13 +1,14 @@
 import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RlbAppModule } from '../../../rlb-app.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { ListComponent, ListItemImageComponent } from '@open-rlb/ng-bootstrap';
 import { AppInfo } from '../../../services/apps/app';
 import { AppsService } from '../../../services/apps/apps.service';
 import { AuthenticationService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'rlb-app-selector',
-  imports: [RlbAppModule, CommonModule],
+  imports: [CommonModule, TranslateModule, ListComponent, ListItemImageComponent],
   templateUrl: './app-selector.component.html',
   styleUrl: './app-selector.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

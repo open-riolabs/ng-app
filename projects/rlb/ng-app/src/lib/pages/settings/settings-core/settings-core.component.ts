@@ -3,13 +3,31 @@ import { ChangeDetectionStrategy, Component, computed, inject, Inject, Optional 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { ToastService } from '@open-rlb/ng-bootstrap';
-import { RlbAppModule } from '../../../rlb-app.module';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  ListComponent,
+  ListItemComponent,
+  OptionComponent,
+  SelectComponent,
+  SwitchComponent,
+} from '@open-rlb/ng-bootstrap';
 import { LanguageService } from '../../../services/i18n/language.service';
-import { AppContextActions, BaseState, appContextFeatureKey } from '../../../store';
+import { AppContextActions } from '../../../store/app-context/app-context.actions';
+import { appContextFeatureKey } from '../../../store/app-context/app-context.model';
+import { BaseState } from '../../../store/base-state';
 
 @Component({
   selector: 'rlb-settings-core',
-  imports: [RlbAppModule],
+  imports: [
+    FormsModule,
+    TranslateModule,
+    ListComponent,
+    ListItemComponent,
+    OptionComponent,
+    SelectComponent,
+    SwitchComponent,
+  ],
   templateUrl: './settings-core.component.html',
   styleUrl: './settings-core.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

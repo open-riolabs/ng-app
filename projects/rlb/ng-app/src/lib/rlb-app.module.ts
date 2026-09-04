@@ -17,7 +17,8 @@ import { BaseComponent } from './templates/base/base.component';
 import { CmsComponent } from './templates/cms/cms.component';
 import { ContentComponent } from './templates/content/content.component';
 
-import { AutolinkPipe, TruncatePipe } from './pipes';
+import { AutolinkPipe } from './pipes/autolink/autolink.pipe';
+import { TruncatePipe } from './pipes/truncate/truncate.pipe';
 import { LeftComponentPipe } from './pipes/left-component/left-component.pipe';
 import { MobileComponentPipe } from './pipes/mobile-component/mobile-component.pipe';
 import { RightComponentPipe } from './pipes/right-component/right-component.pipe';

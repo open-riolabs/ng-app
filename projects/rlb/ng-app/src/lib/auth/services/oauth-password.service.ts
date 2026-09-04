@@ -2,7 +2,7 @@ import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from
 import { Injectable, OnInit } from '@angular/core';
 import { lastValueFrom, Observable } from 'rxjs';
 import { AuthenticationService } from './auth.service';
-import { AppLoggerService, LoggerContext } from "../../services";
+import { AppLoggerService, LoggerContext } from '../../services/apps/app-logger.service';
 
 const SESSION_RT = 'RT';
 const SESSION_AT = 'AT';

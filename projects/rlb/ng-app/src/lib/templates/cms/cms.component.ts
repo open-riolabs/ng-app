@@ -13,7 +13,9 @@ import {
   TabsComponent,
 } from '@open-rlb/ng-bootstrap';
 import { combineLatest, EMPTY, startWith, switchMap } from 'rxjs';
-import { AbstractMdService, LanguageService, StrapiService } from '../../services';
+import { AbstractMdService } from '../../services/cms/md.service';
+import { StrapiService } from '../../services/cms/strapi.service';
+import { LanguageService } from '../../services/i18n/language.service';
 import { RLB_CFG_CMS } from '../../configuration';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
