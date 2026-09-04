@@ -47,7 +47,7 @@
     "@ngrx/store": "^22.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@open-rlb/date-tz": "^2.1.8",
+    "@open-rlb/date-tz": "2.1.4",
     "@open-rlb/ng-bootstrap": "^4.0.0",
     "@types/bootstrap": "^5.2.10",
     "angular-auth-oidc-client": "^19.0.1",

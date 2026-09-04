@@ -28,7 +28,9 @@ import { Schema } from './schema';
  */
 const DEPENDENCIES: ReadonlyArray<{ name: string; version: string; type: DependencyType }> = [
   { name: '@open-rlb/ng-bootstrap', version: '^4.0.0', type: DependencyType.Default },
-  { name: '@open-rlb/date-tz', version: '^2.1.8', type: DependencyType.Default },
+  // Pinned exactly, not caret-ranged: 2.1.4 is the version we consider stable. Later 2.1.x
+  // releases have known problems, and `^2.1.4` would resolve straight past it to the newest.
+  { name: '@open-rlb/date-tz', version: '2.1.4', type: DependencyType.Default },
   { name: '@ngrx/store', version: '^22.0.0', type: DependencyType.Default },
   { name: '@ngrx/effects', version: '^22.0.0', type: DependencyType.Default },
   { name: '@ngrx/operators', version: '^22.0.0', type: DependencyType.Default },
