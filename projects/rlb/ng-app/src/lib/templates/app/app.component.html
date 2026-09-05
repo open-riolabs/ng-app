@@ -276,6 +276,19 @@
                 (click)="onSideBarItemClick(subitem)"
               >
                 {{ subitem.label }}
+                @for (leaf of subitem.items || []; track $index) {
+                  <rlb-sidebar-item
+                    *roles="leaf.action"
+                    [icon]="leaf.icon"
+                    [link]="leaf.url"
+                    [title]="leaf.title"
+                    [label]="leaf.label"
+                    [badgeCounter]="leaf.badgeCounter"
+                    (click)="onSideBarItemClick(leaf)"
+                  >
+                    {{ leaf.label }}
+                  </rlb-sidebar-item>
+                }
               </rlb-sidebar-item>
             }
           </rlb-sidebar-item>
