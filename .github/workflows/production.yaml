@@ -65,8 +65,6 @@ jobs:
         run: npm run lib:test-ci
       - name: Check import hygiene
         run: npm run check:imports
-      - name: Test ng-add schematic
-        run: npm run lib:test:ng-add
 
   build:
     needs: test
@@ -85,6 +83,10 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run lib:build
+      # Runs here, not in `test`: it drives the compiled schematics out of dist/, which only
+      # exists after `npm run lib:build`.
+      - name: Test ng-add schematic
+        run: npm run lib:test:ng-add
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
