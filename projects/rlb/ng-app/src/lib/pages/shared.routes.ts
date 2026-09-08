@@ -1,19 +1,18 @@
 import { Route, Routes } from '@angular/router';
-import {
-  CmsContentComponent,
-  CookiesComponent,
-  NotFoundComponent,
-  PrivacyComponent,
-  SupportComponent,
-  TermsAndConditionsComponent,
-} from '.';
+import { CmsContentComponent } from './cms-content/cms-content.component';
+import { CookiesComponent } from './cookies/cookies.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { PrivacyComponent } from './privacy/privacy.component';
+import { SupportComponent } from './support/support.component';
+import { TermsAndConditionsComponent } from './terms-and-conditions/terms-and-conditions.component';
 import { PagesConfiguration } from '../configuration';
 import { AppSelectorComponent } from './apps/app-selector/app-selector.component';
 import { UserAccountComponent } from './apps/user-account/user-account.component';
 import { SettingsCoreComponent } from './settings/settings-core/settings-core.component';
 import { SettingsListComponent } from './settings/settings-list/settings-list.component';
 import { DEFAULT_ROUTES_CONFIG, DefaultRouteConfig } from './default-routes.config';
-import { oauthGuard, pagePermissionGuard } from '../auth';
+import { oauthGuard } from '../auth/guards/oauth.guard';
+import { pagePermissionGuard } from '../auth/guards/permission.guard';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 
 /**

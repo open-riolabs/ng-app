@@ -6,14 +6,10 @@ import { EnvironmentConfiguration, RLB_CFG_ENV } from '../../configuration';
 import { AppsService } from '../../services/apps/apps.service';
 import { AppStorageService } from '../../services/utils/app-storage.service';
 import { PwaUpdaterService } from '../../services/utils/pwa-updater.service';
-import {
-  AppContextActions,
-  appContextFeatureKey,
-  AppTheme,
-  BaseState,
-  PageTemplate
-} from '../../store';
-import { AppLoggerService, LoggerContext } from "../../services";
+import { AppContextActions } from '../../store/app-context/app-context.actions';
+import { appContextFeatureKey, AppTheme, PageTemplate } from '../../store/app-context/app-context.model';
+import { BaseState } from '../../store/base-state';
+import { AppLoggerService, LoggerContext } from '../../services/apps/app-logger.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AppTemplateComponent } from '../app/app.component';

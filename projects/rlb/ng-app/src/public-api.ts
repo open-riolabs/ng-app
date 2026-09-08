@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {
   EnvironmentProviders,
   inject,
@@ -70,7 +70,7 @@ export function provideRlbConfig<T = { [k: string]: any }>(
     provideRouter(getDefaultRoutes(env.pages)),
     provideRlbCodeBrowserOAuth(env.auth),
     provideRlbI18n(env.i18n),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:15000',

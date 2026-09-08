@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, switchMap, take, throwError, timeout } from 'rxjs';
 import { AuthenticationService } from '../services/auth.service';
-import { KeycloakCredential, KeycloakDevice, KeycloakSession, KeycloakUser } from './';
+import { KeycloakUser } from './keycloack-user';
+import { KeycloakCredential } from './keycloak-credential';
+import { KeycloakDevice, KeycloakSession } from './keycloak-device';
 
 /** How long to wait on the account API before giving up on a call. */
 const DEFAULT_TIMEOUT_MS = 10_000;

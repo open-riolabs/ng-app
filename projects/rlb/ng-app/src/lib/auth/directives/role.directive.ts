@@ -7,7 +7,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
-import { AppsService } from '../../services';
+import { AppsService } from '../../services/apps/apps.service';
 import { AclAction, normalizeAclActions } from '../../store/acl/acl.model';
 
 /**

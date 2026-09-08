@@ -27,18 +27,20 @@ import { Schema } from './schema';
  * the ranges declared in the library's `peerDependencies`.
  */
 const DEPENDENCIES: ReadonlyArray<{ name: string; version: string; type: DependencyType }> = [
-  { name: '@open-rlb/ng-bootstrap', version: '^3.0.1', type: DependencyType.Default },
-  { name: '@open-rlb/date-tz', version: '^2.1.1', type: DependencyType.Default },
-  { name: '@ngrx/store', version: '^21.0.0', type: DependencyType.Default },
-  { name: '@ngrx/effects', version: '^21.0.0', type: DependencyType.Default },
-  { name: '@ngrx/operators', version: '^21.0.0', type: DependencyType.Default },
-  { name: '@ngrx/signals', version: '^21.0.0', type: DependencyType.Default },
+  { name: '@open-rlb/ng-bootstrap', version: '^4.0.0', type: DependencyType.Default },
+  // Pinned exactly, not caret-ranged: 2.1.4 is the version we consider stable. Later 2.1.x
+  // releases have known problems, and `^2.1.4` would resolve straight past it to the newest.
+  { name: '@open-rlb/date-tz', version: '2.1.4', type: DependencyType.Default },
+  { name: '@ngrx/store', version: '^22.0.0', type: DependencyType.Default },
+  { name: '@ngrx/effects', version: '^22.0.0', type: DependencyType.Default },
+  { name: '@ngrx/operators', version: '^22.0.0', type: DependencyType.Default },
+  { name: '@ngrx/signals', version: '^22.0.0', type: DependencyType.Default },
   { name: '@ngx-translate/core', version: '^17.0.0', type: DependencyType.Default },
   { name: '@ngx-translate/http-loader', version: '^17.0.0', type: DependencyType.Default },
   { name: 'angular-auth-oidc-client', version: '^19.0.1', type: DependencyType.Default },
-  { name: 'ngx-cookie-service', version: '^21.1.0', type: DependencyType.Default },
-  { name: 'ngx-cookie-service-ssr', version: '^21.1.0', type: DependencyType.Default },
-  { name: '@angular/service-worker', version: '^21.0.0', type: DependencyType.Default },
+  { name: 'ngx-cookie-service', version: '^22.0.0', type: DependencyType.Default },
+  { name: 'ngx-cookie-service-ssr', version: '^22.0.0', type: DependencyType.Default },
+  { name: '@angular/service-worker', version: '^22.0.0', type: DependencyType.Default },
   { name: 'bootstrap-icons', version: '^1.13.1', type: DependencyType.Default },
   { name: '@types/bootstrap', version: '^5.2.10', type: DependencyType.Dev },
 ];

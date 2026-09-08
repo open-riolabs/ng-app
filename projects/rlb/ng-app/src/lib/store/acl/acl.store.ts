@@ -6,7 +6,7 @@ import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 import { RLB_INIT_PROVIDER } from '../../services/apps/rlb-init-provider';
 import { ProviderAclConfiguration, RLB_CFG_ACL } from '../../configuration';
 import { Store } from '@ngrx/store';
-import { BaseState } from '../../store';
+import { BaseState } from '../base-state';
 
 export const AclStore = signalStore(
   { providedIn: 'root' },

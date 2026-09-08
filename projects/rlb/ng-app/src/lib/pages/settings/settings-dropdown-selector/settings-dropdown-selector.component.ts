@@ -24,10 +24,15 @@ import {
   TooltipDirective,
 } from '@open-rlb/ng-bootstrap';
 import { Router, RouterModule } from '@angular/router';
-import { AppInfo, AppsService, LanguageService } from '../../../services';
+import { AppInfo } from '../../../services/apps/app';
+import { AppsService } from '../../../services/apps/apps.service';
+import { LanguageService } from '../../../services/i18n/language.service';
 import { isSettingsAppVisible } from '../../../services/apps/app-visibility';
 import { PagesConfiguration, RLB_CFG_PAGES } from '../../../configuration';
-import { AppContextActions, appContextFeatureKey, AuthActions, BaseState } from '../../../store';
+import { AppContextActions } from '../../../store/app-context/app-context.actions';
+import { appContextFeatureKey } from '../../../store/app-context/app-context.model';
+import { AuthActions } from '../../../store/auth/auth.actions';
+import { BaseState } from '../../../store/base-state';
 import { Store } from '@ngrx/store';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';

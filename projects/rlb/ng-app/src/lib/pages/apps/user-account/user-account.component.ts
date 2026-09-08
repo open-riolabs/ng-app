@@ -13,16 +13,45 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { ModalService } from '@open-rlb/ng-bootstrap';
 import { EMPTY, filter, lastValueFrom, switchMap, tap } from 'rxjs';
-import { KeycloakCredential, KeycloakProfileService, KeycloakUser } from '../../../auth/keycloak';
-import { RlbAppModule } from '../../../rlb-app.module';
+import { KeycloakUser } from '../../../auth/keycloak/keycloack-user';
+import { KeycloakProfileService } from '../../../auth/keycloak/keycloak-account.service';
+import { KeycloakCredential } from '../../../auth/keycloak/keycloak-credential';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  BreadcrumbComponent,
+  CardBodyComponent,
+  CardComponent,
+  CardFooterComponent,
+  CardHeaderComponent,
+  InputComponent,
+  ListComponent,
+  ListItemComponent,
+  RlbFabComponent,
+  TooltipDirective,
+} from '@open-rlb/ng-bootstrap';
 import { LanguageService } from '../../../services/i18n/language.service';
-import { BaseState } from '../../../store';
+import { BaseState } from '../../../store/base-state';
 import { AuthActions } from '../../../store/auth/auth.actions';
 import { AuthenticationService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'rlb-user-account',
-  imports: [RlbAppModule, ReactiveFormsModule, DatePipe, UpperCasePipe],
+  imports: [
+    ReactiveFormsModule,
+    DatePipe,
+    UpperCasePipe,
+    TranslateModule,
+    TooltipDirective,
+    BreadcrumbComponent,
+    CardComponent,
+    CardBodyComponent,
+    CardFooterComponent,
+    CardHeaderComponent,
+    RlbFabComponent,
+    InputComponent,
+    ListComponent,
+    ListItemComponent,
+  ],
   templateUrl: './user-account.component.html',
   styleUrl: './user-account.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

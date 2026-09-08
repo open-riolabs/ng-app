@@ -1,6 +1,6 @@
 # NgApp
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.0.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) and targets Angular 22.
 
 ## Code scaffolding
 

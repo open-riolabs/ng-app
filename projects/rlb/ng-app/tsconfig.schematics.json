@@ -2,8 +2,8 @@
   "compilerOptions": {
     "lib": ["es2022", "dom"],
     "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "declaration": false,
     "sourceMap": false,
     "strict": true,

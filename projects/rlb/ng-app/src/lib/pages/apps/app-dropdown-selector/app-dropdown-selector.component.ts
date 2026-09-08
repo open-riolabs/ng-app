@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { AppInfo, AppsService } from '../../../services';
+import { AppInfo } from '../../../services/apps/app';
+import { AppsService } from '../../../services/apps/apps.service';
 
 import {
   ButtonComponent,

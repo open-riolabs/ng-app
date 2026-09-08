@@ -1,6 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { FaqGroup, Home, MenuItem, Page, Tab, Topic, LocalCacheService } from '../'
+import { LocalCacheService } from '../cache/local-cache.service';
+import { FaqGroup, Home, MenuItem, Page, Tab, Topic } from './strapi.service.models';
 import { Observable, from, lastValueFrom, map, switchMap, zip } from 'rxjs'
 import { CmsConfiguration, RLB_CFG_CMS } from '../../configuration'
 

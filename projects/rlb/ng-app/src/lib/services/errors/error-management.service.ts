@@ -2,7 +2,7 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { ModalService, ModalType, ToastService } from '@open-rlb/ng-bootstrap';
 import { ErrorOutput, } from './errors';
 import { EMPTY, Observable, OperatorFunction, catchError, of } from 'rxjs';
-import { LanguageService } from '..';
+import { LanguageService } from '../i18n/language.service';
 import { ProjectConfiguration, RLB_CFG } from '../../configuration';
 import {
   DEFAULT_HTTP_ERROR_DEDUPE_MS,

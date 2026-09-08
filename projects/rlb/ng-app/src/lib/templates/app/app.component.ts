@@ -32,15 +32,14 @@ import {
 } from '@open-rlb/ng-bootstrap';
 import { filter } from 'rxjs';
 import { RLB_CFG_ENV, RLB_NAV_SURFACE } from '../../configuration';
-import { AppInfo, AppsService } from '../../services';
+import { AppInfo } from '../../services/apps/app';
+import { AppsService } from '../../services/apps/apps.service';
 import { hasPublicSettingsApps } from '../../services/apps/app-visibility';
-import {
-  appContextFeatureKey,
-  AuthActions,
-  BaseState,
-  NavbarActions,
-  SidebarActions,
-} from '../../store';
+import { appContextFeatureKey } from '../../store/app-context/app-context.model';
+import { AuthActions } from '../../store/auth/auth.actions';
+import { BaseState } from '../../store/base-state';
+import { NavbarActions } from '../../store/navbar/navbar.actions';
+import { SidebarActions } from '../../store/sidebar/sidebar.actions';
 import { navbarsFeatureKey } from '../../store/navbar/navbar.model';
 import { sidebarsFeatureKey } from '../../store/sidebar/sidebar.model';
 import { AuthenticationService } from '../../auth/services/auth.service';

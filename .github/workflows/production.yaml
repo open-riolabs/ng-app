@@ -28,77 +28,63 @@ jobs:
       - name: Display Version
         run: echo "Version> ${{ env.GitVersion_SemVer }}"
 
-  dependencies:
+  # Every job below runs on the same ubuntu-latest image and does its own `npm ci`.
+  #
+  # It used to install once on `node:alpine` (musl), tar up node_modules and hand the tarball to a
+  # `node:lts-bullseye` (glibc) job. Native and platform-specific optional deps (@esbuild/*,
+  # @rollup/*, @rolldown/*, lmdb, @parcel/watcher) do not survive that libc switch, so the consumer
+  # job had to reify with a second `npm install` on top of the artifact anyway. Uploading ~200 MB to
+  # re-download and then repair it is slower than a cached `npm ci`, and it is how a release gets
+  # built from a tree matching no committed lockfile.
+  #
+  # `npm ci`, not `npm install`: it deletes node_modules, installs the lockfile exactly, and fails
+  # loudly if package.json and the lock disagree. `actions/setup-node`'s `cache: npm` caches the npm
+  # *download* cache keyed on the lockfile, which is safe — unlike caching node_modules itself.
+  #
+  # RLB_SKIP_SKILL_SYNC skips the root postinstall, which syncs @open-rlb/ng-bootstrap's Claude
+  # skills into .claude/skills for local development. CI never reads them: the library bundles from
+  # projects/rlb/ng-app/skills.
+
+  test:
     runs-on: ubuntu-latest
-    container:
-      image: node:alpine
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Cache node_modules
-        uses: actions/cache@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+          node-version-file: .nvmrc
+          cache: npm
       - name: Install dependencies
-        # The root postinstall syncs @open-rlb/ng-bootstrap's Claude skills into .claude/skills for
-        # local development. CI never reads them (the library bundles from
-        # projects/rlb/ng-app/skills), so skip it.
-        #
-        # `npm ci`, not `npm install`: the cache step above restores on a prefix `restore-keys`, so a
-        # lockfile change misses the exact key and hands us a node_modules built from a *different*
-        # lockfile. `npm install` then mutates that tree in place — keeping packages that merely
-        # satisfy the range instead of the locked version, and rewriting package-lock.json in the
-        # runner — which is how a release gets built from deps matching no committed lockfile.
-        # `npm ci` deletes node_modules first, installs the lockfile exactly, and fails loudly if
-        # package.json and the lock disagree.
         env:
           RLB_SKIP_SKILL_SYNC: '1'
-        run: |
-          npm ci
-      - name: Create node_modules TarGz
-        run: tar -czf node_modules.tar.gz node_modules
-      - name: Upload TarGz Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: node_modules-tar # Artifact name
-          path: node_modules.tar.gz # Path to the created `.tar.gz`
+        run: npm ci
+      - name: Test app
+        run: npx ng test ng-baseapp --no-watch --no-progress --browsers=ChromeHeadless
+      - name: Test library
+        run: npm run lib:test-ci
+      - name: Check import hygiene
+        run: npm run check:imports
+      - name: Test ng-add schematic
+        run: npm run lib:test:ng-add
 
   build:
-    needs: dependencies
+    needs: test
     runs-on: ubuntu-latest
-    container:
-      image: node:lts-bullseye
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Download TarGz Artifact
-        uses: actions/download-artifact@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          name: node_modules-tar # The artifact name
-          path: ./ # Where to download the artifact
-      - name: Extract node_modules
-        run: tar -xzf node_modules.tar.gz
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install dependencies
+        env:
+          RLB_SKIP_SKILL_SYNC: '1'
+        run: npm ci
       - name: Build
-        # `npm install` here is not redundant: the node_modules artifact is built by the
-        # `dependencies` job on node:alpine (musl) and consumed here on node:lts-bullseye (glibc),
-        # so the platform-specific optional deps in the tarball are the wrong ones (@esbuild/*,
-        # @rollup/*, @rolldown/*, lmdb, @parcel/watcher — the lockfile carries both variants).
-        # This reify used to happen as a side effect of two `npm link` lines (husky, @nestjs/cli)
-        # that this repo never needed — neither package is a dependency of it. They broke when
-        # @nestjs/cli@12.0.0 (2026-08-27) added `prepare: "husky && node tools/postinstall.cjs"`,
-        # a script that only works inside Nest's own git checkout: npm runs `prepare` for
-        # link-installed packages, and `tools/` is not in the published tarball. 11.0.24 and
-        # earlier declared `prepare: "husky"`, which exits 0 outside a git repo — which is why this
-        # step passed for the 19 months before that release.
-        # --ignore-scripts keeps third-party lifecycle scripts out of the build (this runner's
-        # allowScripts policy already blocks them) and skips the root postinstall skill sync, which
-        # CI does not need — the library bundles skills from projects/rlb/ng-app/skills.
-        run: |
-          npm install --ignore-scripts
-          npm run lib:build
+        run: npm run lib:build
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -118,13 +104,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Download TarGz Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: node_modules-tar
-          path: ./
-      - name: Extract node_modules
-        run: tar -xzf node_modules.tar.gz
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -134,7 +113,7 @@ jobs:
       - name: Set Version and Publish
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
+          node-version-file: .nvmrc
           registry-url: "https://registry.npmjs.org/"
           scope: "@open-rlb"
       - run: |

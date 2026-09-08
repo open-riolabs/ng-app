@@ -4,7 +4,7 @@ import { filter, map, Observable, take } from 'rxjs';
 import { AclStore } from '../../store/acl/acl.store';
 import { AclAction } from '../../store/acl/acl.model';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { AppsService } from '../../services';
+import { AppsService } from '../../services/apps/apps.service';
 
 /**
  * Where a denial lands. The route is registered unconditionally by `getDefaultRoutes` — it used to

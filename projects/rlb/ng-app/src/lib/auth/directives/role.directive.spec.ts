@@ -1,6 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppsService } from '../../services';
+import { AppsService } from '../../services/apps/apps.service';
 import { AclAction, normalizeAclActions } from '../../store/acl/acl.model';
 import { RlbRole } from './role.directive';
 
@@ -18,7 +18,15 @@ class AppsServiceStub {
 @Component({
   selector: 'rlb-role-host',
   imports: [RlbRole],
-  template: `<div class="then" *roles="action(); not: not()">granted</div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
+    <div
+      class="then"
+      *roles="action(); not: not()"
+    >
+      granted
+    </div>
+  `,
 })
 class HostComponent {
   action = signal<AclAction | undefined>(undefined);
@@ -28,8 +36,14 @@ class HostComponent {
 @Component({
   selector: 'rlb-role-else-host',
   imports: [RlbRole],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <div class="then" *roles="action(); else denied">granted</div>
+    <div
+      class="then"
+      *roles="action(); else denied"
+    >
+      granted
+    </div>
     <ng-template #denied><div class="else">denied</div></ng-template>
   `,
 })

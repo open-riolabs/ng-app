@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SupportComponent } from './support.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { RlbAppModule } from '../../rlb-app.module';
-import { AbstractSupportService } from '../../services';
+import { AbstractSupportService } from '../../services/abstraction/abstract-support.service';
 
 describe('SupportComponent', () => {
   let component: SupportComponent;

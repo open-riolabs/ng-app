@@ -1,4 +1,4 @@
-import { HTTP_INTERCEPTORS, HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpErrorResponse, withXhr } from '@angular/common/http';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -43,7 +43,7 @@ describe('TokenOauthRetryInterceptor', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
         RenewalStub,
         { provide: TokenRenewalService, useExisting: RenewalStub },
@@ -63,7 +63,10 @@ describe('TokenOauthRetryInterceptor', () => {
             },
           } as unknown as IConfiguration,
         },
-        { provide: RLB_CFG_AUTH, useValue: { renewal: { publicPaths: options.publicPaths ?? [] } } },
+        {
+          provide: RLB_CFG_AUTH,
+          useValue: { renewal: { publicPaths: options.publicPaths ?? [] } },
+        },
         { provide: HTTP_INTERCEPTORS, useClass: TokenOauthRetryInterceptor, multi: true },
       ],
     });
