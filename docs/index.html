@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@open-rlb/ng-app — Guida</title>
+<meta name="description" content="Guida a @open-rlb/ng-app: shell multi-app per Angular con configurazione, avvio, layout, autenticazione OIDC, ACL e servizi.">
+<style>
+:root {
+  --bg: #fbfbfa;
+  --surface: #ffffff;
+  --surface-2: #f3f3f1;
+  --text: #1d1d1b;
+  --muted: #5d5d58;
+  --border: #e3e3df;
+  --accent: #2f5bd3;
+  --accent-soft: #e9eefc;
+  --warn: #9a5b00;
+  --warn-soft: #fff5e3;
+  --code-bg: #f4f4f2;
+  --radius: 10px;
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413;
+    --surface: #1c1c1a;
+    --surface-2: #232321;
+    --text: #ececea;
+    --muted: #a3a39d;
+    --border: #33332f;
+    --accent: #8aa8ff;
+    --accent-soft: #1f2842;
+    --warn: #f0b75a;
+    --warn-soft: #2e2413;
+    --code-bg: #20201e;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.65 var(--sans);
+}
+a { color: var(--accent); }
+.layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 3rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+nav.toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}
+nav.toc .brand { font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0.15rem 0; }
+nav.toc a {
+  display: block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+}
+nav.toc a:hover { background: var(--surface-2); color: var(--text); }
+main { padding: 2rem 0 5rem; min-width: 0; }
+header.hero { padding: 1.5rem 0 1rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+header.hero h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+header.hero p { color: var(--muted); font-size: 1.05rem; margin: 0; max-width: 60ch; }
+.pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+.pill {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface);
+}
+section { margin-bottom: 3.5rem; }
+h2 {
+  font-size: 1.45rem;
+  margin: 0 0 1rem;
+  padding-top: 0.5rem;
+  letter-spacing: -0.01em;
+}
+h2 .num { color: var(--muted); font-weight: 500; margin-right: 0.4rem; }
+h3 { font-size: 1.08rem; margin: 2rem 0 0.6rem; }
+p, li { max-width: 75ch; }
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.05em 0.3em;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font: 0.84rem/1.55 var(--mono);
+  margin: 0.8rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.table-wrap { overflow-x: auto; margin: 0.8rem 0 1.2rem; border: 1px solid var(--border); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; background: var(--surface); }
+th, td { text-align: left; vertical-align: top; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border); }
+th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td code { white-space: nowrap; }
+.callout {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+}
+.callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.callout strong:first-child { display: block; margin-bottom: 0.2rem; }
+.callout p { margin: 0.3rem 0; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+.card h4 { margin: 0 0 0.3rem; font-size: 0.95rem; }
+.card p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+.card .path { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+ol.steps { padding-left: 1.3rem; }
+ol.steps li { margin: 0.45rem 0; }
+footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; gap: 0; }
+  nav.toc { position: static; max-height: none; padding: 1rem 0 0; border-bottom: 1px solid var(--border); }
+  nav.toc ol { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+  header.hero h1 { font-size: 1.7rem; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" aria-label="Indice">
+    <div class="brand">@open-rlb/ng-app</div>
+    <ol>
+      <li><a href="#panoramica">Panoramica</a></li>
+      <li><a href="#avvio-rapido">Avvio rapido</a></li>
+      <li><a href="#macro-parti">Macro-parti</a></li>
+      <li><a href="#configurazione">Configurazione</a></li>
+      <li><a href="#app">App e micro-frontend</a></li>
+      <li><a href="#core">Avvio del core</a></li>
+      <li><a href="#shell">Shell: navbar e sidebar</a></li>
+      <li><a href="#auth">Autenticazione</a></li>
+      <li><a href="#acl">Autorizzazione (ACL)</a></li>
+      <li><a href="#store">Store NgRx</a></li>
+      <li><a href="#pagine">Pagine standard</a></li>
+      <li><a href="#servizi">Servizi aggiuntivi</a></li>
+      <li><a href="#limiti">Limiti noti</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <h1>@open-rlb/ng-app</h1>
+      <p>Shell applicativa multi-app per Angular: un core sottile ospita una o più "app" (micro-frontend)
+        e la libreria si occupa di store, router, autenticazione OIDC, ACL, i18n, HTTP, service worker,
+        layout e pagine standard.</p>
+      <div class="pills">
+        <span class="pill">Angular 22</span>
+        <span class="pill">zoneless + signals</span>
+        <span class="pill">NgRx</span>
+        <span class="pill">angular-auth-oidc-client</span>
+        <span class="pill">@open-rlb/ng-bootstrap</span>
+        <span class="pill">ngx-translate</span>
+      </div>
+    </header>
+
+    <section id="panoramica">
+      <h2><span class="num">1</span>Panoramica</h2>
+      <p>Un progetto basato su <code>@open-rlb/ng-app</code> ha due livelli:</p>
+      <ul>
+        <li><strong>Il core</strong>: l'applicazione Angular che si avvia. Contiene solo la configurazione
+          (<code>environment.ts</code>), i provider e il componente radice con <code>&lt;rlb-app-container&gt;</code>.</li>
+        <li><strong>Le app</strong>: unità funzionali descritte da un <code>AppDescriber</code> (identità, rotte,
+          provider) e registrate nel core con <code>provideApp()</code>. Ogni app può essere limitata a certi
+          domini e a certe azioni ACL, e può esistere in più istanze (per esempio una per azienda o risorsa).</li>
+      </ul>
+      <p>Tutto il resto (store, router, auth, ACL, traduzioni, gestione errori, layout) è fornito da una sola
+        chiamata: <code>provideRlbConfig(environment)</code>.</p>
+    </section>
+
+    <section id="avvio-rapido">
+      <h2><span class="num">2</span>Avvio rapido</h2>
+      <p>Si parte da un workspace Angular senza applicazioni; <code>ng add</code> crea l'app <code>core</code>.</p>
+      <pre><code>ng new my-workspace --no-create-application
+cd my-workspace
+ng add @open-rlb/ng-app
+npm start</code></pre>
+
+      <h3>Cosa fa <code>ng add</code></h3>
+      <ul>
+        <li>Installa le dipendenze della libreria, più <code>@angular/build</code> e <code>@angular/cdk</code> alla
+          versione Angular del workspace.</li>
+        <li>Registra il progetto <code>core</code> in <code>angular.json</code> sotto <code>newProjectRoot</code>,
+          con le configurazioni <code>production</code>, <code>staging</code> e <code>development</code>, gli stili
+          Bootstrap/ng-bootstrap, gli asset serviti da <code>src/assets</code> e un budget iniziale di 4 MB.</li>
+        <li>Crea solo i file necessari all'avvio.</li>
+        <li>Imposta gli script di <code>package.json</code> e un <code>postinstall</code> che sincronizza le skill Claude.</li>
+      </ul>
+      <pre><code>projects/core/
+  tsconfig.app.json
+  src/index.html
+  src/main.ts
+  src/assets/favicon.ico
+  src/assets/i18n/en.json, it.json
+  src/environments/environment.ts
+  src/app/app.config.ts          provideRlbConfig + RLB_INIT_PROVIDER
+  src/app/app-init.provider.ts   assegna un id a ogni app registrata
+  src/app/app.component.ts       &lt;rlb-app-container&gt; + configurazione del chrome
+  src/app/app.routes.ts          rotte del core (vuote)</code></pre>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Script</th><th>Comando</th></tr></thead>
+        <tbody>
+          <tr><td><code>start</code></td><td><code>ng serve core</code></td></tr>
+          <tr><td><code>build</code></td><td><code>ng build core --configuration production</code></td></tr>
+          <tr><td><code>build:dev</code></td><td><code>ng build core --configuration development</code></td></tr>
+          <tr><td><code>build:staging</code></td><td><code>ng build core --configuration staging</code></td></tr>
+          <tr><td><code>watch</code></td><td><code>ng build core --watch --configuration development</code></td></tr>
+          <tr><td><code>postinstall</code></td><td><code>ng g @open-rlb/ng-app:sync-skills || echo Skipped Claude skill sync</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Opzioni: <code>--name &lt;nome&gt;</code> (default <code>core</code>), <code>--skip-skills</code>,
+        <code>--skip-skills-auto-sync</code>. Se il progetto esiste già, lo schematic si ferma con un errore.</p>
+
+      <h3>Il core minimo</h3>
+      <pre><code>// app.config.ts
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection(),
+    provideRlbConfig(environment),
+    provideRouter(routes),
+    { provide: RLB_INIT_PROVIDER, useClass: AppInitProvider },
+    // provideApp(myAppDescriber), una riga per ogni app
+  ],
+};</code></pre>
+      <pre><code>&lt;!-- template del componente radice --&gt;
+&lt;rlb-app-container modal-container-id="modal-c-1" toast-container-ids="toast-c-1" /&gt;</code></pre>
+      <div class="callout">
+        <strong>Dopo <code>ng add</code></strong>
+        <p>Sostituire in <code>environment.ts</code> i segnaposto OIDC (<code>authority</code>, <code>clientId</code>,
+          <code>redirectUrl</code>, <code>postLogoutRedirectUri</code>), gli <code>allowedUrls</code> e i
+          <code>baseUrl</code> degli endpoint.</p>
+      </div>
+    </section>
+
+    <section id="macro-parti">
+      <h2><span class="num">3</span>Macro-parti</h2>
+      <div class="grid">
+        <div class="card"><h4>Bootstrap e config</h4><div class="path">public-api.ts, configuration.ts</div><p><code>provideRlbConfig</code>, <code>provideApp</code>, token <code>RLB_CFG_*</code>.</p></div>
+        <div class="card"><h4>Orchestrazione app</h4><div class="path">services/apps/</div><p><code>AppsService</code>, <code>AppInfo</code>, <code>AppDescriber</code>, <code>provideForDomains</code>, <code>RLB_INIT_PROVIDER</code>.</p></div>
+        <div class="card"><h4>Store</h4><div class="path">store/</div><p>NgRx: <code>auth</code>, <code>app</code>, <code>navbar</code>, <code>sidebar</code>; signal store <code>AclStore</code>.</p></div>
+        <div class="card"><h4>Auth</h4><div class="path">auth/</div><p>OIDC, interceptor, watchdog del token, guard, direttiva <code>*roles</code>, API account Keycloak.</p></div>
+        <div class="card"><h4>Shell e layout</h4><div class="path">templates/</div><p><code>rlb-app-container</code>, navbar, sidebar, menu mobile, template base/content/cms.</p></div>
+        <div class="card"><h4>Pagine standard</h4><div class="path">pages/</div><p>Settings, hub delle app, profilo, privacy, termini, cookie, supporto, 404, forbidden.</p></div>
+        <div class="card"><h4>Servizi accessori</h4><div class="path">services/*</div><p>Errori, i18n, cache, CMS Strapi, storage, cookie, PWA, utility.</p></div>
+        <div class="card"><h4>Pipe, modali, toast</h4><div class="path">pipes/, modals/, toasts/</div><p><code>cms</code>, <code>truncate</code>, <code>autolink</code>, modale errori, modale app, toast.</p></div>
+        <div class="card"><h4>Schematics</h4><div class="path">schematics/</div><p><code>ng-add</code> (crea il core) e <code>sync-skills</code>.</p></div>
+      </div>
+    </section>
+
+    <section id="configurazione">
+      <h2><span class="num">4</span>Configurazione</h2>
+      <p>Tutta la configurazione sta in un unico oggetto <code>ProjectConfiguration&lt;T&gt;</code>
+        (<code>IConfiguration &amp; { production } &amp; T</code>): <code>T</code> permette di aggiungere campi
+        propri del progetto. Ogni sezione si può iniettare con il suo token.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Sezione</th><th>Campi principali</th><th>Token</th></tr></thead>
+        <tbody>
+          <tr><td><code>environment</code></td><td><code>baseUrl</code>, <code>logLevel</code>, <code>pwaUpdateEnabled</code>, <code>errorDialogName</code>, <code>errorDialogSize</code>, <code>errorToastName</code>, <code>errorToastContainer</code>, <code>httpErrors</code></td><td><code>RLB_CFG_ENV</code></td></tr>
+          <tr><td><code>auth</code></td><td><code>protocol</code>, <code>storage</code>, <code>interceptor</code>, <code>allowedUrls</code>, <code>enableCompanyInterceptor</code>, <code>providers[]</code>, <code>renewal</code></td><td><code>RLB_CFG_AUTH</code></td></tr>
+          <tr><td><code>i18n</code></td><td><code>availableLangs</code>, <code>defaultLanguage</code></td><td><code>RLB_CFG_I18N</code></td></tr>
+          <tr><td><code>pages</code></td><td><code>{ [chiave]: { path, action? } }</code></td><td><code>RLB_CFG_PAGES</code></td></tr>
+          <tr><td><code>endpoints</code></td><td><code>{ [nome]: { baseUrl, healthPath, auth?, wss? } }</code></td><td>via <code>RLB_CFG</code></td></tr>
+          <tr><td><code>acl</code></td><td><code>businessIdKey</code>, <code>resourceIdKey</code>, <code>interceptorMapping</code></td><td><code>RLB_CFG_ACL</code></td></tr>
+          <tr><td><code>cms</code></td><td><code>endpoint</code>, <code>chacheDuration</code>, <code>useAppLanguage</code>, <code>markdown</code></td><td><code>RLB_CFG_CMS</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Messaggi di errore HTTP</h3>
+      <p><code>ErrorManagementService</code> cerca il messaggio nelle traduzioni in quest'ordine:
+        <code>errors.http.&lt;status&gt;</code> → <code>errors.http.default</code> → testo del backend
+        (<code>"&lt;status&gt;: &lt;messaggio&gt;"</code>). Ogni gruppo ha <code>title</code>, <code>message</code> e un
+        <code>messageRetry</code> opzionale che può usare <code>{{minutes}}</code>, <code>{{seconds}}</code> e <code>{{status}}</code>.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>environment.httpErrors</code></th><th>Default</th><th>Significato</th></tr></thead>
+        <tbody>
+          <tr><td><code>keyPrefix</code></td><td><code>errors.http</code></td><td>Namespace delle traduzioni.</td></tr>
+          <tr><td><code>defaultRetryMinutes</code></td><td>—</td><td>Attesa da mostrare se la risposta non ha un <code>Retry-After</code> leggibile. Un gateway su un'altra origine deve esporlo in <code>Access-Control-Expose-Headers</code>.</td></tr>
+          <tr><td><code>dedupeMs</code></td><td><code>1000</code></td><td>Lo stesso messaggio viene mostrato una volta sola in questa finestra; <code>0</code> disattiva.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="app">
+      <h2><span class="num">5</span>App e micro-frontend</h2>
+      <p>Ogni app si descrive con un <code>AppDescriber</code> e si registra con <code>provideApp()</code>:</p>
+      <pre><code>export const chatDescriber: AppDescriber = {
+  info: {
+    type: 'chat',
+    enabled: true,
+    actions: ['chat-read', 'chat-admin'],
+    core:     { title: 'Chat', description: '…', url: 'chat', icon: 'bi bi-chat', auth: true },
+    settings: { title: 'Chat settings', description: '…', url: 'settings/chat', icon: 'bi bi-gear', auth: true },
+  },
+  routes,
+  providers: [],
+};</code></pre>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Campo di <code>AppInfo</code></th><th>Effetto</th></tr></thead>
+        <tbody>
+          <tr><td><code>type</code></td><td>Chiave dell'app; <code>finalizeApp</code> la usa per creare le istanze.</td></tr>
+          <tr><td><code>id</code></td><td>Se presente l'app è già "finalizzata". Senza <code>id</code> la shell non può selezionarla.</td></tr>
+          <tr><td><code>enabled</code></td><td>Se l'app partecipa.</td></tr>
+          <tr><td><code>core</code> / <code>settings</code></td><td><code>{ title, description, url, icon, auth }</code>: landing dell'app e sua pagina impostazioni. <code>auth: false</code> rende le impostazioni visibili anche agli anonimi.</td></tr>
+          <tr><td><code>viewMode</code></td><td><code>'app'</code> o <code>'settings'</code>.</td></tr>
+          <tr><td><code>routes</code></td><td>Riempito da <code>provideApp</code> con i path appiattiti delle rotte; serve a riconoscere l'app dall'URL.</td></tr>
+          <tr><td><code>domains</code></td><td>Hostname su cui l'app è visibile e selezionabile.</td></tr>
+          <tr><td><code>actions</code></td><td>Azioni ACL: l'app è nascosta a chi non ne ha almeno una sulla sua risorsa.</td></tr>
+          <tr><td><code>autoRedirectOnRootEnabled</code></td><td>Con più app, la root reindirizza a questa.</td></tr>
+          <tr><td><code>data</code></td><td>Dati liberi; contiene i valori di <code>businessIdKey</code> e <code>resourceIdKey</code> usati dall'ACL.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Istanze multiple</h3>
+      <p>Un <code>type</code> può produrre più istanze: ogni <code>AppContextActions.finalizeApp({ appType, appId, data })</code>
+        con lo stesso tipo e un <code>appId</code> diverso clona l'app. È il meccanismo multi-tenant (un'istanza per
+        azienda o risorsa ACL).</p>
+
+      <div class="callout warn">
+        <strong>I provider del describer valgono su tutti i domini</strong>
+        <p><code>info.domains</code> decide cosa la shell mostra, non cosa registra: <code>providers</code> e
+          <code>routes</code> finiscono nell'injector radice ovunque. Un interceptor o un initializer che deve
+          valere solo per alcuni domini va avvolto così:</p>
+        <pre><code>providers: [
+  ...provideForDomains(PARTNER_DOMAINS, [
+    { provide: HTTP_INTERCEPTORS, useClass: PartnerInterceptor, multi: true },
+  ]),
+]</code></pre>
+      </div>
+
+      <h3>Leggere le app da un componente</h3>
+      <pre><code>private readonly apps = inject(AppsService);
+
+visibleApps = this.apps.apps;          // AppInfo[] filtrate per dominio e ACL
+current     = this.apps.currentApp;    // AppInfo | null
+currentId   = this.apps.currentAppId;  // string | undefined
+
+this.apps.checkPermissionInCurrentApp('chat-admin');
+this.apps.selectApp(app, 'app', '/chat');</code></pre>
+    </section>
+
+    <section id="core">
+      <h2><span class="num">6</span>Avvio del core</h2>
+      <p><code>provideRlbConfig</code> registra store, effects, rotte di default, OIDC, i18n, HttpClient, service
+        worker, registri di modali e toast, e tre app initializer. L'ordine di avvio è questo:</p>
+      <ol class="steps">
+        <li><strong>i18n</strong>: attende il caricamento delle traduzioni (<code>LanguageService.ready$</code>).</li>
+        <li><strong><code>AppsService</code></strong> viene costruito subito:
+          <ul>
+            <li>sceglie il provider OIDC: quello già nello store, altrimenti l'unico configurato, altrimenti quello
+              con l'hostname corrente in <code>domains</code>. Nessun match o due match: errore in dev, log di errore in produzione;</li>
+            <li>si mette in ascolto di <code>NavigationEnd</code>.</li>
+          </ul>
+        </li>
+        <li><strong><code>AuthenticationService.checkAuthMultiple()</code></strong>:
+          <ul>
+            <li>verifica la sessione OIDC; con <code>oauth-code-ep-retry</code> prova prima un refresh dal refresh token salvato;</li>
+            <li>utente autenticato: imposta il provider, carica l'ACL da <code>endpoints[acl.endpointKey].baseUrl/acl.path</code>,
+              chiama <code>RLB_INIT_PROVIDER.finalizeApps(resources, store, acl)</code> e ripristina l'URL salvato prima del login;</li>
+            <li>ospite: <code>finalizeApps([])</code>;</li>
+            <li>emette <code>authReady$</code> e, se autenticato, <code>authenticated$</code> (che avvia il watchdog del token).</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Nel frattempo <code>AppContextEffects</code> aggiunge allo store ogni app registrata con <code>provideApp</code>.</p>
+
+      <h3>Selezione dell'app corrente</h3>
+      <p>A ogni navigazione <code>AppsService</code> aspetta che tutte le app abbiano un <code>id</code>, poi:</p>
+      <ol class="steps">
+        <li><strong>Root con una sola app</strong>: redirect a <code>core.url</code>.</li>
+        <li><strong>Root con più app</strong>: hub delle app (<code>currentApp = null</code>), a meno che un'app abbia <code>autoRedirectOnRootEnabled</code>.</li>
+        <li><strong>Deep link</strong>: seleziona l'app i cui <code>routes</code> o <code>core.url</code> corrispondono al path.</li>
+      </ol>
+      <p>L'app scelta viene salvata in <code>localStorage</code> (<code>c-app-id</code>) e il container naviga al suo URL.</p>
+      <div class="callout warn">
+        <strong>Senza <code>id</code> la selezione non avviene mai</strong>
+        <p>Se un'app non ha <code>id</code> (né in <code>info.id</code> né assegnato da <code>finalizeApp</code>),
+          <code>currentApp</code> resta vuota. Il <code>app-init.provider.ts</code> generato da <code>ng add</code>
+          assegna a ogni app il suo <code>type</code> come id; per creare un'istanza per risorsa ACL va adattato.</p>
+      </div>
+    </section>
+
+    <section id="shell">
+      <h2><span class="num">7</span>Shell: navbar e sidebar</h2>
+      <p>Il template della shell si sceglie per rotta di primo livello con <code>data: { template }</code>:
+        <code>'app'</code> (default) mostra navbar e sidebar, <code>'basic'</code> solo il contenuto.</p>
+      <p>Navbar e sidebar si configurano con azioni NgRx, di solito nel componente radice:</p>
+      <pre><code>this.store.dispatch(NavbarActions.setActionsLayout({ layout: 'dropdown' }));
+this.store.dispatch(NavbarActions.setSettingsVisible({ visible: true }));
+this.store.dispatch(SidebarActions.setItems({ items: [
+  { title: 'Menu' },
+  { label: 'Home', url: '/', icon: 'bi bi-house' },
+  { label: 'Admin', url: '/admin', icon: 'bi bi-shield', action: 'sysadmin' },
+]}));</code></pre>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>NavbarActions</code></th><th>Effetto</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>setVisible</code></td><td>Mostra la navbar.</td><td><code>true</code></td></tr>
+          <tr><td><code>setHeader</code></td><td>Brand: <code>{ type: 'text', text }</code> o <code>{ type: 'image', src, alt?, height? }</code>.</td><td><code>null</code></td></tr>
+          <tr><td><code>setSearchVisible</code> / <code>setSearchText</code></td><td>Campo di ricerca; il testo va nello store.</td><td><code>false</code></td></tr>
+          <tr><td><code>setLoginVisible</code></td><td>Pulsante di login / profilo.</td><td><code>false</code></td></tr>
+          <tr><td><code>setSettingsVisible</code></td><td>Impostazioni e account.</td><td><code>false</code></td></tr>
+          <tr><td><code>setAppsVisible</code></td><td>Launcher delle app (con più di un'app).</td><td><code>false</code></td></tr>
+          <tr><td><code>setActionsLayout</code></td><td><code>'default'</code> (icone) o <code>'dropdown'</code> (card).</td><td><code>'dropdown'</code></td></tr>
+          <tr><td><code>setSeparatorVisible</code></td><td>Separatore prima delle azioni.</td><td><code>true</code></td></tr>
+          <tr><td><code>setLeftItems</code> / <code>setRightItems</code> / <code>setMobileItems</code></td><td>Attivano i componenti custom per nome.</td><td><code>[]</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>SidebarActions</code></th><th>Effetto</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>setVisible</code></td><td>Mostra la sidebar.</td><td><code>true</code></td></tr>
+          <tr><td><code>setItems</code></td><td>Voci fino a tre livelli: <code>{ title }</code> come intestazione, oppure <code>{ label, url | externalUrl, icon, badgeCounter, action, items }</code>.</td><td><code>[]</code></td></tr>
+          <tr><td><code>setFooterComponent</code></td><td>Componente nel footer, per nome.</td><td><code>null</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>La proprietà <code>action</code> delle voci passa per la direttiva <code>*roles</code>: le voci sono filtrate per ACL.</p>
+
+      <h3>Componenti custom</h3>
+      <pre><code>// nei providers del describer
+{ provide: RLB_APP_NAVCOMP, useValue: {
+    left:   [{ name: 'my-item', component: MyItemComponent }],
+    right:  [{ name: 'my-item', component: MyItemComponent }],
+    mobile: [{ name: 'my-menu', component: MyMenuComponent }],   // opzionale
+} },
+{ provide: RLB_APP_SIDEBARCOMP, useValue: {
+    footer: [{ name: 'my-footer', component: MyFooterComponent }],
+} },
+
+// poi si attivano
+this.store.dispatch(NavbarActions.setRightItems({ items: ['my-item'] }));
+this.store.dispatch(SidebarActions.setFooterComponent({ name: 'my-footer' }));</code></pre>
+      <p>Sotto il breakpoint <code>lg</code> i componenti <code>left</code> e <code>right</code> non vengono mostrati: al loro
+        posto c'è un menu laterale con i <code>mobileItems</code> (che usano <code>right</code> se <code>mobile</code> manca),
+        la griglia delle app e le impostazioni. Un componente può sapere dove si trova con
+        <code>inject(RLB_NAV_SURFACE, { optional: true })</code>, che vale <code>'navbar'</code> o <code>'mobile-menu'</code>.</p>
+
+      <h3>Tema, lingua, template di pagina</h3>
+      <ul>
+        <li><code>AppContextActions.setTheme('light' | 'dark')</code> imposta <code>data-bs-theme</code> e lo salva.</li>
+        <li><code>AppContextActions.setLanguage</code> e <code>setSupportedLanguages</code> agiscono su ngx-translate.
+          Entrambi si cambiano anche da <code>/settings/general</code>.</li>
+        <li>Template per le pagine: <code>&lt;rlb-base-template title subtitle breadcrumb&gt;</code>,
+          <code>&lt;rlb-content-template&gt;</code>, <code>&lt;rlb-cms-template contentId&gt;</code>.</li>
+        <li><code>AppBreadcrumbService.breadcrumbs()</code> costruisce il breadcrumb da <code>data.breadcrumb</code> delle rotte.</li>
+      </ul>
+    </section>
+
+    <section id="auth">
+      <h2><span class="num">8</span>Autenticazione</h2>
+      <p>L'autenticazione usa OIDC con authorization code flow e refresh token, tramite <code>angular-auth-oidc-client</code>.</p>
+      <pre><code>auth: {
+  protocol: 'oauth',
+  storage: 'localStorage',              // 'cookies' | 'localStorage' | 'sessionStorage'
+  interceptor: 'oauth-code-ep-retry',
+  renewal: { publicPaths: ['/register'] },
+  enableCompanyInterceptor: true,
+  allowedUrls: ['https://api.example.com'],
+  providers: [{
+    configId: 'default',
+    domains: ['app.example.com'],       // un provider per portale, scelto per hostname
+    authority: 'https://login.example.com/realms/my-realm',
+    clientId: 'my-client',
+    redirectUrl: 'https://app.example.com',
+    postLogoutRedirectUri: 'https://app.example.com',
+    scope: 'openid profile offline_access',
+    acl: { endpointKey: 'api', path: 'acl/resources' },
+  }],
+}</code></pre>
+
+      <h3>Interceptor</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>interceptor</code></th><th>Comportamento</th></tr></thead>
+        <tbody>
+          <tr><td><code>'oauth-code-all'</code></td><td>Interceptor della libreria OIDC, sugli <code>allowedUrls</code>.</td></tr>
+          <tr><td><code>'oauth-code-ep'</code></td><td>Aggiunge il bearer agli <code>endpoints</code> con <code>auth: true</code> (non <code>wss</code>). Senza token la richiesta parte comunque, anonima.</td></tr>
+          <tr><td><code>'oauth-code-ep-retry'</code></td><td>Come sopra, ma non invia mai una richiesta autenticata senza token (salvo <code>publicPaths</code>), ripete una volta dopo un 401 e rinnova il token con un watchdog proprio. Spegne il <code>silentRenew</code> della libreria OIDC.</td></tr>
+          <tr><td><code>'none'</code></td><td>Nessun interceptor.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Con <code>enableCompanyInterceptor</code> le richieste verso gli <code>allowedUrls</code> ricevono come query
+        param i valori di <code>currentApp.data</code> indicati in <code>acl.interceptorMapping</code>.</p>
+
+      <h3>Rinnovo del token (<code>oauth-code-ep-retry</code>)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th><code>renewal</code></th><th>Default</th><th>Significato</th></tr></thead>
+        <tbody>
+          <tr><td><code>renewLeadSeconds</code></td><td><code>90</code></td><td>Anticipo del rinnovo rispetto alla scadenza.</td></tr>
+          <tr><td><code>retryDelaysSeconds</code></td><td><code>[5, 20, 60]</code></td><td>Attese tra i primi tentativi falliti.</td></tr>
+          <tr><td><code>transientRetrySeconds</code></td><td><code>120</code></td><td>Cadenza dei tentativi successivi.</td></tr>
+          <tr><td><code>maxOutageSeconds</code></td><td><code>1800</code></td><td>Dopo questo tempo il watchdog si ferma; il prossimo 401 riparte da capo.</td></tr>
+          <tr><td><code>autoStart</code></td><td><code>true</code></td><td>Avvia il watchdog appena l'utente è autenticato.</td></tr>
+          <tr><td><code>restoreOnBoot</code></td><td><code>true</code></td><td>All'avvio, se l'access token è scaduto ma c'è un refresh token, rinnova invece di considerare l'utente ospite.</td></tr>
+          <tr><td><code>publicPaths</code></td><td><code>[]</code></td><td>Parti di URL che gli anonimi possono chiamare su endpoint autenticati.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout">
+        <strong>Restare connessi dopo la chiusura del browser</strong>
+        <p>Servono tre cose: <code>offline_access</code> nello <code>scope</code>, <code>storage: 'localStorage'</code> e
+          <code>restoreOnBoot</code> attivo (default con <code>oauth-code-ep-retry</code>). Durante un'interruzione del
+          server di login <code>oauthGuard</code> non rimanda al login finché il watchdog sta ancora provando.</p>
+      </div>
+
+      <h3>Login, logout e dati utente</h3>
+      <ul>
+        <li>Login e logout con <code>AuthActions.login()</code> / <code>AuthActions.logout()</code> oppure con <code>AuthFeatureService</code>.
+          Il login salva l'URL corrente e ci torna dopo il rientro.</li>
+        <li><code>RLB_AUTH_URL_HANDLER</code> permette di aprire la pagina di login in modo diverso; in Electron succede in automatico.</li>
+        <li><code>AuthenticationService</code> espone <code>isAuthenticated$</code>, <code>userInfo$</code>, <code>accessToken$</code>,
+          <code>idToken$</code>, <code>refreshToken$</code>, <code>roles$</code>, <code>authReady$</code>, <code>authenticated$</code>.</li>
+        <li>Esiste anche un flusso con password grant: <code>OauthPasswordService</code> e <code>oauthPasswordGuard</code>.</li>
+      </ul>
+    </section>
+
+    <section id="acl">
+      <h2><span class="num">9</span>Autorizzazione (ACL)</h2>
+      <p>Dopo il login la libreria scarica le risorse dell'utente:</p>
+      <pre><code>UserResource[] = [
+  { companyId: 'acme', resources: [
+      { resourceId: 'chat-1', actions: ['chat-read'], friendlyName: 'Chat Acme' },
+  ] },
+]</code></pre>
+      <p>Un'app è collegata a una risorsa tramite <code>data[acl.businessIdKey]</code> e <code>data[acl.resourceIdKey]</code>.
+        Le istanze si creano in <code>RLB_INIT_PROVIDER</code>:</p>
+      <pre><code>@Injectable()
+export class AppInitProvider implements RlbInitProvider {
+  async finalizeApps(resources: UserResource[], store: Store&lt;BaseState&gt;, acl: AclConfiguration | null) {
+    for (const company of resources) {
+      for (const res of company.resources) {
+        store.dispatch(AppContextActions.finalizeApp({
+          appType: 'chat',
+          appId: `chat-${res.resourceId}`,
+          data: { title: res.friendlyName, [acl!.businessIdKey]: company.companyId, [acl!.resourceIdKey]: res.resourceId },
+        }));
+      }
+    }
+  }
+}</code></pre>
+
+      <h3>Dove si applica</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Cosa</th><th>Strumento</th><th>Ambito</th></tr></thead>
+        <tbody>
+          <tr><td>Un'app intera</td><td><code>AppInfo.actions</code></td><td>la risorsa dell'app</td></tr>
+          <tr><td>Una rotta autenticata</td><td><code>canActivate: [oauthGuard]</code></td><td>sessione</td></tr>
+          <tr><td>Una rotta con permesso</td><td><code>canActivate: [permissionGuard]</code>, <code>data: { action }</code></td><td>l'app che possiede la rotta</td></tr>
+          <tr><td>Una pagina <code>pages.*</code></td><td><code>pages.x.action</code> + <code>pagePermissionGuard(action)</code></td><td>qualsiasi risorsa</td></tr>
+          <tr><td>Un elemento della UI</td><td><code>*roles</code></td><td>l'app corrente</td></tr>
+        </tbody>
+      </table></div>
+      <p><code>action</code> può essere una stringa o un array: basta averne una. Le guard aspettano che l'ACL sia
+        caricata prima di decidere; un rifiuto porta sempre a <code>/forbidden</code>.</p>
+      <pre><code>&lt;button *roles="'sysadmin'"&gt;Solo admin&lt;/button&gt;
+&lt;button *roles="['manager', 'director']"&gt;Approva&lt;/button&gt;
+&lt;span *roles="'editor'; not: true"&gt;Sola lettura&lt;/span&gt;
+&lt;button *roles="'convert'; else noConvert"&gt;Converti&lt;/button&gt;
+&lt;ng-template #noConvert&gt;Non disponibile&lt;/ng-template&gt;</code></pre>
+      <p>Senza azione (<code>undefined</code>, <code>''</code> o <code>[]</code>) l'elemento è pubblico.</p>
+    </section>
+
+    <section id="store">
+      <h2><span class="num">10</span>Store NgRx</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Slice</th><th>Contenuto</th><th>Azioni</th></tr></thead>
+        <tbody>
+          <tr><td><code>auth</code></td><td>Provider OIDC corrente, stato di caricamento</td><td><code>AuthActions.login</code>, <code>logout</code>, <code>setCurrentProvider</code></td></tr>
+          <tr><td><code>app</code></td><td>App registrate, app corrente, lingua, tema</td><td><code>AppContextActions.setLanguage</code>, <code>setSupportedLanguages</code>, <code>setTheme</code>, <code>setCurrentApp</code>, <code>finalizeApp</code>, <code>removeApp</code></td></tr>
+          <tr><td><code>navbar</code></td><td>Visibilità, header, voci, layout</td><td><code>NavbarActions.*</code></td></tr>
+          <tr><td><code>sidebar</code></td><td>Voci, visibilità, footer</td><td><code>SidebarActions.*</code></td></tr>
+          <tr><td><code>AclStore</code> (signal store)</td><td>Risorse ACL dell'utente</td><td><code>hasPermission</code>, <code>hasPermissionAnywhere</code>, <code>resources()</code>, <code>loaded()</code></td></tr>
+        </tbody>
+      </table></div>
+      <pre><code>private readonly store = inject(Store&lt;BaseState&gt;);
+currentApp = this.store.selectSignal(s =&gt; s[appContextFeatureKey].currentApp);</code></pre>
+      <p>I gruppi <code>*Internal</code> sono usati dagli effects della libreria e non vanno dispacciati dall'app.</p>
+    </section>
+
+    <section id="pagine">
+      <h2><span class="num">11</span>Pagine standard</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Rotta</th><th>Contenuto</th><th>Registrata</th></tr></thead>
+        <tbody>
+          <tr><td><code>/settings</code></td><td>Elenco impostazioni</td><td>sempre, con <code>oauthGuard</code></td></tr>
+          <tr><td><code>/settings/general</code></td><td>Tema e lingua</td><td>sempre, con <code>oauthGuard</code></td></tr>
+          <tr><td><code>/apps</code></td><td>Hub delle app</td><td>sempre, con <code>oauthGuard</code></td></tr>
+          <tr><td><code>/profile</code></td><td>Account Keycloak: profilo, sessioni, credenziali, OTP, password</td><td>sempre, con <code>oauthGuard</code></td></tr>
+          <tr><td><code>/forbidden</code></td><td>Accesso negato</td><td>sempre</td></tr>
+          <tr><td><code>/notFound</code></td><td>Pagina non trovata</td><td>con <code>pages.notFound</code></td></tr>
+          <tr><td><code>/privacy</code>, <code>/terms</code>, <code>/cookies</code>, <code>/content</code></td><td>Contenuti legali e CMS</td><td>con la chiave in <code>pages</code></td></tr>
+          <tr><td><code>/support</code></td><td>Modulo di supporto (serve un <code>AbstractSupportService</code>)</td><td>con <code>pages.support</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Le voci <code>status</code> e <code>logger</code> compaiono nelle impostazioni ma le rotte vanno create dal progetto,
+        con <code>pagePermissionGuard</code> se hanno un'<code>action</code>.</p>
+    </section>
+
+    <section id="servizi">
+      <h2><span class="num">12</span>Servizi aggiuntivi</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Servizio</th><th>Cosa fa</th></tr></thead>
+        <tbody>
+          <tr><td><code>ErrorManagementService</code></td><td><code>showError</code>, <code>showDialog</code>, <code>showToast</code> e l'operatore RxJS <code>manageUI(type, 'dialog' | 'toast' | 'console')</code>.</td></tr>
+          <tr><td><code>LanguageService</code></td><td>Lingua dell'interfaccia e lingua dei contenuti come signal, <code>translate</code>, <code>translateAsync</code>.</td></tr>
+          <tr><td><code>AppLoggerService</code></td><td>Log con livelli e contesto (<code>for('MyClass')</code>); livello da <code>environment.logLevel</code>.</td></tr>
+          <tr><td><code>AppBreadcrumbService</code></td><td>Breadcrumb calcolato dalle rotte.</td></tr>
+          <tr><td><code>AppsService</code></td><td>App visibili, app corrente, selezione, controlli di permesso.</td></tr>
+          <tr><td><code>KeycloakAccountService</code></td><td>API account Keycloak (profilo, dispositivi, credenziali); in caso di errore le letture restituiscono un valore di ripiego.</td></tr>
+          <tr><td><code>KeycloakProfileService</code></td><td>Stesse API con gestione errori in UI, più <code>configureOTP</code> e <code>updatePassword</code>.</td></tr>
+          <tr><td><code>TokenRenewalService</code></td><td>Watchdog del token: <code>start</code>, <code>refresh</code>, <code>isRecoverable</code>.</td></tr>
+          <tr><td><code>StrapiService</code>, <code>CmsPipe</code>, <code>AbstractMdService</code></td><td>Contenuti da Strapi con cache; il markdown si rende implementando <code>AbstractMdService</code>.</td></tr>
+          <tr><td><code>LocalCacheService</code></td><td><code>getData(obs$, key, ttlSec)</code> con cache in <code>localStorage</code>.</td></tr>
+          <tr><td><code>PwaUpdaterService</code></td><td>Propone l'aggiornamento quando c'è una nuova versione (con <code>pwaUpdateEnabled</code>).</td></tr>
+          <tr><td><code>AppStorageService</code>, <code>CookiesService</code></td><td>Accesso a local/session storage e cookie.</td></tr>
+          <tr><td><code>UtilsService</code></td><td><code>groupBy</code>, <code>compareArrayUnsort</code>, <code>toPlainDataObject</code>, <code>floatStr</code>, …</td></tr>
+          <tr><td><code>provideForDomains</code></td><td>Registra provider solo su alcuni hostname.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="limiti">
+      <h2><span class="num">13</span>Limiti noti</h2>
+      <p>Punti emersi dall'analisi del codice, da tenere presenti finché non vengono corretti:</p>
+      <ul>
+        <li><code>LocalCacheService</code> legge la cache con <code>JSON.parse(key)</code> invece del valore: la cache
+          non viene mai usata e con chiavi non JSON <code>getData</code> genera un errore (impatta <code>StrapiService</code>).</li>
+        <li><code>CompanyInterceptor</code> usa come nome del query param il valore di <code>interceptorMapping</code>
+          invece della chiave.</li>
+        <li>Alcuni campi di configurazione non sono letti: <code>appLogo</code>, <code>appTitle</code>, <code>navbarDisabled</code>,
+          <code>ssr</code>, <code>phone</code>, <code>i18n.useLanguageBrowser</code>, <code>storeSelectedLanguage</code>,
+          <code>cookieStoreName</code>, <code>cms.contentLanguages</code>, <code>ProviderConfiguration.roleClaim</code>
+          (<code>roles$</code> legge sempre il claim <code>roles</code>).</li>
+        <li><code>pages.*.path</code> non cambia il percorso: le rotte sono fisse (per esempio <code>/notFound</code>).</li>
+        <li>Al primo avvio il container imposta tema <code>dark</code> e lingua <code>en</code>, ignorando <code>i18n.defaultLanguage</code>.</li>
+        <li>I flag <code>loginVisible</code>, <code>searchVisible</code>, <code>settingsVisible</code> e <code>appsVisible</code>
+          della sidebar sono nello store ma il template non li usa.</li>
+        <li>Il template <code>data.template</code> accetta solo <code>'app'</code> e <code>'basic'</code>, anche se il tipo prevede anche <code>'cms'</code> e <code>'content'</code>.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Generato dall'analisi del codice sorgente di <code>@open-rlb/ng-app</code>.
+      Repository: <a href="https://github.com/open-riolabs/ng-app">github.com/open-riolabs/ng-app</a>.
+    </footer>
+  </main>
+</div>
+</body>
+</html>
