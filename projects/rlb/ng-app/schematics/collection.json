@@ -2,7 +2,7 @@
   "$schema": "../../../../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "ng-add": {
-      "description": "Add @open-rlb/ng-app to an Angular project: install peer dependencies, register Bootstrap styles, and scaffold a runnable application shell (environment, providers, app shell, routes, i18n).",
+      "description": "Add @open-rlb/ng-app to a workspace: install the dependencies, create the core application (angular.json, app shell, environment) and point the package.json scripts at it.",
       "factory": "./ng-add/index#ngAdd",
       "schema": "./ng-add/schema.json"
     },

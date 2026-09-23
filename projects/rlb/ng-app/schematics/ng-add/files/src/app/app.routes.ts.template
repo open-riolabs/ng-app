@@ -1,0 +1,8 @@
+import { Routes } from '@angular/router';
+
+/**
+ * Routes owned by the core. The standard pages (settings, profile, apps, forbidden and those
+ * enabled under `environment.pages`) are registered by `provideRlbConfig`, and every app registered
+ * with `provideApp` brings its own routes.
+ */
+export const routes: Routes = [];

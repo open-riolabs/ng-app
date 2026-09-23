@@ -1,0 +1,36 @@
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import {
+  AclConfiguration,
+  AppContextActions,
+  appContextFeatureKey,
+  BaseState,
+  RlbInitProvider,
+  UserResource,
+} from '@open-rlb/ng-app';
+
+/**
+ * Runs once at startup, after authentication and the ACL load, and gives every registered app the
+ * `id` the shell needs before it can select a current app.
+ *
+ * By default each app registered with `provideApp` becomes a single instance keyed by its `type`.
+ * To create one instance per ACL resource instead, dispatch `finalizeApp` for each entry of
+ * `resources`, putting `acl.businessIdKey` / `acl.resourceIdKey` into `data`.
+ */
+@Injectable()
+export class AppInitProvider implements RlbInitProvider {
+  async finalizeApps(
+    resources: UserResource[],
+    store: Store<BaseState>,
+    acl: AclConfiguration | null,
+  ): Promise<void> {
+    const apps = store.selectSignal(state => state[appContextFeatureKey].apps)();
+
+    for (const app of apps) {
+      if (app.id) continue;
+      store.dispatch(
+        AppContextActions.finalizeApp({ appType: app.type, appId: app.type, data: app.data }),
+      );
+    }
+  }
+}

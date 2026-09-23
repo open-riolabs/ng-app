@@ -163,8 +163,8 @@ A denial goes to `/forbidden`, which the kit **always registers** — it no long
 `pages.forbidden` being configured. Where it was not, the redirect used to fall through to the
 consumer's `**` route, so a permission denial presented as a redirect to some unrelated page with
 nothing logged. Configuring `pages.forbidden` still only decides whether the entry exists in your
-config; add the `pages.forbidden.{title,content,button}` i18n keys (the `ng add` scaffold ships
-them) so the page reads properly.
+config; add the `pages.forbidden.{title,content,button}` i18n keys to `assets/i18n/*.json` so the
+page reads properly.
 
 ## Guarding UI
 

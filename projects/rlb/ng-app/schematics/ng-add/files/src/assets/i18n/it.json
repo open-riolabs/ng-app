@@ -14,7 +14,9 @@
     "noResults": "Nessun risultato",
     "loading": "Caricamento...",
     "yes": "Sì",
-    "no": "No"
+    "no": "No",
+    "saved": "Salvato",
+    "savedSuccessfully": "Le modifiche sono state salvate."
   },
   "errors": {
     "http": {
@@ -41,12 +43,14 @@
   "core": {
     "apps": {
       "button": "Applicazioni",
-      "title": "App di Riolabs"
+      "title": "App"
     },
     "settings": {
       "title": "Impostazioni",
       "generalTitle": "Impostazioni generali",
       "generalDescription": "Gestisci le impostazioni generali delle applicazioni",
+      "generalTheme": "Tema",
+      "generalLanguage": "Lingua",
       "support": "Supporto",
       "privacy": "Privacy",
       "cookies": "Cookie",
@@ -86,6 +90,10 @@
         "deleteTitle": "Elimina credenziale",
         "deleteHeader": "Conferma eliminazione credenziale",
         "deleteMessage": "Sei sicuro di voler eliminare questa credenziale?"
+      },
+      "settings": {
+        "title": "Impostazioni account",
+        "showMore": "Mostra altro"
       }
     },
     "pwa": {

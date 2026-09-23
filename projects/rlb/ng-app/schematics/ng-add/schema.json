@@ -4,17 +4,10 @@
   "title": "@open-rlb/ng-app ng-add schematic",
   "type": "object",
   "properties": {
-    "project": {
+    "name": {
       "type": "string",
-      "description": "The name of the project to add the library to.",
-      "$default": {
-        "$source": "projectName"
-      }
-    },
-    "skipShell": {
-      "type": "boolean",
-      "default": false,
-      "description": "Do not scaffold the application shell (environment, providers, app component, routes, home)."
+      "default": "core",
+      "description": "Name of the core application to create in the workspace."
     },
     "skipSkills": {
       "type": "boolean",

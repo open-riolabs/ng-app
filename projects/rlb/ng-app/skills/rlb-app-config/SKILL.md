@@ -96,8 +96,8 @@ readable message — add the i18n keys instead:
 gateway must list `Retry-After` in `Access-Control-Expose-Headers`** or the browser hides it and
 only `message` is reachable. `{{status}}` and `{{seconds}}` interpolate too.
 
-`ng add` ships `0`, `429`, `500` and `503`. There is deliberately **no** `errors.http.default`
-group — without one, every unmapped status still shows the backend's own text, which is what you
+Add the groups you need (typically `0`, `429`, `500`, `503`) to `assets/i18n/*.json`. Without an
+`errors.http.default` group every unmapped status still shows the backend's own text, which is what you
 want while developing. Add the group when you want a generic message in front of users.
 
 `environment.httpErrors`: `keyPrefix` (default `'errors.http'`), `defaultRetryMinutes`, `dedupeMs`.
