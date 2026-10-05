@@ -23,14 +23,17 @@ import {
 import { Schema } from './schema';
 
 /**
- * Dependencies the library needs at the consumer side. Versions mirror the ranges declared in the
- * library's `peerDependencies`.
+ * Dependencies the library needs at the consumer side. Each version must fall inside the range the
+ * library's `peerDependencies` declare for that package (a caret on one major where the peer range
+ * spans several), and `@open-rlb/date-tz` inside the range `@open-rlb/ng-bootstrap` declares.
+ * `scripts/test-ng-add.cjs` enforces both: these used to drift, and a fresh `ng add` then installed
+ * versions our own peer range rejected.
  */
 const DEPENDENCIES: ReadonlyArray<{ name: string; version: string; type: DependencyType }> = [
-  { name: '@open-rlb/ng-bootstrap', version: '^4.0.0', type: DependencyType.Default },
-  // Pinned exactly, not caret-ranged: 2.1.4 is the version we consider stable. Later 2.1.x
-  // releases have known problems, and `^2.1.4` would resolve straight past it to the newest.
-  { name: '@open-rlb/date-tz', version: '2.1.4', type: DependencyType.Default },
+  { name: '@open-rlb/ng-bootstrap', version: '^5.1.1', type: DependencyType.Default },
+  // @open-rlb/ng-bootstrap 5.1.1 requires date-tz ^3.0.2. 2.1.4 used to be pinned exactly because
+  // later 2.1.x releases had known problems; 3.0.2 is confirmed stable, so a caret is safe again.
+  { name: '@open-rlb/date-tz', version: '^3.0.2', type: DependencyType.Default },
   { name: '@ngrx/store', version: '^22.0.0', type: DependencyType.Default },
   { name: '@ngrx/effects', version: '^22.0.0', type: DependencyType.Default },
   { name: '@ngrx/operators', version: '^22.0.0', type: DependencyType.Default },
@@ -59,11 +62,16 @@ const ANGULAR_DEPENDENCIES: ReadonlyArray<{ name: string; type: DependencyType }
 /** Used when package.json does not name `@angular/core` at all. */
 const FALLBACK_ANGULAR_VERSION = '^22.0.0';
 
-/** Global styles required for the Bootstrap + @open-rlb/ng-bootstrap look & feel. */
+/**
+ * Global styles required for the Bootstrap + @open-rlb/ng-bootstrap look & feel.
+ *
+ * Not `assets/scss/icons.scss`: it only ever declared the Material Design Icons font, which neither
+ * library uses (every icon goes through bootstrap-icons). Since ng-bootstrap 5.1.0 it declares
+ * nothing and prints a deprecation warning on every build.
+ */
 const STYLE_PATHS: ReadonlyArray<string> = [
   'node_modules/bootstrap-icons/font/bootstrap-icons.css',
   'node_modules/@open-rlb/ng-bootstrap/assets/scss/app.scss',
-  'node_modules/@open-rlb/ng-bootstrap/assets/scss/icons.scss',
 ];
 
 /** SCSS `@use`/`@import` resolution root needed by the ng-bootstrap stylesheets. */

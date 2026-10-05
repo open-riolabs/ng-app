@@ -40,8 +40,8 @@ const PACKAGE_NAME = '@open-rlb/ng-app';
  *
  * We delegate to their schematic rather than bundling their skill files into our package. Their
  * version is resolved from the consumer's own `node_modules`, so the guidance always matches the
- * code they actually installed — our peer range (`^4.0.0`) lets them resolve a newer release than
- * the one we built against. Delegation also keeps each library the sole owner of its manifest;
+ * code they actually installed — our caret peer range lets them resolve a newer release than the
+ * one we built against. Delegation also keeps each library the sole owner of its manifest;
  * republishing would make our prune and theirs fight over the same folders.
  *
  * @open-rlb/ng-bootstrap is a peerDependency of this library, so it is normally installed — but
@@ -171,8 +171,8 @@ type Companion =
  *
  * A package that resolves but declares no `sync-skills` is reported as `unsupported` rather than
  * folded into `absent`, and so is one whose manifest or collection cannot be read — from the
- * consumer's side the outcome and the fix are the same. Our `^4.0.0` peer range no longer admits
- * the versions that predate the schematic, so this now signals a broken install rather than an old
+ * consumer's side the outcome and the fix are the same. Our peer range no longer admits the
+ * versions that predate the schematic, so this now signals a broken install rather than an old
  * one, but the branch stays: silence there is indistinguishable from success.
  */
 function resolveCompanion(pkg: string): Companion {
