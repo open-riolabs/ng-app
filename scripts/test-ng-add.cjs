@@ -12,6 +12,7 @@ const {
 } = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const semver = require('semver');
 
 const distSchematics = path.join(__dirname, '..', 'dist', 'rlb', 'ng-app', 'schematics');
 const collection = path.join(distSchematics, 'collection.json');
@@ -180,6 +181,11 @@ async function testNgAdd() {
     build.options.styles.includes('node_modules/@open-rlb/ng-bootstrap/assets/scss/app.scss'),
   );
   check(
+    'ng-bootstrap icons.scss not registered (it declares nothing since ng-bootstrap 5.1.0)',
+    !build.options.styles.some(s => (typeof s === 'string' ? s : s.input).endsWith('/icons.scss')),
+    JSON.stringify(build.options.styles),
+  );
+  check(
     'SCSS include path set',
     build.options.stylePreprocessorOptions.includePaths.includes('node_modules'),
   );
@@ -231,6 +237,34 @@ async function testNgAdd() {
     'library dependencies added',
     Boolean(pkg.dependencies['@ngrx/store'] && pkg.dependencies['angular-auth-oidc-client']),
   );
+
+  // What ng add writes must be installable next to the library. Twice the hard-coded versions fell
+  // behind a peer range that had moved, and a fresh `ng add` installed what the library rejected.
+  const written = { ...pkg.dependencies, ...pkg.devDependencies };
+  const ourPeers = JSON.parse(
+    readFileSync(path.join(__dirname, '..', 'projects', 'rlb', 'ng-app', 'package.json'), 'utf8'),
+  ).peerDependencies;
+  for (const [name, peerRange] of Object.entries(ourPeers)) {
+    if (!written[name]) continue;
+    check(
+      `${name} ${written[name]} lies inside our peer range ${peerRange}`,
+      semver.subset(written[name], peerRange),
+    );
+  }
+  // date-tz is not our peer but ng-bootstrap's, so it answers to the range the installed
+  // ng-bootstrap declares — the version this repository builds and tests against.
+  const companionManifest = path.join(__dirname, '..', 'node_modules', '@open-rlb', 'ng-bootstrap', 'package.json');
+  const dateTzPeer = existsSync(companionManifest)
+    ? JSON.parse(readFileSync(companionManifest, 'utf8')).peerDependencies?.['@open-rlb/date-tz']
+    : undefined;
+  if (dateTzPeer) {
+    check(
+      `@open-rlb/date-tz ${written['@open-rlb/date-tz']} lies inside ng-bootstrap's peer range ${dateTzPeer}`,
+      Boolean(written['@open-rlb/date-tz']) && semver.subset(written['@open-rlb/date-tz'], dateTzPeer),
+    );
+  } else {
+    console.log("  (skipped — the installed @open-rlb/ng-bootstrap declares no date-tz peer)");
+  }
 
   check(
     'manifest written to .claude/skills/.rlb-skills.ng-app.json',
