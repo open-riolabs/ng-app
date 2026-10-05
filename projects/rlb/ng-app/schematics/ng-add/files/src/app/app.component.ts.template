@@ -1,0 +1,77 @@
+import { Component, DOCUMENT, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Title } from '@angular/platform-browser';
+import { NavigationEnd, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import {
+  AppContextActions,
+  appContextFeatureKey,
+  AuthenticationService,
+  BaseState,
+  NavbarActions,
+  RlbAppModule,
+  SidebarActions,
+} from '@open-rlb/ng-app';
+import { combineLatestWith, filter, tap } from 'rxjs';
+import { environment } from '../environments/environment';
+
+@Component({
+  selector: 'app-root',
+  imports: [RlbAppModule],
+  template: `
+    <rlb-app-container
+      modal-container-id="modal-c-1"
+      toast-container-ids="toast-c-1"
+    />
+  `,
+})
+export class AppComponent {
+  private readonly document = inject(DOCUMENT);
+
+  constructor(
+    private readonly store: Store<BaseState>,
+    private readonly titleService: Title,
+    private readonly authService: AuthenticationService,
+    private readonly router: Router,
+  ) {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        tap(() => this.document.querySelector('.rlb-content')?.scrollTo({ top: 0 })),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
+
+    this.store
+      .select(state => state[appContextFeatureKey].currentApp)
+      .pipe(
+        combineLatestWith(this.authService.isAuthenticated$),
+        tap(([app]) => {
+          if (!app) {
+            this.setInitialCoreAppConfig();
+          }
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
+  }
+
+  private setInitialCoreAppConfig() {
+    this.store.dispatch(
+      AppContextActions.setSupportedLanguages({
+        supportedLanguages: environment.i18n?.availableLangs ?? ['en'],
+      }),
+    );
+
+    this.titleService.setTitle(environment.environment?.appTitle ?? '<%= name %>');
+    this.store.dispatch(NavbarActions.setSearchVisible({ visible: false }));
+    this.store.dispatch(NavbarActions.setSeparatorVisible({ visible: false }));
+    this.store.dispatch(NavbarActions.setActionsLayout({ layout: 'dropdown' }));
+    this.store.dispatch(NavbarActions.setLoginVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setSearchVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setLoginVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setAppsVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setSettingsVisible({ visible: false }));
+    this.store.dispatch(SidebarActions.setVisible({ visible: false }));
+  }
+}

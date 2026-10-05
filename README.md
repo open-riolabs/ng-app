@@ -6,26 +6,46 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4202/`. The application will automatically reload if you change any of the source files.
 
-## Using @open-rlb/ng-app in another app (`ng add`)
+## Starting a project on @open-rlb/ng-app (`ng add`)
 
-`@open-rlb/ng-app` ships an `ng add` schematic that bootstraps a consuming app in one command:
+`@open-rlb/ng-app` ships an `ng add` schematic that creates the **core** application — the shell
+every app of the workspace is registered into — in a workspace without applications:
 
 ```bash
+ng new my-workspace --no-create-application
+cd my-workspace
 ng add @open-rlb/ng-app
 ```
 
-It installs the peer dependencies, registers the Bootstrap + ng-bootstrap styles in `angular.json`,
-and scaffolds a runnable application shell: `src/environments/environment.ts`,
-`src/app/app.config.ts` (`provideRlbConfig` + `provideApp` + `RLB_INIT_PROVIDER`),
-`app.component.ts` (the `<rlb-app-container>` shell), `app.describer.ts`, routes, a home page, and
-i18n assets. It also copies the bundled Claude skills into `.claude/skills/`.
+It installs the dependencies, registers the `core` project in `angular.json` (under
+`newProjectRoot`, with `production`, `staging` and `development` configurations and the Bootstrap +
+ng-bootstrap styles), and creates only the minimum needed to start it:
 
-After running it, **edit `src/environments/environment.ts`** to replace the placeholder OIDC
-`authority`/`clientId`/`redirectUrl` and endpoint `baseUrl`s with your real values, then `ng serve`.
+```
+projects/core/
+  tsconfig.app.json
+  src/index.html
+  src/main.ts
+  src/assets/favicon.ico
+  src/assets/i18n/en.json, it.json
+  src/environments/environment.ts
+  src/app/app.config.ts          provideRlbConfig + RLB_INIT_PROVIDER
+  src/app/app-init.provider.ts   gives every registered app its id
+  src/app/app.component.ts       <rlb-app-container> + core chrome setup
+  src/app/app.routes.ts
+```
 
-Options: `--skip-shell` (don't scaffold the shell), `--skip-skills` (don't copy Claude skills),
-`--skip-skills-auto-sync` (copy them once, but don't add the `postinstall` below),
-`--project <name>` (target a specific workspace project).
+It points the `package.json` scripts at the core app (`start`, `build`, `build:dev`,
+`build:staging`, `watch`) and copies the bundled Claude skills into `.claude/skills/`.
+
+After running it, **edit `projects/core/src/environments/environment.ts`** to replace the
+placeholder OIDC `authority`/`clientId`/`redirectUrl` and endpoint `baseUrl`s with your real
+values, then `npm start`. Register each app of the shell in `app.config.ts` with
+`provideApp(describer)`.
+
+Options: `--name <name>` (create the core app under another name, default `core`),
+`--skip-skills` (don't copy Claude skills), `--skip-skills-auto-sync` (copy them once, but don't
+add the `postinstall` below).
 
 ## Claude skills
 
@@ -42,7 +62,7 @@ skill in the workspace, not just ours. Pass `--companions=false` to sync only th
 ```json
 {
   "scripts": {
-    "postinstall": "ng g @open-rlb/ng-app:sync-skills"
+    "postinstall": "ng g @open-rlb/ng-app:sync-skills || echo Skipped Claude skill sync"
   }
 }
 ```

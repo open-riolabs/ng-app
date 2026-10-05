@@ -14,7 +14,9 @@
     "noResults": "No results",
     "loading": "Loading...",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "saved": "Saved",
+    "savedSuccessfully": "Your changes have been saved."
   },
   "errors": {
     "http": {
@@ -41,12 +43,14 @@
   "core": {
     "apps": {
       "button": "Apps",
-      "title": "Riolabs Apps"
+      "title": "Apps"
     },
     "settings": {
       "title": "Settings",
       "generalTitle": "General settings",
       "generalDescription": "Manage general settings of applications",
+      "generalTheme": "Theme",
+      "generalLanguage": "Language",
       "support": "Support",
       "privacy": "Privacy",
       "cookies": "Cookies",
@@ -111,7 +115,6 @@
       "content": "You do not have permission to access this page.",
       "button": "Go to home page"
     },
-
     "support": {
       "title": "Support",
       "legal": "Legal",

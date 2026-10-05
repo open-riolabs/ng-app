@@ -1,0 +1,16 @@
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideRlbConfig, RLB_INIT_PROVIDER } from '@open-rlb/ng-app';
+import { environment } from '../environments/environment';
+import { AppInitProvider } from './app-init.provider';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection(),
+    provideRlbConfig(environment),
+    provideRouter(routes),
+    { provide: RLB_INIT_PROVIDER, useClass: AppInitProvider },
+    // Register each app of the shell here, e.g. `provideApp(myAppDescriber)`.
+  ],
+};

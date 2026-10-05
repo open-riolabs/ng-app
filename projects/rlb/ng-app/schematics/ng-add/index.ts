@@ -16,15 +16,15 @@ import {
 import {
   addDependency,
   DependencyType,
+  ExistingBehavior,
   readWorkspace,
   updateWorkspace,
 } from '@schematics/angular/utility';
 import { Schema } from './schema';
 
 /**
- * Dependencies the library needs at the consumer side. `@angular/{core,common,forms,router}`
- * and `rxjs` are intentionally omitted: every Angular app already provides them. Versions mirror
- * the ranges declared in the library's `peerDependencies`.
+ * Dependencies the library needs at the consumer side. Versions mirror the ranges declared in the
+ * library's `peerDependencies`.
  */
 const DEPENDENCIES: ReadonlyArray<{ name: string; version: string; type: DependencyType }> = [
   { name: '@open-rlb/ng-bootstrap', version: '^4.0.0', type: DependencyType.Default },
@@ -45,6 +45,20 @@ const DEPENDENCIES: ReadonlyArray<{ name: string; version: string; type: Depende
   { name: '@types/bootstrap', version: '^5.2.10', type: DependencyType.Dev },
 ];
 
+/**
+ * Angular packages a workspace created with `--no-create-application` does not ship but the core
+ * app needs: the application builder, and the CDK the library's templates import. Installed at the
+ * workspace's own Angular version and never replaced when already present.
+ */
+const ANGULAR_DEPENDENCIES: ReadonlyArray<{ name: string; type: DependencyType }> = [
+  { name: '@angular/cdk', type: DependencyType.Default },
+  { name: '@angular/platform-browser', type: DependencyType.Default },
+  { name: '@angular/build', type: DependencyType.Dev },
+];
+
+/** Used when package.json does not name `@angular/core` at all. */
+const FALLBACK_ANGULAR_VERSION = '^22.0.0';
+
 /** Global styles required for the Bootstrap + @open-rlb/ng-bootstrap look & feel. */
 const STYLE_PATHS: ReadonlyArray<string> = [
   'node_modules/bootstrap-icons/font/bootstrap-icons.css',
@@ -55,21 +69,23 @@ const STYLE_PATHS: ReadonlyArray<string> = [
 /** SCSS `@use`/`@import` resolution root needed by the ng-bootstrap stylesheets. */
 const STYLE_INCLUDE_PATH = 'node_modules';
 
-/** Source folder for the scaffolded runtime assets (i18n JSON, logo), served at `/assets`. */
-const ASSETS_INPUT = 'src/assets';
-
 /**
- * Initial-bundle budget the scaffolded shell needs.
+ * Production budgets of the core app.
  *
- * `ng new` writes a 1 MB error ceiling, but this library together with ng-bootstrap, Bootstrap,
- * NgRx and the OIDC client starts at ~1.55 MB — so without this a fresh `ng add` produces an app
- * that fails `ng build` before the consumer has written a line of code. Angular budgets measure
- * raw bytes; the same bundle transfers at ~277 kB compressed.
+ * `ng new`'s 1 MB initial ceiling does not fit: this library together with ng-bootstrap, Bootstrap,
+ * NgRx and the OIDC client starts at ~1.55 MB raw (~277 kB compressed), so the default would make
+ * the very first `ng build` fail.
  */
-const INITIAL_BUDGET = { maximumWarning: '2MB', maximumError: '4MB' } as const;
+const BUDGETS = [
+  { type: 'initial', maximumWarning: '2MB', maximumError: '4MB' },
+  { type: 'anyComponentStyle', maximumWarning: '6kB', maximumError: '10kB' },
+];
 
 /** Keeps `.claude/skills` in step with the installed library version on every `npm install`. */
 const SYNC_SKILLS_COMMAND = 'ng g @open-rlb/ng-app:sync-skills';
+
+/** The `postinstall` we write: the sync, failing soft so an install never breaks on it. */
+const SYNC_SKILLS_POSTINSTALL = `${SYNC_SKILLS_COMMAND} || echo Skipped Claude skill sync`;
 
 /**
  * The equivalent command from @open-rlb/ng-bootstrap. Our sync now delegates to it, so a
@@ -77,156 +93,153 @@ const SYNC_SKILLS_COMMAND = 'ng g @open-rlb/ng-app:sync-skills';
  */
 const COMPANION_SYNC_COMMAND = 'ng g @open-rlb/ng-bootstrap:sync-skills';
 
+/**
+ * Creates the `core` application — the shell every app of the workspace is registered into — in a
+ * workspace made with `ng new --no-create-application`.
+ */
 export function ngAdd(options: Schema): Rule {
-  return async (tree: Tree, _context: SchematicContext) => {
-    const project = await resolveProject(tree, options.project);
+  return async (tree: Tree) => {
+    const name = options.name || 'core';
+    const workspace = await readWorkspace(tree);
+
+    if (workspace.projects.has(name)) {
+      throw new SchematicsException(
+        `Project "${name}" already exists in the workspace. Pass --name to create the core app under another name.`,
+      );
+    }
+
+    const newProjectRoot = String(workspace.extensions['newProjectRoot'] ?? 'projects');
+    const projectRoot = [newProjectRoot, name].filter(Boolean).join('/');
+    const angularVersion = readAngularVersion(tree);
 
     return chain([
       // 1. Install dependencies (a single npm install is scheduled automatically).
+      ...ANGULAR_DEPENDENCIES.map(dep =>
+        addDependency(dep.name, angularVersion, { type: dep.type, existing: ExistingBehavior.Skip }),
+      ),
       ...DEPENDENCIES.map(dep => addDependency(dep.name, dep.version, { type: dep.type })),
-      // 2. Register Bootstrap + ng-bootstrap global styles and the SCSS include path in angular.json.
-      addBootstrapStyles(project),
-      // 3. Raise the initial-bundle budget so the scaffolded app builds out of the box.
-      raiseInitialBudget(project),
-      // 4. Scaffold the runnable application shell (providers, environment, app component, routes).
-      options.skipShell ? noop : scaffoldShell(tree, project),
+      // 2. Register the core app in angular.json.
+      addCoreProject(name, projectRoot),
+      // 3. Scaffold its files.
+      scaffoldCore(name, projectRoot),
+      // 4. Point the package.json scripts at it.
+      addScripts(name),
       // 5. Optionally copy the bundled Claude skills into .claude/skills.
       options.skipSkills ? noop : schematic('sync-skills', {}),
       // 6. Optionally keep them in sync on every future `npm install`.
       options.skipSkills || options.skipSkillsAutoSync ? noop : addSkillsPostinstall(),
       // 7. Print next steps.
-      logNextSteps(project, options),
+      logNextSteps(name, projectRoot, options),
     ]);
   };
 }
 
-/** Resolves the target project: the provided name, else the first application, else the first project. */
-async function resolveProject(tree: Tree, name?: string): Promise<string> {
-  const workspace = await readWorkspace(tree);
-
-  if (name) {
-    if (!workspace.projects.has(name)) {
-      throw new SchematicsException(`Project "${name}" was not found in the workspace.`);
-    }
-    return name;
+/** The workspace's `@angular/core` range, so the Angular packages we add match it. */
+function readAngularVersion(tree: Tree): string {
+  const raw = tree.read('/package.json');
+  if (!raw) {
+    return FALLBACK_ANGULAR_VERSION;
   }
-
-  for (const [projectName, project] of workspace.projects) {
-    if (project.extensions['projectType'] === 'application') {
-      return projectName;
-    }
-  }
-
-  const first = workspace.projects.keys().next().value;
-  if (!first) {
-    throw new SchematicsException('No project found in the workspace to add @open-rlb/ng-app to.');
-  }
-  return first;
+  const pkg = JSON.parse(raw.toString('utf-8')) as {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
+  return (
+    pkg.dependencies?.['@angular/core'] ??
+    pkg.devDependencies?.['@angular/core'] ??
+    FALLBACK_ANGULAR_VERSION
+  );
 }
 
-function addBootstrapStyles(project: string): Rule {
+function addCoreProject(name: string, projectRoot: string): Rule {
+  const sourceRoot = `${projectRoot}/src`;
+
   return updateWorkspace(workspace => {
-    const target = workspace.projects.get(project)?.targets.get('build');
-    if (!target) {
-      return;
-    }
-    target.options ??= {};
-
-    const styles = (target.options['styles'] as Array<string | { input: string }>) ?? [];
-    for (const style of STYLE_PATHS) {
-      const present = styles.some(s => (typeof s === 'string' ? s : s.input) === style);
-      if (!present) {
-        styles.unshift(style);
-      }
-    }
-    target.options['styles'] = styles;
-
-    const preprocessor =
-      (target.options['stylePreprocessorOptions'] as { includePaths?: string[] } | undefined) ?? {};
-    const includePaths = preprocessor.includePaths ?? [];
-    if (!includePaths.includes(STYLE_INCLUDE_PATH)) {
-      includePaths.push(STYLE_INCLUDE_PATH);
-    }
-    preprocessor.includePaths = includePaths;
-    target.options['stylePreprocessorOptions'] = preprocessor;
-
-    // Ensure the scaffolded src/assets (i18n JSON, logo) are served at `/assets`. Fresh Angular
-    // apps only ship `public/`, so the library's `./assets/i18n/*.json` loader would 404 without this.
-    type AssetEntry = string | { glob: string; input: string; output?: string };
-    const assets = (target.options['assets'] as AssetEntry[]) ?? [];
-    const servesAssets = assets.some(a => {
-      const input = typeof a === 'string' ? a : a.input;
-      return input === ASSETS_INPUT;
-    });
-    if (!servesAssets) {
-      assets.push({ glob: '**/*', input: ASSETS_INPUT, output: 'assets' });
-    }
-    target.options['assets'] = assets;
-  });
-}
-
-/**
- * Raises the production `initial` bundle budget to fit the shell.
- *
- * Only ever raises. A consumer who already allowed more keeps their setting, and a value we cannot
- * parse (a `%` budget, say) is left alone rather than guessed at — lowering someone's ceiling would
- * be a far worse failure than leaving it high.
- */
-function raiseInitialBudget(project: string): Rule {
-  return updateWorkspace(workspace => {
-    type Budget = { type?: string; maximumWarning?: string; maximumError?: string };
-
-    const target = workspace.projects.get(project)?.targets.get('build');
-    const production = target?.configurations?.['production'] as { budgets?: Budget[] } | undefined;
-    const budgets = production?.budgets;
-
-    // No budgets configured means nothing is being enforced — there is nothing to raise.
-    if (!production || !Array.isArray(budgets) || !budgets.some(b => b.type === 'initial')) {
-      return;
-    }
-
-    // Replace the array wholesale rather than mutating the entry in place: the workspace writer
-    // records changes per property, and cannot express an edit to an object nested in an array.
-    production.budgets = budgets.map(budget => {
-      if (budget.type !== 'initial') {
-        return budget;
-      }
-
-      const raised: Budget = { ...budget };
-      for (const key of ['maximumWarning', 'maximumError'] as const) {
-        const current = parseBudgetBytes(raised[key]);
-        const wanted = parseBudgetBytes(INITIAL_BUDGET[key]);
-        if (current !== null && wanted !== null && current < wanted) {
-          raised[key] = INITIAL_BUDGET[key];
-        }
-      }
-      return raised;
+    workspace.projects.add({
+      name,
+      root: projectRoot,
+      sourceRoot,
+      prefix: 'app',
+      projectType: 'application',
+      schematics: {
+        '@schematics/angular:component': { style: 'scss' },
+      },
+      targets: {
+        build: {
+          builder: '@angular/build:application',
+          defaultConfiguration: 'production',
+          options: {
+            browser: `${sourceRoot}/main.ts`,
+            index: `${sourceRoot}/index.html`,
+            tsConfig: `${projectRoot}/tsconfig.app.json`,
+            inlineStyleLanguage: 'scss',
+            assets: [{ glob: '**/*', input: `${sourceRoot}/assets`, output: 'assets' }],
+            styles: [...STYLE_PATHS],
+            stylePreprocessorOptions: { includePaths: [STYLE_INCLUDE_PATH] },
+          },
+          configurations: {
+            production: {
+              budgets: BUDGETS,
+              outputHashing: 'all',
+            },
+            staging: {
+              budgets: BUDGETS,
+              outputHashing: 'all',
+              sourceMap: true,
+            },
+            development: {
+              optimization: false,
+              extractLicenses: false,
+              sourceMap: true,
+            },
+          },
+        },
+        serve: {
+          builder: '@angular/build:dev-server',
+          defaultConfiguration: 'development',
+          options: {},
+          configurations: {
+            production: { buildTarget: `${name}:build:production` },
+            staging: { buildTarget: `${name}:build:staging` },
+            development: { buildTarget: `${name}:build:development` },
+          },
+        },
+      },
     });
   });
 }
 
-/** Bytes for an Angular budget string such as `500kB`, or null when it is not a plain size. */
-function parseBudgetBytes(value: string | undefined): number | null {
-  const match = /^(\d+(?:\.\d+)?)\s*(b|kb|mb|gb)?$/i.exec(value?.trim() ?? '');
-  if (!match) {
-    return null;
-  }
+function scaffoldCore(name: string, projectRoot: string): Rule {
+  const depth = projectRoot.split('/').filter(Boolean).length;
+  const relativePathToWorkspaceRoot = Array(depth).fill('..').join('/') || '.';
 
-  const units = { b: 1, kb: 1024, mb: 1024 ** 2, gb: 1024 ** 3 };
-  return Number(match[1]) * units[(match[2] ?? 'b').toLowerCase() as keyof typeof units];
+  const templates = apply(url('./files'), [
+    applyTemplates({ ...strings, name, relativePathToWorkspaceRoot }),
+    move(projectRoot),
+  ]);
+  return mergeWith(templates, MergeStrategy.Overwrite);
 }
 
-function scaffoldShell(tree: Tree, project: string): Rule {
-  return async () => {
-    const workspace = await readWorkspace(tree);
-    const def = workspace.projects.get(project);
-    const sourceRoot = def?.sourceRoot ?? (def ? `${def.root}/src` : 'src');
+/** Points the workspace scripts at the core app. Other scripts are left untouched. */
+function addScripts(name: string): Rule {
+  return (tree: Tree) => {
+    const raw = tree.read('/package.json');
+    if (!raw) {
+      return tree;
+    }
 
-    const templates = apply(url('./files'), [applyTemplates({ ...strings }), move(sourceRoot)]);
-
-    // Overwrite the core shell files: ng add assumes a fresh/near-fresh app and the shell is the
-    // deliverable. Existing files (e.g. the default app.config.ts from `ng new`) are replaced.
-    return mergeWith(templates, MergeStrategy.Overwrite);
+    const pkg = JSON.parse(raw.toString('utf-8')) as { scripts?: Record<string, string> };
+    pkg.scripts = {
+      ...pkg.scripts,
+      start: `ng serve ${name}`,
+      build: `ng build ${name} --configuration production`,
+      'build:dev': `ng build ${name} --configuration development`,
+      'build:staging': `ng build ${name} --configuration staging`,
+      watch: `ng build ${name} --watch --configuration development`,
+      test: 'ng test',
+    };
+    tree.overwrite('/package.json', JSON.stringify(pkg, null, 2) + '\n');
+    return tree;
   };
 }
 
@@ -261,8 +274,7 @@ function addSkillsPostinstall(): Rule {
     const absorbsCompanion = existing?.trim() === COMPANION_SYNC_COMMAND;
 
     // Windows `cmd.exe` parses `A || B && C` as `A || (B && C)` — not `(A || B) && C` as sh does.
-    // Appending to a script that already uses `||` (a fail-soft sync, say) would silently skip our
-    // command whenever theirs succeeded, so group it first.
+    // Both sides may use `||` (ours does, to fail soft), so each is grouped before joining.
     const base = absorbsCompanion
       ? undefined
       : existing?.includes('||')
@@ -271,7 +283,7 @@ function addSkillsPostinstall(): Rule {
 
     pkg.scripts = {
       ...pkg.scripts,
-      postinstall: base ? `${base} && ${SYNC_SKILLS_COMMAND}` : SYNC_SKILLS_COMMAND,
+      postinstall: base ? `${base} && (${SYNC_SKILLS_POSTINSTALL})` : SYNC_SKILLS_POSTINSTALL,
     };
     tree.overwrite('/package.json', JSON.stringify(pkg, null, 2) + '\n');
 
@@ -286,41 +298,31 @@ function addSkillsPostinstall(): Rule {
   };
 }
 
-function logNextSteps(project: string, options: Schema): Rule {
+function logNextSteps(name: string, projectRoot: string, options: Schema): Rule {
   return (_tree: Tree, context: SchematicContext) => {
     const log = context.logger;
     log.info('');
     log.info('✅ @open-rlb/ng-app added successfully.');
     log.info('   • Dependencies installed and added to package.json');
-    log.info('   • Bootstrap + ng-bootstrap styles registered in angular.json');
-    if (!options.skipShell) {
-      log.info(`   • Application shell scaffolded into the "${project}" app:`);
-      log.info('     - src/main.ts bootstraps the AppComponent shell');
-      log.info(
-        '     - src/environments/environment.ts (config: auth, endpoints, i18n, pages, acl)',
-      );
-      log.info('     - src/app/app.config.ts (provideRlbConfig + provideApp + RLB_INIT_PROVIDER)');
-      log.info(
-        '     - src/app/app.component.ts (<rlb-app-container> shell), app.describer.ts, routes, home',
-      );
-      log.info(
-        '     A default root component from `ng new` (e.g. src/app/app.ts) is now unused and can be deleted.',
-      );
-    }
+    log.info(`   • "${name}" application registered in angular.json (${projectRoot})`);
+    log.info(`     - src/main.ts, src/index.html, src/assets/favicon.ico, src/assets/i18n/{en,it}.json`);
+    log.info('     - src/app/app.config.ts (provideRlbConfig + RLB_INIT_PROVIDER)');
+    log.info('     - src/app/app-init.provider.ts, src/app/app.component.ts, src/app/app.routes.ts');
+    log.info('     - src/environments/environment.ts');
+    log.info(`   • package.json scripts point at "${name}" (start, build, build:dev, build:staging, watch)`);
     if (!options.skipSkills) {
       log.info('   • Claude skills copied to .claude/skills/ (rlb-app-* guides, plus');
       log.info("     @open-rlb/ng-bootstrap's — the sync delegates to its own schematic)");
       if (!options.skipSkillsAutoSync) {
-        log.info(`   • "postinstall": "${SYNC_SKILLS_COMMAND}" wired into package.json`);
-        log.info("     One command refreshes every library's skills on `npm install`. Note");
+        log.info(`   • "postinstall": "${SYNC_SKILLS_POSTINSTALL}" wired into package.json`);
         log.info('     `npm update <pkg>` skips root lifecycle scripts — follow it with a');
         log.info('     bare `npm install`.');
       }
     }
     log.info('');
-    log.info('⚠ Before running: edit src/environments/environment.ts and replace the placeholder');
-    log.info('  OIDC authority/clientId/redirectUrl and endpoint baseUrls with your real values.');
-    log.info('  Then start the app with: ng serve');
+    log.info(`⚠ Before running: edit ${projectRoot}/src/environments/environment.ts and replace the`);
+    log.info('  placeholder OIDC authority/clientId/redirectUrl and endpoint baseUrls.');
+    log.info('  Then start the app with: npm start');
     log.info('');
   };
 }

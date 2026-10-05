@@ -1,0 +1,93 @@
+import { ProjectConfiguration } from '@open-rlb/ng-app';
+
+/**
+ * Configuration read by `provideRlbConfig(environment)`.
+ *
+ * ⚠ Replace the placeholders: OIDC `authority` / `clientId` / `redirectUrl` /
+ * `postLogoutRedirectUri`, `allowedUrls` and the endpoint `baseUrl`s.
+ */
+export const environment: ProjectConfiguration = {
+  production: false,
+  environment: {
+    baseUrl: 'http://localhost:4200',
+    ssr: false,
+    phone: false,
+    appLogo: 'assets/logo.svg',
+    appTitle: '<%= name %> (Development)',
+    navbarDisabled: false,
+    errorDialogName: 'error-modal-component',
+    errorDialogSize: 'sm',
+    httpErrors: {
+      defaultRetryMinutes: 10,
+    },
+    pwaUpdateEnabled: false,
+    logLevel: 'log',
+  },
+  i18n: {
+    availableLangs: ['en', 'it'],
+    defaultLanguage: 'en',
+    useLanguageBrowser: true,
+    storeSelectedLanguage: true,
+    cookieStoreName: 'language',
+  },
+  auth: {
+    protocol: 'oauth',
+    storage: 'localStorage',
+    interceptor: 'oauth-code-ep-retry',
+    renewal: {
+      // Calls anonymous visitors make on an authenticated endpoint, e.g. '/register'.
+      publicPaths: [],
+    },
+    enableCompanyInterceptor: true,
+    allowedUrls: ['https://api.example.com'],
+    // One provider per portal: the one whose `domains` contains the current hostname is used.
+    providers: [
+      {
+        configId: 'default',
+        domains: ['localhost'],
+        authority: 'https://login.example.com/realms/your-realm',
+        redirectUrl: 'http://localhost:4200',
+        postLogoutRedirectUri: 'http://localhost:4200',
+        clientId: 'your-client-id',
+        scope: 'openid profile offline_access',
+        roleClaim: data => data['resource_access']?.['account']?.['roles'] || [],
+        logLevel: 2,
+        acl: {
+          endpointKey: 'api',
+          path: 'acl/resources',
+        },
+      },
+    ],
+  },
+  acl: {
+    businessIdKey: 'businessId',
+    resourceIdKey: 'resourceId',
+    interceptorMapping: {
+      companyIdKey: 'companyId',
+      productIdKey: 'productId',
+    },
+  },
+  pages: {
+    notFound: {
+      path: 'not-found',
+    },
+    forbidden: {
+      path: 'forbidden',
+    },
+    status: {
+      path: 'status',
+      // action: 'sysadmin',
+    },
+    cookies: {
+      path: 'cookies',
+    },
+  },
+  endpoints: {
+    api: {
+      baseUrl: 'https://api.example.com',
+      auth: true,
+      healthPath: 'health',
+      wss: false,
+    },
+  },
+};
