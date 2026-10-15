@@ -133,5 +133,6 @@ A class implementing `RlbInitProvider.finalizeApps(resources, store, acl)`. It r
 - The app is **zoneless** — never rely on zone.js; use signals.
 - `appLogo`/i18n files live under `src/assets`; ensure `assets` includes `src/assets` in `angular.json`.
 - The service worker is `enabled: !isDevMode()`, so it's off under `ng serve`. For production builds, configure `ngsw-config.json` (e.g. `ng add @angular/pwa`).
+- With `pwaUpdateEnabled`, `PwaUpdaterService` offers a downloaded version (`core.pwa.newVersionAvailable`, `updateMessage`, `updateNow`, `update`, `later`) and, when the service worker reports an unrecoverable state, asks for a reload (`core.pwa.reloadRequired`, `unrecoverableMessage`, `reload`). Add all eight keys to every `assets/i18n/*.json`. A version that fails to install is logged as an error whether or not `pwaUpdateEnabled` is set, but only reaches the console when `logLevel` is `error` or higher: with the default `off` a stuck update stays silent.
 
 Related: [[rlb-app-apps]], [[rlb-app-shell]], [[rlb-app-store]], [[rlb-app-auth-acl]].

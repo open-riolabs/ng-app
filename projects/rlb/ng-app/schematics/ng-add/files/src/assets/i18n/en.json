@@ -101,7 +101,10 @@
       "updateNow": "Update now",
       "updateMessage": "A new version of the application is available. Do you want to update it now?",
       "later": "Later",
-      "update": "Update"
+      "update": "Update",
+      "reloadRequired": "Reload required",
+      "unrecoverableMessage": "The application can no longer load its files correctly and must be reloaded to keep working.",
+      "reload": "Reload"
     }
   },
   "pages": {

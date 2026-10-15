@@ -655,7 +655,7 @@ currentApp = this.store.selectSignal(s =&gt; s[appContextFeatureKey].currentApp)
           <tr><td><code>TokenRenewalService</code></td><td>Watchdog del token: <code>start</code>, <code>refresh</code>, <code>isRecoverable</code>.</td></tr>
           <tr><td><code>StrapiService</code>, <code>CmsPipe</code>, <code>AbstractMdService</code></td><td>Contenuti da Strapi con cache; il markdown si rende implementando <code>AbstractMdService</code>.</td></tr>
           <tr><td><code>LocalCacheService</code></td><td><code>getData(obs$, key, ttlSec)</code> con cache in <code>localStorage</code>.</td></tr>
-          <tr><td><code>PwaUpdaterService</code></td><td>Propone l'aggiornamento quando c'è una nuova versione (con <code>pwaUpdateEnabled</code>).</td></tr>
+          <tr><td><code>PwaUpdaterService</code></td><td>Propone l'aggiornamento quando c'è una nuova versione e chiede di ricaricare la pagina se il service worker non può più servirla (con <code>pwaUpdateEnabled</code>); registra come errore una versione che non si installa.</td></tr>
           <tr><td><code>AppStorageService</code>, <code>CookiesService</code></td><td>Accesso a local/session storage e cookie.</td></tr>
           <tr><td><code>UtilsService</code></td><td><code>groupBy</code>, <code>compareArrayUnsort</code>, <code>toPlainDataObject</code>, <code>floatStr</code>, …</td></tr>
           <tr><td><code>provideForDomains</code></td><td>Registra provider solo su alcuni hostname.</td></tr>

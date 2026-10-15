@@ -101,7 +101,10 @@
       "updateNow": "Aggiorna ora",
       "updateMessage": "È disponibile una nuova versione dell'applicazione. Vuoi aggiornarla ora?",
       "later": "Dopo",
-      "update": "Aggiorna"
+      "update": "Aggiorna",
+      "reloadRequired": "Ricaricamento necessario",
+      "unrecoverableMessage": "L'applicazione non riesce più a caricare correttamente i propri file e va ricaricata per continuare a funzionare.",
+      "reload": "Ricarica"
     }
   },
   "pages": {
